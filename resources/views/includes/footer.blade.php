@@ -3,7 +3,7 @@
     <p class="col-md-4 mb-0 text-muted">&copy; 2022 Colegio Nuestra Señora del Huerto</p>
 
     <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-      <h3><i class="bi bi-bootstrap"></i></h3>
+      <img src="{{ asset('images/logo.png') }}" class="me-2" alt="" width="50" height="50">
     </a>
 
     <ul class="nav col-md-4 justify-content-end">

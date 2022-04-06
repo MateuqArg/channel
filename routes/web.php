@@ -15,4 +15,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('main.home');
+})->name('home');
+
+// Route::group(['name' => 'student.', 'prefix' => 'student', 'middleware' => ['role:student'], ['auth']], function () {
+Route::name('student.')->prefix('student')->middleware(['role:student'], ['auth'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('student.dashboard');
+    })->name('dashboard');
 });
+
+require __DIR__.'/auth.php';
