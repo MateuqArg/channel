@@ -6,6 +6,10 @@
   outline: 0;
 }
 
+.active {
+  border-bottom: 1px solid;
+}
+
 html,
 .login {
   height: 100%;
@@ -60,4 +64,45 @@ html,
   .bd-placeholder-img-lg {
     font-size: 3.5rem;
   }
+}
+
+.btn-create {
+  position: absolute;
+  border-radius: 50%;
+  bottom: 40px;
+  right: 30px;
+  padding: 0.5rem 1rem;
+  font-size: 1.25rem;
+}
+
+.form-inscription {
+  position: relative;
+  display: block;
+}
+
+.classes-card {
+  width: 100%;
+  height: 150px;
+}
+
+.classes-footer {
+  width: 100%;
+  height: 40px;
+  margin-top: -40px;
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+.classes-card-text {
+  color: #fff;
+  width: 100%;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  font-weight: inherit;
+  margin-bottom: 0.5rem;
+}
+
+.notification-alert {
+  text-decoration: none;
 }

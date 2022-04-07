@@ -1,7 +1,7 @@
 <header class="p-3 mb-3 border-bottom">
     <div class="container">
       <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-        {{-- <a href="{{ route('organizer.dashboard') }}" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none"> --}}
+        <a href="{{ route('student.dashboard') }}" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none">
           {{-- <img src="{{ asset('images/logo.png') }}" class="me-2" alt="" width="40" height="40"> --}}
         </a>
 
