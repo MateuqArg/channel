@@ -97,12 +97,12 @@ html,
   width: 100%;
 }
 
-.subtitle {
-  font-size: 1.25rem;
-  font-weight: inherit;
-  margin-bottom: 0.5rem;
-}
-
 .notification-alert {
   text-decoration: none;
+}
+
+.flexdatalist-results li span.highlight {
+  text-decoration: underline;
+  color: #000;
+  background: yellow;
 }

@@ -13,15 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('inscriptions', function (Blueprint $table) {
+        Schema::create('visitors', function (Blueprint $table) {
             $table->id();
-            $table->integer('custid');
+            $table->string('custid');
             $table->integer('event_id');
-            $table->boolean('approved')->nullable();
+            $table->boolean('approved')->nullable()->default(null);
             $table->string('name')->nullable();
-            $table->string('surname')->nullable();
             $table->string('email')->nullable();
-            $table->integer('phone')->nullable();
+            $table->bigInteger('phone')->nullable();
             $table->string('charge')->nullable();
             $table->string('company')->nullable();
             $table->string('city')->nullable();
@@ -38,6 +37,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('inscriptions');
+        Schema::dropIfExists('visitors');
     }
 };

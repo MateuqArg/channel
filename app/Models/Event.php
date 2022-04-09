@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Inscription;
+use App\Models\Visitor;
 
 class Event extends Model
 {
@@ -12,8 +12,8 @@ class Event extends Model
 
     protected $fillable = ['custid', 'title', 'date', 'inscription', 'approve'];
 
-    public function inscriptions()
+    public function visitors()
     {
-        return $this->hasMany(Inscription::class);
+        return $this->hasMany(Visitor::class);
     }
 }

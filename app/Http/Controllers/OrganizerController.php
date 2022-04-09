@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 use App\Models\Event;
-use App\Models\Inscription;
+use App\Models\Visitor;
 use Carbon\Carbon;
 
 class OrganizerController extends Controller
@@ -12,9 +14,9 @@ class OrganizerController extends Controller
     public function eventsIndex()
     {
         $events = Event::get()->all();
-        $inscriptions = Inscription::get()->all();
+        $visitors = Visitor::where('approved', null)->get();
 
-        return view('organizer.events.index', compact('events', 'inscriptions'));
+        return view('organizer.events.index', compact('events', 'visitors'));
     }
 
     public function eventsCreate(Request $request)
@@ -32,7 +34,7 @@ class OrganizerController extends Controller
         }
 
         do {
-            $custid = strtolower(Str::random(6));
+            $custid = createCustomid();
         } while (Event::where('custid', $custid)->first() <> null);
 
         $event = new Event([
@@ -42,9 +44,28 @@ class OrganizerController extends Controller
             'inscription' => implode("*", $request->inscription),
             'approve' => $approve
         ]);
- 
         $event->save();
 
+        Role::create(['name' => $custid]);
+
         return redirect()->back()->with('success', 'Evento dado de alta correctamente');
+    }
+
+    public function visitorAccept(Request $request, $id)
+    {
+        $visitor = Visitor::find($id);
+        $visitor->approved = true;
+        $visitor->update();
+
+        return redirect()->back()->with('successvisitors', 'Inscripción aceptada correctamente');
+    }
+
+    public function visitorReject(Request $request, $id)
+    {
+        $visitor = Visitor::find($id);
+        $visitor->approved = false;
+        $visitor->update();
+
+        return redirect()->back()->with('successvisitors', 'Inscripción rechazada correctamente');
     }
 }

@@ -5,50 +5,55 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Event;
 use App\Models\User;
-use App\Models\Inscription;
+use App\Models\Visitor;
 use App\Models\Meeting;
 
 class MainController extends Controller
 {
-    public function eventsInscription(Request $request, $custid)
+    public function eventsVisitor(Request $request, $custid)
     {
         $event = Event::where('custid', $custid)->first();
         $data = explode("*", $event->inscription);
 
-        $exhibitors = User::role('exhibitor')->role('e'.$custid)->get();
+        $exhibitors = User::role('exhibitor')->role($custid)->get();
 
         return view('main.inscription', compact('event', 'data', 'exhibitors'));
     }
 
-    public function inscriptionStore(Request $request, $custid)
+    public function visitorStore(Request $request, $custid)
     {
         $event = Event::where('custid', $custid)->first();
 
         do {
-            $inscid = strtolower(Str::random(6));
-        } while (Inscription::where('custid', $inscid)->first() <> null);
+            $inscid = createCustomid();;
+        } while (Visitor::where('custid', $inscid)->first() <> null);
         $data = $request->all();
         unset($data['_token']);
         $data['event_id'] = $event->id;
         $data['custid'] = $inscid;
 
-        if ($event->approve = true) {
-            $data['approved'] = false;
+        if ($event->approve = false) {
+            $data['approved'] = true;
         }
 
-        $inscription = new Inscription;
-        $inscription->fill($data);
-        $inscription->save();
+        $visitor = new Visitor;
+        $visitor->fill($data);
+        $visitor->save();
 
-        $inscription = Inscription::where('custid', $inscid)->first();
+        $visitor = Visitor::where('custid', $inscid)->first();
 
         if ($request->meeting == 'on') {
             foreach ($request->exhibitors as $exhibitor) {
+                do {
+                    $inscid = createCustomid();
+                } while (Meeting::where('custid', $inscid)->first() <> null);
                 $meeting = new Meeting([
+                    'custid' => $custid,
                     'event_id' => $event->id,
-                    'inscription_id' => $inscription->id,
+                    'visitor_id' => $visitor->id,
                     'exhibitor_id' => $exhibitor,
-                    'approved' => false
+                    'approved' => null,
+                    'requested' => 'visitor'
                 ]);
                 $meeting->save();
             }

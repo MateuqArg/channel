@@ -20,7 +20,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     @endif
-                    <form method="GET" action="{{ route('store.inscription', ['custid' => $event->custid]) }}" enctype="multipart/form-data">
+                    <form method="GET" action="{{ route('store.visitor', ['custid' => $event->custid]) }}" enctype="multipart/form-data">
                     @csrf
                     	@if(in_array("name", $data))
                         <div class="mb-3">

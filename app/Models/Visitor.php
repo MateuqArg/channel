@@ -5,8 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Event;
+use App\Models\Meeting;
 
-class Inscription extends Model
+class Visitor extends Model
 {
     use HasFactory;
 
@@ -15,5 +16,10 @@ class Inscription extends Model
     public function event()
     {
         return $this->belongsTo(Event::class);
+    }
+
+    public function meetings()
+    {
+        return $this->hasMany(Meeting::class);
     }
 }
