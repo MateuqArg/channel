@@ -52,7 +52,7 @@
               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
           @endif
-        <form method="POST" action="{{ route('exhibitor.meeting.request', ['id' => $event->custid]) }}">
+        <form method="POST" action="{{ route('exhibitor.meeting.request') }}">
           @csrf
 
           <div class="mb-3">

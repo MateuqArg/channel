@@ -15,11 +15,12 @@ return new class extends Migration
     {
         Schema::create('meetings', function (Blueprint $table) {
             $table->id();
-            $table->string('custid')
+            $table->string('custid');
             $table->integer('event_id');
             $table->integer('visitor_id');
             $table->integer('exhibitor_id');
             $table->boolean('approved');
+            $table->string('requested');
             $table->timestamps();
         });
     }

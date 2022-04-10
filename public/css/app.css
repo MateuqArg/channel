@@ -96,13 +96,3 @@ html,
   color: #fff;
   width: 100%;
 }
-
-.notification-alert {
-  text-decoration: none;
-}
-
-.flexdatalist-results li span.highlight {
-  text-decoration: underline;
-  color: #000;
-  background: yellow;
-}

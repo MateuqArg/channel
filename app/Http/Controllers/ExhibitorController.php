@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\UsersImport;
 use App\Models\Event;
 use App\Models\Meeting;
 use App\Models\Visitor;
@@ -68,7 +70,8 @@ class ExhibitorController extends Controller
 
     public function inviteSend(Request $request)
     {
-        dd($request->all());
+        $excel = Excel::import(new UsersImport, request()->excel);
+        dd($excel);
         // return redirect()->back()->with('successrequest', 'Reunión solicitada');
     }
 }
