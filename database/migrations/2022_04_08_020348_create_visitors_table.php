@@ -17,10 +17,9 @@ return new class extends Migration
             $table->id();
             $table->string('custid');
             $table->integer('event_id');
+            $table->integer('visitor_id');
             $table->boolean('approved')->nullable()->default(null);
-            $table->string('name')->nullable();
-            $table->string('email')->nullable();
-            $table->bigInteger('phone')->nullable();
+            $table->boolean('present')->nullable()->default(null);
             $table->string('charge')->nullable();
             $table->string('company')->nullable();
             $table->string('city')->nullable();

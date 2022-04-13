@@ -16,16 +16,18 @@ use App\Http\Controllers\MainController;
 |
 */
 
-Route::get('/', function () {
-    return view('main.home');
-})->name('home');
+// Route::get('/', function () {
+//     return view('main.home');
+// })->name('home');
 
-Route::prefix('events')->group(function () {
-    Route::get('/{custid}', [MainController::class, 'eventsVisitor'])->name('visitor');
-    Route::get('/{custid}/store', [MainController::class, 'visitorStore'])->name('store.visitor');
+Route::name('visitor.')->prefix('visitor')->group(function () {
+    Route::prefix('events')->group(function () {
+        Route::get('/', [MainController::class, 'events'])->name('index');
+        Route::get('/{custid}', [MainController::class, 'eventsVisitor'])->name('inscription');
+        Route::get('/{custid}/store', [MainController::class, 'visitorStore'])->name('inscription.store');
+    });
 });
 
-// Route::group(['name' => 'student.', 'prefix' => 'student', 'middleware' => ['role:student'], ['auth']], function () {
 Route::name('organizer.')->prefix('organizer')->middleware(['role:organizer'], ['auth'])->group(function () {
     Route::name('events.')->prefix('events')->group(function () {
         Route::get('/', [OrganizerController::class, 'eventsIndex'])->name('index');
@@ -34,12 +36,23 @@ Route::name('organizer.')->prefix('organizer')->middleware(['role:organizer'], [
     });
 
     Route::name('visitor.')->prefix('visitor')->group(function () {
+        Route::get('/{custid}', [OrganizerController::class, 'visitorScan'])->name('scan');
+        Route::get('/print/{custid}', [OrganizerController::class, 'visitorPrint'])->name('print');
+        Route::get('/track/{custid}', [OrganizerController::class, 'visitorTrack'])->name('track');
         Route::get('/accept/{id}', [OrganizerController::class, 'visitorAccept'])->name('accept');
         Route::get('/reject/{id}', [OrganizerController::class, 'visitorReject'])->name('reject');
     });
 
-    Route::get('/exhibitors', [OrganizerController::class, 'exhibitors'])->name('exhibitors');
-    Route::get('/talks', [OrganizerController::class, 'talks'])->name('talks');
+    Route::name('exhibitor.')->prefix('exhibitor')->group(function () {
+        Route::get('/', [OrganizerController::class, 'exhibitors'])->name('index');
+        Route::get('/create', [OrganizerController::class, 'exhibitorsCreate'])->name('create');
+    });
+
+    Route::name('talk.')->prefix('talk')->group(function () {
+        Route::get('/', [OrganizerController::class, 'talks'])->name('index');
+        Route::get('/create', [OrganizerController::class, 'talksCreate'])->name('create');
+    });
+
     Route::get('/admins', [OrganizerController::class, 'admins'])->name('admins');
     Route::get('/visitors', [OrganizerController::class, 'visitors'])->name('visitors');
 });
@@ -52,7 +65,7 @@ Route::name('exhibitor.')->prefix('exhibitor')->middleware(['role:exhibitor'], [
     
     Route::name('invite.')->prefix('invite')->group(function () {
         Route::get('/', [ExhibitorController::class, 'inviteIndex'])->name('index');
-        Route::get('/send', [ExhibitorController::class, 'inviteSend'])->name('send');
+        Route::post('/send', [ExhibitorController::class, 'inviteSend'])->name('send');
     });
 
     Route::name('meeting.')->prefix('meeting')->group(function () {

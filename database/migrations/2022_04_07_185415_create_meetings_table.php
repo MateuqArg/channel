@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('event_id');
             $table->integer('visitor_id');
             $table->integer('exhibitor_id');
-            $table->boolean('approved');
+            $table->boolean('approved')->nullable()->default(null);
             $table->string('requested');
             $table->timestamps();
         });

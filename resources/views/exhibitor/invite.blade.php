@@ -8,7 +8,7 @@
               <div class="modal-dialog mb-0">
                 <div class="modal-content">
                   <div class="modal-body">
-                    <form method="GET" action="{{ route('exhibitor.invite.send') }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('exhibitor.invite.send') }}" enctype="multipart/form-data">
                       <div class="mb-3">
                         <label for="file" class="form-label">Cargar archivo excel</label>
                         <input type="file" name="excel" class="form-control" id="excel" aria-describedby="excelHelp" accept=".xls, .xlsx">

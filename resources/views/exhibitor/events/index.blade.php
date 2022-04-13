@@ -135,8 +135,8 @@
       { id: '{{ $visitor->id }}',
       custid: '{{ $visitor->custid }}',
       event: '{{ $visitor->event->title }}',
-      name: '{{ $visitor->name }}',
-      email: '{{ $visitor->email }}',
+      name: '{{ $visitor->user->name }}',
+      email: '{{ $visitor->user->email }}',
       },
     @endforeach
   ];

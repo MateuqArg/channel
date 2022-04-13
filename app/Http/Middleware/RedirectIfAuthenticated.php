@@ -23,12 +23,12 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                if (Auth::user()->hasRole('student')) {
-                    return redirect()->route('student.dashboard');
-                } else if (Auth::user()->hasRole('teacher')) {
-                    return redirect()->route('teacher.dashboard');
-                } else if (Auth::user()->hasRole('admin')) {
-                    return redirect()->route('admin.dashboard');
+                if (Auth::user()->hasRole('visitor')) {
+                    return redirect()->route('visitor.index');
+                } else if (Auth::user()->hasRole('exhibitor')) {
+                    return redirect()->route('exhibitor.dashboard');
+                } else if (Auth::user()->hasRole('organizer')) {
+                    return redirect()->route('organizer.dashboard');
                 }
             }
         }

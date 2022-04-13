@@ -15,6 +15,10 @@ return new class extends Migration
     {
         Schema::create('talks', function (Blueprint $table) {
             $table->id();
+            $table->string('custid');
+            $table->integer('event_id');
+            $table->integer('exhibitor_id');
+            $table->string('title');
             $table->timestamps();
         });
     }

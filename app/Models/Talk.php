@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Talk extends Model
 {
     use HasFactory;
+
+     protected $fillable = ['custid', 'event_id', 'exhibitor_id', 'title'];
 }

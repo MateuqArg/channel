@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Imports\UsersImport;
+use Illuminate\Support\Facades\Storage;
+use Rap2hpoutre\FastExcel\FastExcel;
 use App\Models\Event;
 use App\Models\Meeting;
 use App\Models\Visitor;
+use App\Models\User;
 
 class ExhibitorController extends Controller
 {
@@ -70,8 +71,30 @@ class ExhibitorController extends Controller
 
     public function inviteSend(Request $request)
     {
-        $excel = Excel::import(new UsersImport, request()->excel);
-        dd($excel);
+        $custid = createCustomid();
+        $ext = $request->excel->getClientOriginalExtension();
+
+        $request->excel->storeAs('/', 'excels/'.$custid.'.'.$ext, 'public_uploads');
+        $collection = fastexcel()->import(public_path().'/excels/'.$custid.'.'.$ext);
+
+        unlink(public_path().'/excels/'.$custid.'.'.$ext);
+        
+        dd($collection);
+
+        // return redirect()->back()->with('successrequest', 'Reunión solicitada');
+    }
+
+    public function visitorsDownload(Request $request)
+    {
+        // $visitors = 
+
+        $request->excel->storeAs('/', 'excels/'.$custid.'.'.$ext, 'public_uploads');
+        $collection = fastexcel()->import(public_path().'/excels/'.$custid.'.'.$ext);
+
+        unlink(public_path().'/excels/'.$custid.'.'.$ext);
+        
+        dd($collection);
+
         // return redirect()->back()->with('successrequest', 'Reunión solicitada');
     }
 }

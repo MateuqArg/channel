@@ -1,59 +1,45 @@
-<x-guest-layout>
-    <x-auth-card>
-        <x-slot name="logo">
-            <a href="/">
-                <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-            </a>
-        </x-slot>
+@extends('includes.auth.app')
+@section('content')
+    <main class="form-signin">
+      <form method="POST" action="{{ route('register') }}">
+        @csrf
+
+        <img class="mb-4" src="https://getbootstrap.com/docs/5.1/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57">
 
         <!-- Validation Errors -->
         <x-auth-validation-errors class="mb-4" :errors="$errors" />
 
-        <form method="POST" action="{{ route('register') }}">
-            @csrf
+        <div class="form-floating mb-2">
+          <input type="name" class="form-control" name="name" id="name" :value="old('name')" required autofocus>
+          <label for="name">Nombre</label>
+        </div>
 
-            <!-- Name -->
-            <div>
-                <x-label for="name" :value="__('Name')" />
+        <div class="form-floating mb-2">
+          <input type="email" class="form-control" name="email" id="email" :value="old('email')" required>
+          <label for="email">Email</label>
+        </div>
 
-                <x-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus />
-            </div>
+        <div class="form-floating mb-2">
+          <input type="number" class="form-control" name="phone" id="phone" :value="old('phone')" required>
+          <label for="phone">Teléfono</label>
+        </div>
 
-            <!-- Email Address -->
-            <div class="mt-4">
-                <x-label for="email" :value="__('Email')" />
+        <div class="form-floating mb-2">
+          <input type="password" class="form-control" name="password" id="password" required autocomplete="new-password">
+          <label for="password">Contraseña</label>
+        </div>
 
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required />
-            </div>
+        <div class="form-floating mb-2">
+          <input type="password" class="form-control" name="password_confirmation" id="password_confirmation" required>
+          <label for="password_confirmation">Confirmar contraseña</label>
+        </div>
 
-            <!-- Password -->
-            <div class="mt-4">
-                <x-label for="password" :value="__('Password')" />
+        <div class="mb-3">
+          <a href="{{ route('login') }}">¿Ya estás registrado?</a>
+        </div>
 
-                <x-input id="password" class="block mt-1 w-full"
-                                type="password"
-                                name="password"
-                                required autocomplete="new-password" />
-            </div>
-
-            <!-- Confirm Password -->
-            <div class="mt-4">
-                <x-label for="password_confirmation" :value="__('Confirm Password')" />
-
-                <x-input id="password_confirmation" class="block mt-1 w-full"
-                                type="password"
-                                name="password_confirmation" required />
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('login') }}">
-                    {{ __('Already registered?') }}
-                </a>
-
-                <x-button class="ml-4">
-                    {{ __('Register') }}
-                </x-button>
-            </div>
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Crear cuenta</button>
+        <p class="mt-5 mb-3 text-muted">&copy; 2022 ChannelTalks</p>
         </form>
-    </x-auth-card>
-</x-guest-layout>
+    </main>
+@endsection

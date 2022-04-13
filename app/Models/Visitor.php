@@ -11,11 +11,16 @@ class Visitor extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['custid', 'event_id', 'approved', 'name', 'surname', 'email', 'phone', 'charge', 'company', 'city', 'state', 'country'];
+    protected $fillable = ['custid', 'event_id', 'visitor_id', 'approved', 'charge', 'company', 'city', 'state', 'country'];
 
     public function event()
     {
         return $this->belongsTo(Event::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'visitor_id');
     }
 
     public function meetings()

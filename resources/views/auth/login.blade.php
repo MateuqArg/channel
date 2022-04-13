@@ -17,6 +17,7 @@
           <input type="email" class="form-control" name="email" id="email" :value="old('email')" required autofocus>
           <label for="email">Email</label>
         </div>
+        
         <div class="form-floating">
           <input type="password" class="form-control" name="password" id="password" required autocomplete="current-password">
           <label for="password">Contraseña</label>
@@ -28,7 +29,7 @@
           </label>
         </div>
         <button class="w-100 btn btn-lg btn-primary" type="submit">Iniciar sesión</button>
-        <p class="mt-5 mb-3 text-muted">&copy; 2022</p>
+        <p class="mt-5 mb-3 text-muted">&copy; 2022 ChannelTalks</p>
       </form>
     </main>
 @endsection
