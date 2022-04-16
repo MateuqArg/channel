@@ -4,7 +4,7 @@
 <div class="container-fluid">
   @if(!$visitors->isEmpty())
   <div class="row">
-    <a class="notification-alert" data-bs-toggle="modal" data-bs-target="#visitor" class="btn btn-success btn-create" href="">
+    <a class="notification-alert" data-bs-toggle="modal" data-bs-target="#visitors" class="btn btn-success btn-create" href="">
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
         <p class="mb-0"><i class="bi bi-check-circle-fill"></i> Hay inscripciones pendientes de aprobación</p>
     </div>
@@ -134,7 +134,7 @@
               <div class="row">
                 <div class="col-9">
                   <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $visitor->custid }}" aria-expanded="true" aria-controls="{{ $visitor->custid }}">
-                    {{ $visitor->name }} - {{ $visitor->event->title }}
+                    {{ $visitor->user->name }} - {{ $visitor->event->title }}
                   </button>
                 </div>
                 <div class="col-1">
@@ -148,11 +148,11 @@
             <div id="{{ $visitor->custid }}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
               <div class="accordion-body">
                 <p class="mb-0">
-                  <strong>Nombre:</strong> {{ $visitor->name }}<br>
-                  <strong>Email:</strong> {{ $visitor->email }}<br>
-                  <strong>Teléfono:</strong> {{ $visitor->phone }}<br>
-                  <strong>Cargo:</strong> {{ $visitor->charge }}<br>
+                  <strong>Nombre:</strong> {{ $visitor->user->name }}<br>
+                  <strong>Email:</strong> {{ $visitor->user->email }}<br>
+                  <strong>Teléfono:</strong> {{ $visitor->user->phone }}<br>
                   <strong>Empresa:</strong> {{ $visitor->company }}<br>
+                  <strong>Cargo:</strong> {{ $visitor->charge }}<br>
                   <strong>País:</strong> {{ $visitor->country }}<br>
                   <strong>Provincia:</strong> {{ $visitor->state }}<br>
                   <strong>Ciudad:</strong> {{ $visitor->city }}

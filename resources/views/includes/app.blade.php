@@ -22,6 +22,8 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <script src="{{ asset('js/app.js') }}" defer></script>
 
+    @livewireStyles
+    @livewireScripts
 </head>
 <body>
 <main class="d-flex flex-column min-vh-100">

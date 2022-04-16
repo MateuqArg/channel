@@ -12,7 +12,7 @@
             {{ Request::is('organizer/exhibitor') ? "active" : "" }}">Expositores</a></li>
           <li><a href="{{ route('organizer.talk.index') }}" class="nav-link px-2 link-dark
             {{ Request::is('organizer/talk') ? "active" : "" }}">Charlas</a></li>
-          <li><a href="{{ route('organizer.visitors') }}" class="nav-link px-2 link-dark
+          <li><a href="{{ route('organizer.visitors.index') }}" class="nav-link px-2 link-dark
             {{ Request::is('organizer/visitors') ? "active" : "" }}">Asistentes</a></li>
           <li><a href="{{ route('organizer.admins') }}" class="nav-link px-2 link-dark
             {{ Request::is('organizer/admins') ? "active" : "" }}">Administradores</a></li>

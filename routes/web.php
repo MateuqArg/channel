@@ -54,7 +54,11 @@ Route::name('organizer.')->prefix('organizer')->middleware(['role:organizer'], [
     });
 
     Route::get('/admins', [OrganizerController::class, 'admins'])->name('admins');
-    Route::get('/visitors', [OrganizerController::class, 'visitors'])->name('visitors');
+
+    Route::name('visitors.')->prefix('visitors')->group(function () {
+        Route::get('/', [OrganizerController::class, 'visitors'])->name('index');
+        Route::get('/edit', [OrganizerController::class, 'visitorsEdit'])->name('edit');
+    });
 });
 
 Route::name('exhibitor.')->prefix('exhibitor')->middleware(['role:exhibitor'], ['auth'])->group(function () {

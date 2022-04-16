@@ -2,6 +2,10 @@
   font-size: 85%;
 }
 
+.swal2-container.swal2-backdrop-show, .swal2-container.swal2-noanimation {
+  background: rgba(20, 20, 20, 0.95) !important;
+}
+
 .dropdown-toggle {
   outline: 0;
 }

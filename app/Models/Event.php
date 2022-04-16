@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Visitor;
 use App\Models\User;
-
+use App\Models\Talk;
 
 class Event extends Model
 {
@@ -17,5 +17,10 @@ class Event extends Model
     public function visitors()
     {
         return $this->hasMany(Visitor::class);
+    }
+
+    public function talks()
+    {
+        return $this->hasMany(Talk::class);
     }
 }

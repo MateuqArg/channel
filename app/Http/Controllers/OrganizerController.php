@@ -114,12 +114,7 @@ class OrganizerController extends Controller
 
     public function exhibitors()
     {
-        $events = Event::get()->all();
-        $exhibitors = User::whereHas('roles', function($q){
-            $q->where('name', 'exhibitor');
-        })->get();
-
-        return view('organizer.events.exhibitors', compact('events', 'exhibitors'));
+        return view('organizer.events.exhibitors');
     }
 
     public function exhibitorsCreate(Request $request)
@@ -148,38 +143,33 @@ class OrganizerController extends Controller
 
     public function talks()
     {
-        $events = Event::get()->all();
-        $talks = Talk::get()->all();
-        $exhibitors = User::whereHas('roles', function($q){
-            $q->where('name', 'exhibitor');
-        })->get();
-
-        return view('organizer.events.talks', compact('talks', 'exhibitors', 'events'));
+        return view('organizer.events.talks');
     }
 
     public function talksCreate(Request $request)
     {
-        if ($request->new_talk == 'on') {
-            do {
-                $custid = createCustomid();
-            } while (Talk::where('custid', $custid)->first() <> null);
+        // dd($request->all());
+        // if ($request->new_talk = 'on') {
+        //     do {
+        //         $custid = createCustomid();
+        //     } while (Talk::where('custid', $custid)->first() <> null);
 
-            $talk = new Talk([
-                'custid' => $custid,
-                'event_id' => $request->event,
-                'exhibitor_id' => $request->exhibitor,
-                'title' => $request->title
-            ]);
-            $talk->save();
-        } else {
-            foreach ($request->talks as $talk) {
-                $talk = Talk::find($talk);
-                
-                $talk->exhibitor_id = $request->exhibitor;
-                $talk->update();
-            }
-        }
+        //     $talk = new Talk([
+        //         'custid' => $custid,
+        //         'event_id' => $request->event,
+        //         'exhibitor_id' => $request->exhibitor,
+        //         'title' => $request->title
+        //     ]);
+        //     $talk->save();
+        // } else {
+            
+        // }
         
+    }
+
+    public function visitors()
+    {
+        return view('organizer.events.visitors');
     }
 
     // public function exhibitorsCreate(Request $request)

@@ -5,7 +5,7 @@
 <script src="{{ asset('/js/jquery.flexdatalist.min.js') }}"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-borderless/borderless.css">
 
-@livewire('exhibitors')
+@livewire('visitors')
 
 {{-- @include('includes.footer') --}}
 @endsection
