@@ -31,8 +31,8 @@ Route::name('visitor.')->prefix('visitor')->group(function () {
 Route::name('organizer.')->prefix('organizer')->middleware(['role:organizer'], ['auth'])->group(function () {
     Route::name('events.')->prefix('events')->group(function () {
         Route::get('/', [OrganizerController::class, 'eventsIndex'])->name('index');
-        Route::get('/{id}', [OrganizerController::class, 'eventsShow'])->name('show');
-        Route::post('/create', [OrganizerController::class, 'eventsCreate'])->name('create');
+        // Route::get('/{id}', [OrganizerController::class, 'eventsShow'])->name('show');
+        // Route::post('/create', [OrganizerController::class, 'eventsCreate'])->name('create');
     });
 
     Route::name('visitor.')->prefix('visitor')->group(function () {
@@ -45,19 +45,19 @@ Route::name('organizer.')->prefix('organizer')->middleware(['role:organizer'], [
 
     Route::name('exhibitor.')->prefix('exhibitor')->group(function () {
         Route::get('/', [OrganizerController::class, 'exhibitors'])->name('index');
-        Route::get('/create', [OrganizerController::class, 'exhibitorsCreate'])->name('create');
+        // Route::get('/create', [OrganizerController::class, 'exhibitorsCreate'])->name('create');
     });
 
     Route::name('talk.')->prefix('talk')->group(function () {
         Route::get('/', [OrganizerController::class, 'talks'])->name('index');
-        Route::get('/create', [OrganizerController::class, 'talksCreate'])->name('create');
+        // Route::get('/create', [OrganizerController::class, 'talksCreate'])->name('create');
     });
 
     Route::get('/admins', [OrganizerController::class, 'admins'])->name('admins');
 
     Route::name('visitors.')->prefix('visitors')->group(function () {
         Route::get('/', [OrganizerController::class, 'visitors'])->name('index');
-        Route::get('/edit', [OrganizerController::class, 'visitorsEdit'])->name('edit');
+        // Route::get('/edit', [OrganizerController::class, 'visitorsEdit'])->name('edit');
     });
 });
 

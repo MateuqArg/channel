@@ -16,10 +16,9 @@ class OrganizerController extends Controller
 {
     public function eventsIndex()
     {
-        $events = Event::get()->all();
         $visitors = Visitor::where('approved', null)->get();
 
-        return view('organizer.events.index', compact('events', 'visitors'));
+        return view('organizer.events.index', compact('visitors'));
     }
 
     public function eventsCreate(Request $request)
@@ -146,31 +145,31 @@ class OrganizerController extends Controller
         return view('organizer.events.talks');
     }
 
-    public function talksCreate(Request $request)
-    {
-        // dd($request->all());
-        // if ($request->new_talk = 'on') {
-        //     do {
-        //         $custid = createCustomid();
-        //     } while (Talk::where('custid', $custid)->first() <> null);
-
-        //     $talk = new Talk([
-        //         'custid' => $custid,
-        //         'event_id' => $request->event,
-        //         'exhibitor_id' => $request->exhibitor,
-        //         'title' => $request->title
-        //     ]);
-        //     $talk->save();
-        // } else {
-            
-        // }
-        
-    }
-
     public function visitors()
     {
         return view('organizer.events.visitors');
     }
+
+    // public function talksCreate(Request $request)
+    // {
+    //     dd($request->all());
+    //     if ($request->new_talk = 'on') {
+    //         do {
+    //             $custid = createCustomid();
+    //         } while (Talk::where('custid', $custid)->first() <> null);
+
+    //         $talk = new Talk([
+    //             'custid' => $custid,
+    //             'event_id' => $request->event,
+    //             'exhibitor_id' => $request->exhibitor,
+    //             'title' => $request->title
+    //         ]);
+    //         $talk->save();
+    //     } else {
+            
+    //     }
+        
+    // }
 
     // public function exhibitorsCreate(Request $request)
     // {

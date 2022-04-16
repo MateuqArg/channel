@@ -1,7 +1,7 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-3">
-      <input type="text" wire:model="search" class="form-control" placeholder="Buscar por id, evento o expositor">
+      <input type="text" wire:model="search" class="form-control" placeholder="Buscar por id o eventos">
     </div>
   </div>
   <div class="row g-3">
@@ -11,9 +11,8 @@
           <th scope="col">Acciones</th>
           <th scope="col">ID</th>
           <th scope="col">ID publico</th>
-          <th scope="col">Evento</th>
-          <th scope="col">Expositor</th>
-          <th scope="col">Titulo</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Eventos</th>
         </tr>
       </thead>
       <tbody>
@@ -26,7 +25,9 @@
           <td>{{ $exhibitor->custid }}</td>
           <td>{{ $exhibitor->name }}</td>
           @foreach($exhibitor->getRoleNames() as $role)
-          <td>{{ $role }}</td>
+          @if(strlen($role) == 6)
+            <td>{{ $role }}</td>
+          @endif
           @endforeach
         </tr>
         @endforeach

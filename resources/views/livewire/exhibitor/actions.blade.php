@@ -4,24 +4,31 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="editLabel">Editar charla</h5>
+        <h5 class="modal-title" id="editLabel">Editar roles</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
           <div class="mb-3">
-            <div class="mb-3">
-              <label for="event" class="form-label">Evento</label>
-              <input type="text" wire:model.defer="event" id="event" class="form-control" aria-describedby="eventHelp">
-            </div>
-            <div class="mb-3">
-              <label for="exhibitor" class="form-label">Expositor</label>
-              <input type="text" wire:model.defer="exhibitor" id="exhibitor" class="form-control" aria-describedby="exhibitorHelp">
-            </div>
-            <div class="mb-3">
-              <label for="title" class="form-label">Titulo</label>
-              <input type="text" wire:model.defer="title" id="title" class="form-control" aria-describedby="titleHelp">
-            </div>
+          <p>Al destildar el expositor se saldrá de todos los eventos</p>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="exhibitor" id="exhibitor" checked>
+            <label class="form-check-label" for="exhibitor">
+              Expositor
+            </label>
           </div>
+          <hr>
+          <p>ID público de todos los eventos</p>
+          @foreach($roles as $role)
+          @if(strlen($role->name) == 6)
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="{{ $role->name }}" wire:model.defer="role" id="{{ $role->name }}" 
+            {{ $user->hasRole($role->name) ? "checked" : "" }}>
+            <label class="form-check-label" for="{{ $role->name }}">
+              {{ $role->name }}
+            </label>
+          </div>
+          @endif
+          @endforeach
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-arrow-left"></i></button>

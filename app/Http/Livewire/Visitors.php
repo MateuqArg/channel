@@ -52,10 +52,16 @@ class Visitors extends Component
         $visitor->update();
 
         $this->emit('alert', 'Asistente modificado correctamente');
+        $this->emit('cleanData');
     }
 
     public function destroy($id)
     {
         Visitor::destroy($id);
+    }
+
+    public function cleanData()
+    {
+        $this->reset(['company', 'charge', 'country', 'state', 'city', 'vip']);
     }
 }

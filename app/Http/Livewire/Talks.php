@@ -65,10 +65,16 @@ class Talks extends Component
         $talk->update();
 
         $this->emit('alert', 'Asistente modificado correctamente');
+        $this->emit('cleanData');
     }
 
     public function destroy($id)
     {
         Talk::destroy($id);
+    }
+
+    public function cleanData()
+    {
+        $this->reset(['event', 'exhibitor', 'title']);
     }
 }
