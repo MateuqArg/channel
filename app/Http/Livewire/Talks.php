@@ -9,18 +9,22 @@ use App\Models\User;
 
 class Talks extends Component
 {
-    public $search, $talk, $event, $talks;
+    public $search, $cretalk, $talk, $event, $talks;
     public $listeners = ['destroy', 'selected', 'refresh' => '$refresh', 'cleanData'];
 
     protected $rules = [
         'talk.event' => 'required',
         'talk.exhibitor' => 'required',
-        'talk.title' => 'required'
+        'talk.title' => 'required',
+        'cretalk.event' => 'required',
+        'cretalk.exhibitor' => 'required',
+        'cretalk.title' => 'required'
     ];
 
     public function mount(Talk $talk)
     {
         $this->talk = $talk;
+        $this->cretalk = $talk;
     }
 
     public function render()
@@ -36,16 +40,25 @@ class Talks extends Component
 
     public function create()
     {
-        // dd($this);
         do {
             $custid = createCustomid();
         } while (Talk::where('custid', $custid)->first() <> null);
 
+        if ($this->cretalk->event == null) {
+            $event = Event::get()->first();
+            $this->cretalk->event = $event->id;
+        }
+
+        if ($this->cretalk->exhibitor == null) {
+            $exhibitor = User::whereHas('roles', function($q){$q->where('name', 'exhibitor');})->first();
+            $this->cretalk->exhibitor = $exhibitor->id;
+        }
+
         $talk = new Talk([
             'custid' => $custid,
-            'event_id' => $this->talk->event,
-            'exhibitor_id' => $this->talk->exhibitor,
-            'title' => $this->talk->title
+            'event_id' => $this->cretalk->event,
+            'exhibitor_id' => $this->cretalk->exhibitor,
+            'title' => $this->cretalk->title
         ]);
         $talk->save();
 

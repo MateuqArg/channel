@@ -8,32 +8,23 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-          @if(Session::has('success'))
-          <div class="alert alert-success alert-dismissible fade show" role="alert">
-              <p class="mb-0"><i class="bi bi-check-circle-fill"></i> {{ Session::get('success') }}</p>
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-          @endif
-
           <div class="mb-3">
               <div class="mb-3">
                 <label for="title" class="form-label">Titulo</label>
                 <br>
-                <input type="text" wire:model="talk.title" id="title" class="form-control" aria-describedby="titleHelp">
+                <input type="text" wire:model.defer="cretalk.title" id="title" class="form-control" aria-describedby="titleHelp">
               </div>
-              <div class="mb-3">
+              <div class="mb-3" wire:ignore>
                 <label for="event" class="form-label">Selecciona el evento relacionado a la charla</label>
-                <select wire:model="talk.event" id="event">
-                  <option value="">Escribe el nombre</option>
+                <select class="form-control" wire:model.defer="cretalk.event" id="crevents">
                   @foreach($events as $event)
                   <option value="{{ $event->id }}">{{ $event->title }}</option>
                   @endforeach
                 </select>
               </div>
-              <div class="mb-3">
+              <div class="mb-3" wire:ignore>
                 <label for="exhibitor" class="form-label">Ahora selecciona el usuario que será expositor</label>
-                <select  wire:model="talk.exhibitor" id="exhibitor">
-                  <option value="">Escribe el nombre</option>
+                <select class="form-control" wire:model.defer="cretalk.exhibitor" id="crexhibitors">
                   @foreach($exhibitors as $exhibitor)
                   <option value="{{ $exhibitor->id }}">{{ $exhibitor->name }}</option>
                   @endforeach
@@ -49,13 +40,17 @@
   </div>
 </div>
 
-<script type="text/javascript">
+<script>
   $(document).ready(function() {
-    $('#event').select2({placeholder: 'Select an option'});
-    $('#exhibitor').select2();
-  });
-
-  $(document).on("click", "#create-btn", function () {
-      window.Livewire.emit('cleanData')
+    $('#crevents').select2({theme: 'bootstrap-5', dropdownParent: $('#create')});
+    $('#crexhibitors').select2({theme: 'bootstrap-5', dropdownParent: $('#create')});
+    $('#crevents').on('change', function (e) {
+        var data = $('#crevents').select2("val");
+        @this.set('cretalk.event', data);
+    });
+    $('#crexhibitors').on('change', function (e) {
+        var data = $('#crexhibitors').select2("val");
+        @this.set('cretalk.exhibitor', data);
+    });
   });
 </script>

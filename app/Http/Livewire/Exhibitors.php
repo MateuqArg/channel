@@ -9,11 +9,12 @@ use Auth;
 
 class Exhibitors extends Component
 {
-    public $exhibitor, $exhibitors, $role = [], $search;
+    public $user, $exhibitor, $exhibitors, $search;
     public $listeners = ['destroy', 'selected', 'refresh' => '$refresh'];
 
     protected $rules = [
         'exhibitor.role' => 'array',
+        'user.id' => 'array',
     ];
 
     public function mount(User $exhibitor)
@@ -24,7 +25,9 @@ class Exhibitors extends Component
     public function render()
     {
         $events = Event::get()->all();
-        $users = User::get()->all();
+        $users = User::whereDoesntHave('roles', function($q){
+            $q->where('name', 'exhibitor');
+        })->get();
         $this->exhibitors = User::where('id', 'like', '%'.$this->search.'%')
         ->whereHas('roles', function($q){
             $q->where('name', 'exhibitor');
@@ -35,43 +38,17 @@ class Exhibitors extends Component
         return view('livewire.exhibitor.exhibitor', compact('users', 'events', 'roles', 'user'));
     }
 
-    // public function create()
-    // {
-    //     // dd($this);
-    //     $this->validate([
-    //         'title' => 'required',
-    //         'date' => 'required',
-    //         'inscription' => 'required',
-    //     ]);
+    public function create()
+    {
+        foreach($this->user['id'] as $id) {
+            $exhibitor = User::find($id);
 
-    //     if ($this->approve) {
-    //         $this->approve = false;
-    //     }
+            $exhibitor->assignRole('exhibitor');
+        }
 
-    //     do {
-    //         $custid = createCustomid();
-    //     } while (Event::where('custid', $custid)->first() <> null);
-
-    //     if ($this->approve == null) {
-    //         $approve = false;
-    //     } else {
-    //         $approve = true;
-    //     }
-
-    //     $event = new Event([
-    //         'custid' => $custid,
-    //         'title' => $this->title,
-    //         'date' => $this->date,
-    //         'inscription' => implode("*", $this->inscription),
-    //         'approve' => $approve
-    //     ]);
-    //     $event->save();
-
-    //     Role::create(['name' => $custid]);
-
-    //     $this->emit('alert', ['title' => '¡Uno más!', 'text' => 'El evento ha sido dado de alta', 'type' => 'success']);
-    //     $this->emit('refresh');
-    // }
+        $this->emit('alert', ['title' => '¡Uno más!', 'text' => 'El expositor ha sido dado de alta', 'type' => 'success']);
+        $this->emit('refresh');
+    }
 
     public function destroy($id)
     {
@@ -79,16 +56,18 @@ class Exhibitors extends Component
 
         $exhibitor->removeRole('exhibitor');
 
-        $this->emit('alert', ['title' => '¡Adiós!', 'text' => 'El evento ha sido eliminado', 'type' => 'success']);
+        $this->emit('alert', ['title' => '¡Adiós!', 'text' => 'El expositor ha sido eliminado', 'type' => 'success']);
     }
 
     public function update($id)
     {
         $exhibitor = User::find($id);
-// dd($users);
+
+        $this->exhibitor->role = array_merge($this->exhibitor->role, ['exhibitor']);
+
         $exhibitor->syncRoles($this->exhibitor->role);
 
-        $this->emit('alert', ['id' => $id, 'title' => '¡Uno más!', 'text' => 'El expositor ha sido dado de alta', 'type' => 'success']);
+        $this->emit('alert', ['id' => $id, 'title' => '¡Arreglado!', 'text' => 'El expositor ha sido modificado', 'type' => 'success']);
     }
 
     public function selected($id)

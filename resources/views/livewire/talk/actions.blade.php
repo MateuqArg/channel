@@ -8,17 +8,17 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <div class="mb-3">
-          <label for="event" class="form-label">Selecciona el evento relacionado a la charla</label>
-          <select class="form-control" wire:model="talk.event" id="event">
+        <div class="mb-3" wire:ignore>
+          <label for="events" class="form-label">Selecciona el evento relacionado a la charla</label>
+          <select class="form-control" wire:model.defer="talk.event" id="events{{ $talk->id }}">
               @foreach($events as $event)
               <option value="{{ $event->id }}">{{ $event->title }}</option>
               @endforeach
           </select>
         </div>
-        <div class="mb-3">
-          <label for="exhibitor" class="form-label">Ahora selecciona el usuario que será expositor</label>
-            <select class="form-control" wire:model="talk.exhibitor" id="exhibitor">
+        <div class="mb-3" wire:ignore>
+          <label for="exhibitors" class="form-label">Ahora selecciona el usuario que será expositor</label>
+            <select class="form-control" wire:model.defer="talk.exhibitor" id="exhibitors{{ $talk->id }}">
               @foreach($exhibitors as $exhibitor)
               <option value="{{ $exhibitor->id }}">{{ $exhibitor->name }}</option>
               @endforeach
@@ -38,8 +38,18 @@
 </div>
 <script>
   $(document).ready(function() {
-    $('#event').select2();
-    $('#exhibitor').select2();
+    $('#events{{ $talk->id }}').select2({theme: 'bootstrap-5', dropdownParent: $('#edit{{ $talk->id }}')});
+    $('#exhibitors{{ $talk->id }}').select2({theme: 'bootstrap-5', dropdownParent: $('#edit{{ $talk->id }}')});
+  });
+
+  $('#events{{ $talk->id }}').on('change', function (e) {
+        var data = $('#events{{ $talk->id }}').select2("val");
+        @this.set('talk.event', data);
+  });
+
+  $('#exhibitors{{ $talk->id }}').on('change', function (e) {
+        var data = $('#exhibitors{{ $talk->id }}').select2("val");
+        @this.set('talk.exhibitor', data);
   });
 
   $(document).on("click", "#edit-btn", function () {

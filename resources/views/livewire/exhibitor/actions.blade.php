@@ -8,9 +8,9 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-          <div class="mb-3">
+          <div class="mb-3" wire:ignore>
           <p>ID público de todos los eventos</p>
-          <select class="form-control" wire:model="exhibitor.role" id="role" multiple="multiple">
+          <select class="form-control" wire:model="exhibitor.role" id="roles{{ $exhibitor->id }}" multiple="multiple">
             @foreach($roles as $role)
             @if(strlen($role->name) == 6)
             <option value="{{ $role->name }}">{{ $role->name }}</option>
@@ -27,7 +27,12 @@
 </div>
 <script>
   $(function () {
-    $('#role').select2();
+    $('#roles{{ $exhibitor->id }}').select2({theme: 'bootstrap-5', dropdownParent: $('#edit{{ $exhibitor->id }}')});
+  });
+
+  $('#roles{{ $exhibitor->id }}').on('change', function (e) {
+        var data = $('#roles{{ $exhibitor->id }}').select2("val");
+        @this.set('exhibitor.role', data);
   });
 
   $(document).on("click", "#edit-btn", function () {
