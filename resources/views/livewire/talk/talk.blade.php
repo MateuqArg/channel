@@ -34,4 +34,17 @@
   </div>
 
   @include('livewire.talk.create')
+
+  <script>
+    window.livewire.on('alert', event => {
+      $('#edit{{ $talk->id }}').modal('hide');
+      $('#create').modal('hide');
+      Swal.fire({
+        title: event.title,
+        html: event.text,
+        icon: event.type,
+        timer: 2000,
+      })
+    })
+  </script>
 </div>

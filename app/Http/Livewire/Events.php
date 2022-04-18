@@ -9,12 +9,13 @@ use App\Models\Visitor;
 
 class Events extends Component
 {
-    public $event, $selected = [], $search, $inscription = [], $title, $date, $approve;
-    public $listeners = ['destroy', 'selected'];
+    public $event, $events, $search, $inscription = [], $title, $date, $approve;
+    public $listeners = ['destroy', 'selected', 'refresh' => '$refresh'];
 
     protected $rules = [
         'event.title' => 'required',
         'event.date' => 'required',
+        'event.inscription' => 'array',
         'event.approve' => '',
     ];
 
@@ -25,10 +26,11 @@ class Events extends Component
 
     public function render()
     {
-        $events = Event::get()->all();
+        $this->events = Event::where('id', 'like', '%'.$this->search.'%')
+        ->orWhere('title', 'like', '%'.$this->search.'%')->get();
         $visitors = Visitor::where('approved', null)->get();
 
-        return view('livewire.event.event', compact('events', 'visitors'));
+        return view('livewire.event.event');
     }
 
     public function create()
@@ -48,46 +50,45 @@ class Events extends Component
             $custid = createCustomid();
         } while (Event::where('custid', $custid)->first() <> null);
 
+        if ($this->approve == null) {
+            $approve = false;
+        } else {
+            $approve = true;
+        }
+
         $event = new Event([
             'custid' => $custid,
             'title' => $this->title,
             'date' => $this->date,
             'inscription' => implode("*", $this->inscription),
-            'approve' => $this->approve
+            'approve' => $approve
         ]);
         $event->save();
 
         Role::create(['name' => $custid]);
 
         $this->emit('alert', ['title' => '¡Uno más!', 'text' => 'El evento ha sido dado de alta', 'type' => 'success']);
+        $this->emit('refresh');
     }
 
     public function update($id)
     {
-        // $this->validate();
         $event = Event::find($id);
 
-        $this->event->save();
-        // if (isset($this->title)) {
-        //     $event->title = $this->title;
-        // }
-        // if (isset($this->date)) {
-        //     $event->date = $this->date;
-        // }
-        // if (isset($this->approve)) {
-        //     $event->approve = $this->approve;
-        // }
-        // if (isset($this->inscription)) {
-        //     $insc = explode('*', $event->inscription);
-        //     // foreach ($this->inscription as $data) {
-        //     //     if (in_array($data, $insc) {
-                    
-        //     //     } else {
-        //     //         $user->assignRole($role);
-        //     //     }
-        //     // }
-        // }
-        // $event->update();
+        if (null !== $this->event->title) {
+            $event->title = $this->event->title;
+        }
+        if (null !== $this->event->date) {
+            $event->date = $this->event->date;
+        }
+        if (null !== $this->event->approve) {
+            $event->approve = $this->event->approve;
+        }
+        if (null !== $this->event->inscription) {
+            $event->inscription = implode('*', $this->event->inscription);
+            $this->event->inscription = [];
+        }
+        $event->update();
 
         $this->emit('alert', ['title' => '¡Arreglado!', 'text' => 'El evento ha sido modificado correctamente', 'type' => 'success']);
     }
@@ -99,11 +100,6 @@ class Events extends Component
         $this->emit('alert', ['title' => '¡Adiós!', 'text' => 'El evento ha sido eliminado', 'type' => 'success']);
     }
 
-    public function cleanData()
-    {
-        $this->reset(['company', 'charge', 'country', 'state', 'city', 'vip']);
-    }
-
     public function selected($id)
     {
         $event = Event::find($id);
@@ -111,12 +107,12 @@ class Events extends Component
         $this->event->title = $event->title;
         $this->event->date = $event->date;
         $this->event->title = $event->title;
-        // foreach(explode('*', $event->inscription) as $data)
-        // {
-        //     if ('') {
-        //         // code...
-        //     }
-        // }
+
+        $this->event->inscription = [];
+        foreach(explode('*', $event->inscription) as $key => $data)
+        {
+            $this->event->inscription = array_merge($this->event->inscription, [$data]);
+        }
         $this->event->approve = $event->approve;
     }
 }

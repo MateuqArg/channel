@@ -45,7 +45,7 @@ Route::name('organizer.')->prefix('organizer')->middleware(['role:organizer'], [
 
     Route::name('exhibitor.')->prefix('exhibitor')->group(function () {
         Route::get('/', [OrganizerController::class, 'exhibitors'])->name('index');
-        // Route::get('/create', [OrganizerController::class, 'exhibitorsCreate'])->name('create');
+        Route::get('/create', [OrganizerController::class, 'exhibitorsCreate'])->name('create');
     });
 
     Route::name('talk.')->prefix('talk')->group(function () {

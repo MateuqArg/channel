@@ -10,7 +10,7 @@
         <tr>
           <th scope="col">Acciones</th>
           <th scope="col">ID</th>
-          <th scope="col">ID publico</th>
+          <th scope="col">ID público</th>
           <th scope="col">Nombre</th>
           <th scope="col">Fecha</th>
           <th scope="col">Datos</th>
@@ -43,12 +43,14 @@
 
   <script>
     window.livewire.on('alert', event => {
-      $('#edit').modal('hide');
-      Swal.fire(
-        event.title,
-        event.text,
-        event.type
-      )
+      $('#edit{{ $event->id }}').modal('hide');
+      $('#create').modal('hide');
+      Swal.fire({
+        title: event.title,
+        html: event.text,
+        icon: event.type,
+        timer: 2000,
+      })
     })
   </script>
 </div>

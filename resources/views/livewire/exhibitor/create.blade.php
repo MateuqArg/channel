@@ -25,7 +25,7 @@
             <br>
             <label for="select" class="form-label">Ahora selecciona el usuario</label>
             <br>
-            <input id="exhibitors" type='text' placeholder='Escribe el nombre' multiple='multiple' class='flexdatalist' name='exhibitors[]'>
+            <input id="users" type='text' placeholder='Escribe el nombre' multiple='multiple' class='flexdatalist' name='users[]'>
           </div>
       </div>
       <div class="modal-footer">
@@ -36,22 +36,14 @@
     </div>
   </div>
 </div>
-
 <script>
-  @if(Session::has('success'))
-  $(document).ready(function(){
-    $('#create').modal('show');
-  });
-  @endif
-</script>
-<script>
-  var exhibitors = [
-    @foreach($exhibitors as $exhibitor)
-      { id: '{{ $exhibitor->id }}',
-      custid: '{{ $exhibitor->custid }}',
-      name: '{{ $exhibitor->name }}',
-      email: '{{ $exhibitor->email }}',
-      phone: '{{ $exhibitor->phone }}'
+  var users = [
+    @foreach($users as $user)
+      { id: '{{ $user->id }}',
+      custid: '{{ $user->custid }}',
+      name: '{{ $user->name }}',
+      email: '{{ $user->email }}',
+      phone: '{{ $user->phone }}'
       },
     @endforeach
   ];
@@ -74,8 +66,8 @@
     noResultsText: 'No hay resultados',
   })
 
-  $('#exhibitors').flexdatalist({
-    data: exhibitors,
+  $('#users').flexdatalist({
+    data: users,
     searchIn: ["name"],
     minLength: 0,
     valueProperty: 'id',

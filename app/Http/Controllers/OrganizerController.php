@@ -21,38 +21,6 @@ class OrganizerController extends Controller
         return view('organizer.events.index', compact('visitors'));
     }
 
-    public function eventsCreate(Request $request)
-    {
-        $request->validate([
-            'title' => 'required',
-            'date' => 'required',
-            'inscription' => 'required',
-        ]);
-
-        if ($request->approve == 'on') {
-            $approve = true;
-        } else {
-            $approve = false;
-        }
-
-        do {
-            $custid = createCustomid();
-        } while (Event::where('custid', $custid)->first() <> null);
-
-        $event = new Event([
-            'custid' => $custid,
-            'title' => $request->title,
-            'date' => $request->date,
-            'inscription' => implode("*", $request->inscription),
-            'approve' => $approve
-        ]);
-        $event->save();
-
-        Role::create(['name' => $custid]);
-
-        return redirect()->back()->with('success', 'Evento dado de alta correctamente');
-    }
-
     public function visitorAccept(Request $request, $id)
     {
         $visitor = Visitor::find($id);
@@ -118,10 +86,11 @@ class OrganizerController extends Controller
 
     public function exhibitorsCreate(Request $request)
     {
+        // dd($request->all());
         $events = $request->events;
-        $exhibitors = $request->exhibitors;
+        $users = $request->users;
 
-        $users = User::whereIn('id', $exhibitors)->get();
+        $users = User::whereIn('id', $users)->get();
 
         if ($events) {
             $events = Event::whereIn('id', $events)->get();

@@ -9,9 +9,19 @@ use App\Models\User;
 
 class Talks extends Component
 {
-    public $event, $new_talk, $exhibitor, $title, $talks;
+    public $search, $talk, $event, $talks;
+    public $listeners = ['destroy', 'selected', 'refresh' => '$refresh', 'cleanData'];
 
-    public $listeners = ['destroy'];
+    protected $rules = [
+        'talk.event' => 'required',
+        'talk.exhibitor' => 'required',
+        'talk.title' => 'required'
+    ];
+
+    public function mount(Talk $talk)
+    {
+        $this->talk = $talk;
+    }
 
     public function render()
     {
@@ -26,55 +36,62 @@ class Talks extends Component
 
     public function create()
     {
-        dd($this);
-        if ($this->new_talk == 'on') {
-            do {
-                $custid = createCustomid();
-            } while (Talk::where('custid', $custid)->first() <> null);
+        // dd($this);
+        do {
+            $custid = createCustomid();
+        } while (Talk::where('custid', $custid)->first() <> null);
 
-            $talk = new Talk([
-                'custid' => $custid,
-                'event_id' => $this->event,
-                'exhibitor_id' => $this->exhibitor,
-                'title' => $this->title
-            ]);
-            $talk->save();
-        } else {
-            foreach ($this->talks as $talk) {
-                $talk = Talk::find($talk);
-                
-                $talk->exhibitor_id = $this->exhibitor;
-                $talk->update();
-            }
-        }
+        $talk = new Talk([
+            'custid' => $custid,
+            'event_id' => $this->talk->event,
+            'exhibitor_id' => $this->talk->exhibitor,
+            'title' => $this->talk->title
+        ]);
+        $talk->save();
+
+        $this->emit('alert', ['title' => '¡Una más!', 'text' => 'La charla ha sido dada de alta', 'type' => 'success']);
+        $this->emit('refresh');
     }
 
     public function update($id)
     {
         $talk = Talk::find($id);
 
-        if (isset($this->event)) {
-            $talk->event = $this->event;
+        if (null !== $this->talk->event) {
+            $talk->event_id = $this->talk->event;
         }
-        if (isset($this->exhibitor)) {
-            $talk->exhibitor = $this->exhibitor;    
+        if (null !== $this->talk->exhibitor) {
+            $talk->exhibitor_id = $this->talk->exhibitor;    
         }
-        if (isset($this->title)) {
-            $talk->title = $this->title;
+        if (null !== $this->talk->title) {
+            $talk->title = $this->talk->title;
         }
+
         $talk->update();
 
-        $this->emit('alert', 'Asistente modificado correctamente');
-        $this->emit('cleanData');
+        $this->emit('alert', ['title' => '¡Arreglado!', 'text' => 'La charla ha sido modificada correctamente', 'type' => 'success']);
     }
 
     public function destroy($id)
     {
         Talk::destroy($id);
+
+        $this->emit('alert', ['title' => '¡Adiós!', 'text' => 'La charla ha sido eliminada', 'type' => 'success']);
+    }
+
+    public function selected($id)
+    {
+        $talk = Talk::find($id);
+
+        $this->talk->event = $talk->event->id;
+        $this->talk->exhibitor = $talk->exhibitor->id;
+        $this->talk->title = $talk->title;
     }
 
     public function cleanData()
     {
-        $this->reset(['event', 'exhibitor', 'title']);
+        $this->talk->event = null;
+        $this->talk->exhibitor = null;
+        $this->talk->title = null;
     }
 }
