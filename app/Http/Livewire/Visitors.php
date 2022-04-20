@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use Livewire\Component;
+use Rap2hpoutre\FastExcel\FastExcel;
 use App\Models\Visitor;
 
 class Visitors extends Component
@@ -58,6 +59,23 @@ class Visitors extends Component
     public function destroy($id)
     {
         Visitor::destroy($id);
+    }
+
+    public function download()
+    {
+        $export = (new FastExcel(Visitors::all()))->download('asistentes.xlsx');
+
+        $file_name = "asistentes.xlsx";
+
+        $export->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', true);
+        $export->headers->set('Content-Disposition', 'attachment; ' .
+            'filename="' . rawurldecode($file_name) . '"; ' .
+            'filename*=UTF-8\'\'' . rawurldecode($file_name), true);
+        $export->headers->set('Cache-Control', 'max-age=0', true);
+        $export->headers->set('Pragma', 'public', true);
+
+        $this->emit('alert', ['title' => '¡Descargado!', 'text' => 'El archivo ha sido descargado', 'type' => 'success']);
+        return $export;
     }
 
     public function cleanData()

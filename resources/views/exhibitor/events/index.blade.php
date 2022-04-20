@@ -7,7 +7,7 @@
 <div class="container-fluid">
   @if(!$meetings->isEmpty())
   <div class="row">
-    <a class="notification-alert" data-bs-toggle="modal" data-bs-target="#meetings" class="btn btn-success btn-create" href="">
+    <a class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#meetings" href="">
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
         <p class="mb-0"><i class="bi bi-check-circle-fill"></i> Hay reuniones pendientes de aprobación</p>
     </div>

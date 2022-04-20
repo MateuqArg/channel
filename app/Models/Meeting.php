@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Event;
-use App\Models\Visitor;
+use App\Models\User;
 
 class Meeting extends Model
 {
@@ -20,6 +20,6 @@ class Meeting extends Model
 
     public function visitor()
     {
-        return $this->belongsTo(Visitor::class);
+        return $this->belongsTo(User::class);
     }
 }

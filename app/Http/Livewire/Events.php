@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use Spatie\Permission\Models\Role;
+use Rap2hpoutre\FastExcel\FastExcel;
 use App\Models\Event;
 use App\Models\Visitor;
 
@@ -98,6 +99,23 @@ class Events extends Component
         Event::destroy($id);
 
         $this->emit('alert', ['title' => '¡Adiós!', 'text' => 'El evento ha sido eliminado', 'type' => 'success']);
+    }
+
+    public function download()
+    {
+        $export = (new FastExcel(Event::all()))->download('eventos.xlsx');
+
+        $file_name = "eventos.xlsx";
+
+        $export->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', true);
+        $export->headers->set('Content-Disposition', 'attachment; ' .
+            'filename="' . rawurldecode($file_name) . '"; ' .
+            'filename*=UTF-8\'\'' . rawurldecode($file_name), true);
+        $export->headers->set('Cache-Control', 'max-age=0', true);
+        $export->headers->set('Pragma', 'public', true);
+
+        $this->emit('alert', ['title' => '¡Descargado!', 'text' => 'El archivo ha sido descargado', 'type' => 'success']);
+        return $export;
     }
 
     public function selected($id)

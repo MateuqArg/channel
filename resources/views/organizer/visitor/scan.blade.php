@@ -1,6 +1,6 @@
 @extends('includes.app')
 @section('content')
-@include('includes.navbar')
+@include('includes.auth.organizernavbar')
 <div class="container">
   <div class="row mt-4">
     <div class="col"></div>

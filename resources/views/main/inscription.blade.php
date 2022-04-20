@@ -24,9 +24,6 @@
                     @csrf
                     <h6>De tener una sesión iniciada se autocompletaran los datos compatibles, en caso de no tener cuenta con el envio de este formulario se le generará automáticamente.
                         @if(!$user)<br>¿Ya estás registrado? <a href="{{ route('login') }}">Iniciar sesión</a>@endif</h6>
-                    {{-- <div class="mb-3">
-          <a href="{{ route('login') }}">¿Ya estás registrado?</a>
-        </div> --}}
                         <div class="mb-3">
                             <label for="name" class="form-label">Nombre y Apellido</label>
                             <input type="text" name="name" class="form-control" id="name" aria-describedby="nameHelp" value="{{ $user ? $user->name : "" }}">

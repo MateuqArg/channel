@@ -78,9 +78,19 @@ html,
   position: absolute;
   border-radius: 50%;
   bottom: 40px;
+  left: 30px;
+  padding: 0.5rem 1rem;
+  font-size: 1.25rem;
+}
+
+.btn-chat {
+  position: absolute;
+  border-radius: 50%;
+  bottom: 40px;
   right: 30px;
   padding: 0.5rem 1rem;
   font-size: 1.25rem;
+  z-index: 1055;
 }
 
 .form-inscription {
@@ -103,4 +113,36 @@ html,
 .classes-card-text {
   color: #fff;
   width: 100%;
+}
+
+.modal-dialog .chat {
+    position: fixed;
+    margin: auto;
+    width: 320px;
+    height: 80%;
+    right: 20px;
+}
+
+.thumbnail-message {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 67%;
+}
+
+.msg-sender {
+  background-color: #aec5f2;
+  color: #000;
+}
+
+.msg-receiver {
+  background-color: #d9d9d9;
+  color: #000;
+}
+
+.msg-input {
+  position: -webkit-sticky;
+  position: sticky;
+  bottom: 0px;
+  padding-bottom: 10px;
 }

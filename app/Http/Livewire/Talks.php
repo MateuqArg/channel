@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use Livewire\Component;
+use Rap2hpoutre\FastExcel\FastExcel;
 use App\Models\Talk;
 use App\Models\Event;
 use App\Models\User;
@@ -90,6 +91,23 @@ class Talks extends Component
         Talk::destroy($id);
 
         $this->emit('alert', ['title' => '¡Adiós!', 'text' => 'La charla ha sido eliminada', 'type' => 'success']);
+    }
+
+    public function download()
+    {
+        $export = (new FastExcel(Talk::all()))->download('charlas.xlsx');
+
+        $file_name = "charlas.xlsx";
+
+        $export->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', true);
+        $export->headers->set('Content-Disposition', 'attachment; ' .
+            'filename="' . rawurldecode($file_name) . '"; ' .
+            'filename*=UTF-8\'\'' . rawurldecode($file_name), true);
+        $export->headers->set('Cache-Control', 'max-age=0', true);
+        $export->headers->set('Pragma', 'public', true);
+
+        $this->emit('alert', ['title' => '¡Descargado!', 'text' => 'El archivo ha sido descargado', 'type' => 'success']);
+        return $export;
     }
 
     public function selected($id)

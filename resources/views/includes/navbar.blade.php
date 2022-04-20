@@ -9,9 +9,9 @@
         <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
           <li><a href="{{ route('organizer.events.index') }}" class="nav-link px-2 link-dark
             {{ Request::is('organizer/events') ? "active" : "" }}">Eventos</a></li>
-          <li><a href="{{ route('organizer.exhibitors') }}" class="nav-link px-2 link-dark
+          <li><a href="{{ route('organizer.events.index') }}" class="nav-link px-2 link-dark
             {{ Request::is('organizer/exhibitors') ? "active" : "" }}">Expositores</a></li>
-          <li><a href="{{ route('organizer.talks') }}" class="nav-link px-2 link-dark
+          <li><a href="{{ route('organizer.talk.index') }}" class="nav-link px-2 link-dark
             {{ Request::is('organizer/talks') ? "active" : "" }}">Charlas</a></li>
           <li><a href="{{ route('organizer.admins') }}" class="nav-link px-2 link-dark
             {{ Request::is('organizer/admins') ? "active" : "" }}">Administradores</a></li>

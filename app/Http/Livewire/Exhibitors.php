@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use Livewire\Component;
+use Rap2hpoutre\FastExcel\FastExcel;
 use App\Models\Event;
 use App\Models\User;
 use Auth;
@@ -50,6 +51,18 @@ class Exhibitors extends Component
         $this->emit('refresh');
     }
 
+    public function update($id)
+    {
+        $exhibitor = User::find($id);
+
+        $this->exhibitor->role = array_merge($this->exhibitor->role, ['exhibitor']);
+        $this->exhibitor->role = array_merge($this->exhibitor->role, ['organizer']);
+
+        $exhibitor->syncRoles($this->exhibitor->role);
+
+        $this->emit('alert', ['id' => $id, 'title' => '¡Arreglado!', 'text' => 'El expositor ha sido modificado', 'type' => 'success']);
+    }
+
     public function destroy($id)
     {
         $exhibitor = User::find($id);
@@ -59,20 +72,26 @@ class Exhibitors extends Component
         $this->emit('alert', ['title' => '¡Adiós!', 'text' => 'El expositor ha sido eliminado', 'type' => 'success']);
     }
 
-    public function update($id)
+    public function download()
     {
-        $exhibitor = User::find($id);
+        $export = (new FastExcel(User::all()))->download('expositores.xlsx');
 
-        $this->exhibitor->role = array_merge($this->exhibitor->role, ['exhibitor']);
+        $file_name = "expositores.xlsx";
 
-        $exhibitor->syncRoles($this->exhibitor->role);
+        $export->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', true);
+        $export->headers->set('Content-Disposition', 'attachment; ' .
+            'filename="' . rawurldecode($file_name) . '"; ' .
+            'filename*=UTF-8\'\'' . rawurldecode($file_name), true);
+        $export->headers->set('Cache-Control', 'max-age=0', true);
+        $export->headers->set('Pragma', 'public', true);
 
-        $this->emit('alert', ['id' => $id, 'title' => '¡Arreglado!', 'text' => 'El expositor ha sido modificado', 'type' => 'success']);
+        $this->emit('alert', ['title' => '¡Descargado!', 'text' => 'El archivo ha sido descargado', 'type' => 'success']);
+        return $export;
     }
 
     public function selected($id)
     {
-        $exhibitor = User::find($id);
+        $exhibitor = User::where('id', $id)->get()->first();
 
         $this->exhibitor->role = [];
         foreach($exhibitor->getRoleNames() as $data)

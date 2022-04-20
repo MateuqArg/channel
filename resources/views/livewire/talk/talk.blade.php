@@ -1,7 +1,12 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-3">
-      <input type="text" wire:model="search" class="form-control" placeholder="Buscar por id, evento o expositor">
+    <div class="col d-flex">
+      <div>
+        <input type="text" wire:model="search" class="form-control" placeholder="Buscar por id, evento o expositor">
+      </div>
+      <div class="ms-auto">
+        <button wire:click="download" class="btn btn-outline-primary"><i class="bi bi-download"></i> DESCARGAR</button>
+      </div>
     </div>
   </div>
   <div class="row g-3">
