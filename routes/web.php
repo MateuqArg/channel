@@ -20,6 +20,8 @@ use App\Http\Controllers\MainController;
 //     return view('main.home');
 // })->name('home');
 
+Route::get('/profile', [MainController::class, 'profile'])->name('profile');
+
 Route::name('visitor.')->prefix('visitor')->group(function () {
     Route::prefix('events')->group(function () {
         Route::get('/', [MainController::class, 'events'])->name('index');
@@ -39,6 +41,7 @@ Route::name('organizer.')->prefix('organizer')->middleware(['role:organizer'], [
         Route::get('/{custid}', [OrganizerController::class, 'visitorScan'])->name('scan');
         Route::get('/print/{custid}', [OrganizerController::class, 'visitorPrint'])->name('print');
         Route::get('/track/{custid}', [OrganizerController::class, 'visitorTrack'])->name('track');
+        Route::get('/store/{id}', [OrganizerController::class, 'trackStore'])->name('store');
         Route::get('/accept/{id}', [OrganizerController::class, 'visitorAccept'])->name('accept');
         Route::get('/reject/{id}', [OrganizerController::class, 'visitorReject'])->name('reject');
     });

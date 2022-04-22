@@ -10,8 +10,9 @@
       </div>
       <div class="modal-body p-0" style="overflow-x: hidden;">
         <div class="row row-cols-1">
-            @if($open_chat == false)
+            @if($open_chat == false & $new_chat == false)
             <div class="m-3 mb-0">
+                <a class="btn btn-success btn-add-chat"  wire:click="getNew"><i class="bi bi-send-plus"></i></a>
             @foreach($chats as $chat)
                 <a wire:click="getChat({{ $chat->id }})" id="{{ $chat->id }}" class="text-dark text-decoration-none" style="cursor: pointer;">
                 <div class="col mb-2 d-flex">
@@ -25,6 +26,14 @@
             @endforeach
             </div>
             <hr>
+            @elseif($new_chat == true)
+            <div wire:poll>
+                <div class="m-2 mt-1 mb-1">
+                    <div class="col mb-2 d-flex ps-1">
+                        <p class="ms-auto mb-0 p-2 msg-sender rounded-start"><small>holaaa</p>
+                    </div>
+                </div>
+            </div>
             @elseif($open_chat == true)
             <div wire:poll>
                 <div class="m-2 mt-1 mb-1">

@@ -32,9 +32,15 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        if (Auth::user()->hasRole('student')) {
-            return redirect()->route('student.dashboard');
+        if (Auth::user()->hasRole('visitor')) {
+            $default = url('/');
+        } else if (Auth::user()->hasRole('exhibitor')) {
+            $default = route('exhibitor.events.index');
+        } else if (Auth::user()->hasRole('organizer')) {
+            $default = route('organizer.events.index');
         }
+
+        return Redirect::intended($default);
     }
 
     /**

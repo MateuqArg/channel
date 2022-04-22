@@ -15,6 +15,9 @@ return new class extends Migration
     {
         Schema::create('tracks', function (Blueprint $table) {
             $table->id();
+            $table->integer('visitor_id');
+            $table->integer('talk_id')->nullable();
+            $table->string('extra');
             $table->timestamps();
         });
     }

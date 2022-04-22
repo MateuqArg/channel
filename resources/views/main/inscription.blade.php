@@ -89,6 +89,7 @@
 					           <option value="{{ $exhibitor->id }}">{{ $exhibitor->name }}</option>
                             @endforeach
 						</select>
+                        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfpdUnVCboocscyEhgj59HzYjoIlmS27ckt4zuwCpRrnd7WWw/viewform?embedded=true" width="470" height="1525" frameborder="0" marginheight="0" marginwidth="0">Cargando…</iframe>
                   </div>
                   <div class="modal-footer">
                     @if(Session::has('success'))

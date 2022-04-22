@@ -94,4 +94,9 @@ class MainController extends Controller
 
         return redirect()->back()->with('success', 'Inscripción enviada correctamente')->with('disabled');
     }
+
+    public function profile()
+    {
+        return view('main.profile');
+    }
 }

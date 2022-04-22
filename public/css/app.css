@@ -10,6 +10,11 @@
   outline: 0;
 }
 
+.avatar-card {
+  position: relative;
+  display: block;
+}
+
 .active {
   border-bottom: 1px solid;
 }
@@ -88,6 +93,16 @@ html,
   border-radius: 50%;
   bottom: 40px;
   right: 30px;
+  padding: 0.5rem 1rem;
+  font-size: 1.25rem;
+  z-index: 1055;
+}
+
+.btn-add-chat {
+  position: absolute;
+  border-radius: 50%;
+  bottom: 20px;
+  right: 20px;
   padding: 0.5rem 1rem;
   font-size: 1.25rem;
   z-index: 1055;

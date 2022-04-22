@@ -24,11 +24,11 @@ class RedirectIfAuthenticated
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
                 if (Auth::user()->hasRole('visitor')) {
-                    return redirect()->route('visitor.index');
+                    return redirect()->url('/');
                 } else if (Auth::user()->hasRole('exhibitor')) {
-                    return redirect()->route('exhibitor.dashboard');
+                    return redirect()->route('exhibitor.events.index');
                 } else if (Auth::user()->hasRole('organizer')) {
-                    return redirect()->route('organizer.dashboard');
+                    return redirect()->route('organizer.events.index');
                 }
             }
         }

@@ -8,7 +8,7 @@ use App\Models\Message;
 
 class Chats extends Component
 {
-    public $open_chat = false, $messages, $message, $selectedChat;
+    public $open_chat = false, $new_chat = false, $messages, $message, $selectedChat;
 
     public $listeners = ['refresh' => '$refresh'];
 
@@ -58,7 +58,15 @@ class Chats extends Component
     public function getBack()
     {
         $this->open_chat = false;
+        $this->new_chat = false;
 
         $this->emit('title', 'Chat');
+    }
+
+    public function getNew()
+    {
+        $this->new_chat = true;
+
+        $this->emit('title', 'Crear nuevo chat');
     }
 }

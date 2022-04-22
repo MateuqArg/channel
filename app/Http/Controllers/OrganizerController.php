@@ -10,6 +10,7 @@ use App\Models\Event;
 use App\Models\Visitor;
 use App\Models\User;
 use App\Models\Talk;
+use App\Models\Track;
 use Carbon\Carbon;
 
 class OrganizerController extends Controller
@@ -76,7 +77,20 @@ class OrganizerController extends Controller
     {
         $visitor = Visitor::where('custid', $custid)->first();
 
-        return view('organizer.visitor.track', compact('visitor'));
+        $talks = Talk::where('event_id', $visitor->event_id)->get();
+
+        return view('organizer.visitor.track', compact('visitor', 'talks'));
+    }
+
+    public function trackStore(Request $request, $id)
+    {
+        $track = new Track([
+            'visitor_id' => $id,
+            'talk_id' => $request->talk,
+        ]);
+        $track->save();
+
+        return redirect()->back()->with('alert');
     }
 
     public function exhibitors()
