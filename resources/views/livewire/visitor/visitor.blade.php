@@ -19,6 +19,7 @@
           <th scope="col">Evento</th>
           <th scope="col">Nombre</th>
           <th scope="col">¿Presente?</th>
+          <th scope="col">Email</th>
           <th scope="col">Empresa</th>
           <th scope="col">Cargo</th>
           <th scope="col">País</th>
@@ -35,13 +36,14 @@
           <td>{{ $visitor->id }}</td>
           <td>{{ $visitor->custid }}</td>
           <td>{{ $visitor->event->title }}</td>
-          <td>{{ $visitor->user->name }}</td>
+          <td>{{ $forms[$visitor->form_id]['Nombre completo'] }}</td>
           <td>{{ $visitor->present ? "Si" : "No" }}</td>
-          <td>{{ $visitor->company }}</td>
-          <td>{{ $visitor->charge }}</td>
-          <td>{{ $visitor->country }}</td>
-          <td>{{ $visitor->state }}</td>
-          <td>{{ $visitor->city }}</td>
+          <td>{{ $forms[$visitor->form_id]['Direccion de email'] }}</td>
+          <td>{{ $forms[$visitor->form_id]['Telefono'] }}</td>
+          <td>{{ $forms[$visitor->form_id]['Empresa'] }}</td>
+          <td>{{ $forms[$visitor->form_id]['Cargo'] }}</td>
+          <td>{{ $forms[$visitor->form_id]['Provincia'] }}</td>
+          <td>{{ $forms[$visitor->form_id]['Localidad'] }}</td>
         </tr>
         @endforeach
       </tbody>

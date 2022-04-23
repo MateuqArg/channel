@@ -18,7 +18,6 @@
           <th scope="col">ID público</th>
           <th scope="col">Nombre</th>
           <th scope="col">Fecha</th>
-          <th scope="col">Datos</th>
           <th scope="col">¿Aprobar inscripciones?</th>
         </tr>
       </thead>
@@ -32,11 +31,6 @@
           <td>{{ $event->custid }}</td>
           <td>{{ $event->title }}</td>
           <td>{{ $event->date }}</td>
-          <td>
-              @foreach(explode('*', $event->inscription) as $data)
-              {{ $data == "phone" ? "Teléfono" : ($data == "company" ? "Empresa" : ($data == "charge" ? "Cargo" : ($data == "country" ? "País" : ($data == "state" ? "Provincia" : ($data == "city" ? "Ciudad" : ""))))) }}
-              @endforeach
-          </td>
           <td>{{ $event->approve ? "Si" : "No" }}</td>
         </tr>
         @endforeach

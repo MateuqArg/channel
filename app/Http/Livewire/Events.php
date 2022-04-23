@@ -36,7 +36,6 @@ class Events extends Component
 
     public function create()
     {
-        // dd($this);
         $this->validate([
             'title' => 'required',
             'date' => 'required',

@@ -45,7 +45,7 @@
               <div class="row">
                 <div class="col-9">
                   <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $visitor->custid }}" aria-expanded="true" aria-controls="{{ $visitor->custid }}">
-                    {{ $visitor->user->name }} - {{ $visitor->event->title }}
+                    {{ $forms[$visitor->form_id]['Nombre completo'] }} - {{ $visitor->event->title }}
                   </button>
                 </div>
                 <div class="col-1">
@@ -59,14 +59,13 @@
             <div id="{{ $visitor->custid }}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
               <div class="accordion-body">
                 <p class="mb-0">
-                  <strong>Nombre:</strong> {{ $visitor->user->name }}<br>
-                  <strong>Email:</strong> {{ $visitor->user->email }}<br>
-                  <strong>Teléfono:</strong> {{ $visitor->user->phone }}<br>
-                  <strong>Empresa:</strong> {{ $visitor->company }}<br>
-                  <strong>Cargo:</strong> {{ $visitor->charge }}<br>
-                  <strong>País:</strong> {{ $visitor->country }}<br>
-                  <strong>Provincia:</strong> {{ $visitor->state }}<br>
-                  <strong>Ciudad:</strong> {{ $visitor->city }}
+                  <strong>Nombre:</strong> {{ $forms[$visitor->form_id]['Nombre completo'] }}<br>
+                  <strong>Email:</strong> {{ $forms[$visitor->form_id]['Direccion de email'] }}<br>
+                  <strong>Teléfono:</strong> {{ $forms[$visitor->form_id]['Telefono'] }}<br>
+                  <strong>Empresa:</strong> {{ $forms[$visitor->form_id]['Empresa'] }}<br>
+                  <strong>Cargo:</strong> {{ $forms[$visitor->form_id]['Cargo'] }}<br>
+                  <strong>Provincia:</strong> {{ $forms[$visitor->form_id]['Provincia'] }}<br>
+                  <strong>Ciudad:</strong> {{ $forms[$visitor->form_id]['Localidad'] }}
                 </p>
               </div>
             </div>

@@ -12,14 +12,22 @@ use App\Models\User;
 use App\Models\Talk;
 use App\Models\Track;
 use Carbon\Carbon;
+use Sheets;
 
 class OrganizerController extends Controller
 {
-    public function eventsIndex()
+    public function eventsIndex(Request $request)
     {
         $visitors = Visitor::where('approved', null)->get();
 
-        return view('organizer.events.index', compact('visitors'));
+        $currentEvent = 1;
+
+        $sheets = Sheets::spreadsheet("1hhh76KaFDoJeVE8AC-oTXpIm7WgsESImaY1raUQo4nw")->sheet(strval($currentEvent))->get();
+        $header = $sheets->pull(0);
+        $forms = Sheets::collection($header, $sheets);
+// dd($user);
+
+        return view('organizer.events.index', compact('visitors', 'forms'));
     }
 
     public function visitorAccept(Request $request, $id)

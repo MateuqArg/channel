@@ -11,7 +11,7 @@ class Visitor extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['custid', 'event_id', 'visitor_id', 'approved', 'charge', 'company', 'city', 'state', 'country', 'vip'];
+    protected $fillable = ['custid', 'event_id', 'form_id', 'approved', 'vip'];
 
     public function event()
     {

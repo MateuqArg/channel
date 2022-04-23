@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use Livewire\Component;
 use Rap2hpoutre\FastExcel\FastExcel;
 use App\Models\Visitor;
+use Sheets;
 
 class Visitors extends Component
 {
@@ -14,13 +15,36 @@ class Visitors extends Component
 
     public function render()
     {
-        $this->visitors = Visitor::where('approved', 1)->
-        whereHas('user', function($q){
-            $q->where('name', 'like', '%'.$this->search.'%');
-        })
-        ->orWhere('custid', 'like', '%'.$this->search.'%')
-        ->orWhere('company', 'like', '%'.$this->search.'%')
+        $currentEvent = 1;
+
+        $sheets = Sheets::spreadsheet("1hhh76KaFDoJeVE8AC-oTXpIm7WgsESImaY1raUQo4nw")->sheet(strval($currentEvent))->get();
+        $header = $sheets->pull(0);
+        $this->forms = Sheets::collection($header, $sheets);
+
+        $this->visitors = Visitor::where('custid', 'like', '%'.$this->search.'%')
         ->get();
+
+        if ($this->search == null) {
+            foreach ($this->forms as $form) {
+
+                $check = Visitor::where('form_id', $form['id'])->first();
+                if ($check == null) {
+                    do {
+                        $custid = createCustomid();
+                    } while (Visitor::where('custid', $custid)->first() <> null);
+
+                    $visitor = new Visitor([
+                        'custid' => $custid,
+                        'event_id' => $currentEvent,
+                        'form_id' => $form['id'],
+                        'approved' => null,
+                        'present' => null,
+                        'vip' => 0
+                    ]);
+                    $visitor->save();
+                }
+            }
+        }
 
         return view('livewire.visitor.visitor');
     }
