@@ -20,15 +20,19 @@ use App\Http\Controllers\MainController;
 //     return view('main.home');
 // })->name('home');
 
+Route::get('/invite/{token}/{type}', [MainController::class, 'inviteEnable'])->name('staff.enable');
+Route::post('/invite/store', [MainController::class, 'inviteStore'])->name('staff.store');
+Route::get('/meeting/accept/{id}', [MainController::class, 'meetingAccept'])->name('meeting.accept');
+
 Route::get('/profile', [MainController::class, 'profile'])->name('profile');
 
-Route::name('visitor.')->prefix('visitor')->group(function () {
-    Route::prefix('events')->group(function () {
-        Route::get('/', [MainController::class, 'events'])->name('index');
-        Route::get('/{custid}', [MainController::class, 'eventsVisitor'])->name('inscription');
-        Route::get('/{custid}/store', [MainController::class, 'visitorStore'])->name('inscription.store');
-    });
-});
+// Route::name('visitor.')->prefix('visitor')->group(function () {
+//     Route::prefix('events')->group(function () {
+//         Route::get('/', [MainController::class, 'events'])->name('index');
+//         Route::get('/{custid}', [MainController::class, 'eventsVisitor'])->name('inscription');
+//         Route::get('/{custid}/store', [MainController::class, 'visitorStore'])->name('inscription.store');
+//     });
+// });
 
 Route::name('organizer.')->prefix('organizer')->middleware(['role:organizer'], ['auth'])->group(function () {
     Route::name('events.')->prefix('events')->group(function () {
@@ -56,18 +60,19 @@ Route::name('organizer.')->prefix('organizer')->middleware(['role:organizer'], [
         // Route::get('/create', [OrganizerController::class, 'talksCreate'])->name('create');
     });
 
-    Route::get('/admins', [OrganizerController::class, 'admins'])->name('admins');
+    Route::name('staff.')->prefix('staff')->group(function () {
+        Route::get('/', [OrganizerController::class, 'staffIndex'])->name('index');
+        Route::post('/send', [OrganizerController::class, 'staffSend'])->name('send');
+    });
 
     Route::name('visitors.')->prefix('visitors')->group(function () {
         Route::get('/', [OrganizerController::class, 'visitors'])->name('index');
-        // Route::get('/edit', [OrganizerController::class, 'visitorsEdit'])->name('edit');
     });
 });
 
 Route::name('exhibitor.')->prefix('exhibitor')->middleware(['role:exhibitor'], ['auth'])->group(function () {
-    Route::name('events.')->prefix('events')->group(function () {
-        Route::get('/', [ExhibitorController::class, 'eventsIndex'])->name('index');
-        Route::get('/download', [ExhibitorController::class, 'eventsDownload'])->name('download');
+    Route::name('visitors.')->prefix('visitors')->group(function () {
+        Route::get('/', [ExhibitorController::class, 'visitors'])->name('index');
     });
     
     Route::name('invite.')->prefix('invite')->group(function () {
@@ -79,6 +84,11 @@ Route::name('exhibitor.')->prefix('exhibitor')->middleware(['role:exhibitor'], [
         Route::post('/request', [ExhibitorController::class, 'meetingRequest'])->name('request');
         Route::get('/accept/{id}', [ExhibitorController::class, 'meetingAccept'])->name('accept');
         Route::get('/reject/{id}', [ExhibitorController::class, 'meetingReject'])->name('reject');
+    });
+
+    Route::name('staff.')->prefix('staff')->group(function () {
+        Route::get('/', [ExhibitorController::class, 'staffIndex'])->name('index');
+        Route::post('/send', [ExhibitorController::class, 'staffSend'])->name('send');
     });
 
     Route::get('/talks', [ExhibitorController::class, 'talks'])->name('talks');

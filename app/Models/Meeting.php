@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Event;
-use App\Models\User;
+use App\Models\Visitor;
 
 class Meeting extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['custid', 'event_id', 'visitor_id', 'exhibitor_id', 'approved', 'requested'];
+    protected $fillable = ['custid', 'event_id', 'visitor_id', 'exhibitor', 'approved', 'requested'];
 
     public function event()
     {
@@ -20,6 +20,6 @@ class Meeting extends Model
 
     public function visitor()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Visitor::class);
     }
 }

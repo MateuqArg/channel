@@ -1,4 +1,4 @@
-<a id="edit-btn" data-bs-toggle="modal" data-id="{{ $event->id }}" data-bs-target="#edit{{ $event->id }}"><i class="bi bi-pencil btn btn-outline-warning"></i></a>
+<a id="edit-btn" data-bs-toggle="modal" data-id="{{ $event->id }}" data-bs-target="#edit{{ $event->id }}"><i class="bi bi-pencil btn btn-outline-primary"></i></a>
 <a id="delete-btn" data-id="{{ $event->id }}"><i class="bi bi-trash btn btn-outline-danger"></i></a>
 <div class="modal fade" wire:ignore.self id="edit{{ $event->id }}" tabindex="-1" aria-labelledby="createLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -21,7 +21,7 @@
               <label for="inscription" class="form-label">Datos</label>
               <input type="text" wire:model="event.inscription" id="inscription" class="form-control">
             </div> --}}
-            <div class="form-check form-check-inline">
+            {{-- <div class="form-check form-check-inline">
               <input class="form-check-input" wire:model="event.inscription" type="checkbox" id="phone" value="phone">
               <label class="form-check-label" for="phone">Teléfono</label>
             </div>
@@ -44,7 +44,7 @@
             <div class="form-check form-check-inline">
               <input class="form-check-input" wire:model="event.inscription" type="checkbox" id="city" value="city">
               <label class="form-check-label" for="city">Ciudad</label>
-            </div>
+            </div> --}}
             <div class="form-check form-switch">
               <input class="form-check-input" type="checkbox" wire:model="event.approve" role="switch" id="approve">
               <label class="form-check-label" for="approve">¿Hace falta aprobar las asistencias?</label>

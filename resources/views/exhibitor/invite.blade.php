@@ -38,18 +38,15 @@
                     @csrf
                         <div class="mb-3">
                             <label for="name" class="form-label">Nombre</label>
-                            <input type="name" name="name" class="form-control" id="name" aria-describedby="nameHelp">
-                            <div id="nameHelp" class="form-text">Texto de aclaración sobre el input de arriba.</div>
+                            <input type="text" name="name" class="form-control" id="name" aria-describedby="nameHelp">
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
                             <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp">
-                            <div id="emailHelp" class="form-text">Texto de aclaración sobre el input de arriba.</div>
                         </div>
                         <div class="mb-3">
                             <label for="company" class="form-label">Empresa</label>
-                            <input type="name" name="company" class="form-control" id="company" aria-describedby="companyHelp">
-                            <div id="companyHelp" class="form-text">Texto de aclaración sobre el input de arriba.</div>
+                            <input type="text" name="company" class="form-control" id="company" aria-describedby="companyHelp">
                         </div>
                   </div>
                   <div class="modal-footer">

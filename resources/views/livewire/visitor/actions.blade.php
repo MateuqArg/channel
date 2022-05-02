@@ -1,6 +1,6 @@
-<a id="edit-btn" data-bs-toggle="modal" data-bs-target="#edit" data-visitor="{{ $visitor }}"><i class="bi bi-pencil btn btn-outline-warning"></i></a>
-<a id="delete-btn" data-id="{{ $visitor->id }}" ><i class="bi bi-trash btn btn-outline-danger"></i></a>
-<div class="modal fade" wire:ignore.self id="edit" tabindex="-1" aria-labelledby="createLabel" aria-hidden="true">
+<a id="edit-btn" data-bs-toggle="modal" data-bs-target="#edit{{ $visitor->id }}" data-visitor="{{ $visitor }}"><i class="bi bi-award btn btn-outline-primary"></i></a>
+{{-- <a id="delete-btn" data-id="{{ $visitor->id }}" ><i class="bi bi-trash btn btn-outline-danger"></i></a> --}}
+<div class="modal fade" wire:ignore.self id="edit{{ $visitor->id }}" tabindex="-1" aria-labelledby="createLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -9,7 +9,7 @@
       </div>
       <div class="modal-body">
           <div class="mb-3">
-            <div class="mb-3">
+            {{-- <div class="mb-3">
               <label for="company" class="form-label">Empresa</label>
               <input type="text" wire:model.defer="company" id="company" class="form-control" aria-describedby="companyHelp">
             </div>
@@ -28,7 +28,7 @@
             <div class="mb-3">
               <label for="city" class="form-label">Ciudad</label>
               <input type="text" wire:model.defer="city" id="city" class="form-control" aria-describedby="cityHelp">
-            </div>
+            </div> --}}
             <div class="mb-3 form-check">
               <label class="form-check-label" for="vip">¿Este asistente es de tipo VIP?</label>
               <input class="form-check-input" type="checkbox" wire:model.defer="vip" id="vip" aria-describedby="vipHelp">
@@ -45,11 +45,11 @@
 <script>
   $(document).on("click", "#edit-btn", function () {
       var visitor = $(this).data('visitor');
-      $(".modal-body #company").val(visitor.company);
-      $(".modal-body #charge").val(visitor.charge);
-      $(".modal-body #country").val(visitor.country);
-      $(".modal-body #state").val(visitor.state);
-      $(".modal-body #city").val(visitor.city);
+      // $(".modal-body #company").val(visitor.company);
+      // $(".modal-body #charge").val(visitor.charge);
+      // $(".modal-body #country").val(visitor.country);
+      // $(".modal-body #state").val(visitor.state);
+      // $(".modal-body #city").val(visitor.city);
       if (visitor.vip == 1) {
           $(".modal-body #vip").prop("checked", true);
       } else if (visitor.vip == 0) {
@@ -59,7 +59,7 @@
 </script>
 <script>
   window.livewire.on('alert', function(){
-    $('#edit').modal('hide');
+    $('#edit{{ $visitor->id }}').modal('hide');
     Swal.fire(
       '¡Eliminado!',
       'El asistente ha sido modificado',

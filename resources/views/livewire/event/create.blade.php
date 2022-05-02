@@ -5,7 +5,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="createLabel">Dar de alta evento</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        {{-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> --}}
       </div>
       <div class="modal-body">
           <div class="mb-3">
@@ -18,7 +18,7 @@
             <input type="date" wire:model="date" id="date" class="form-control" aria-describedby="dateHelp">
             <div id="dateHelp" class="form-text">Día del evento o en su defecto del inicio de tal</div>
           </div>
-          <h4 class="mb-0">Formulario de inscripción</h4>
+          {{-- <h4 class="mb-0">Formulario de inscripción</h4>
           <div class="form-text mt-0 mb-2">Selecciona los datos que se pedirán en el formulario</div>
           <div class="form-check form-check-inline">
             <input class="form-check-input" wire:model="inscription" type="checkbox" id="phone" value="phone" >
@@ -43,7 +43,7 @@
           <div class="form-check form-check-inline">
             <input class="form-check-input" wire:model="inscription" type="checkbox" id="city" value="city">
             <label class="form-check-label" for="city">Ciudad</label>
-          </div>
+          </div> --}}
           <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" wire:model.defer="approve" role="switch" id="approve">
             <label class="form-check-label" for="approve">¿Hace falta aprobar las asistencias?</label>

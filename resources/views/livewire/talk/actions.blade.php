@@ -1,4 +1,4 @@
-<a id="edit-btn" data-bs-toggle="modal" data-id="{{ $talk->id }}" data-bs-target="#edit{{ $talk->id }}"><i class="bi bi-pencil btn btn-outline-warning"></i></a>
+<a id="edit-btn" data-bs-toggle="modal" data-id="{{ $talk->id }}" data-bs-target="#edit{{ $talk->id }}"><i class="bi bi-pencil btn btn-outline-primary"></i></a>
 <a id="delete-btn" data-id="{{ $talk->id }}"><i class="bi bi-trash btn btn-outline-danger"></i></a>
 <div class="modal fade" wire:ignore.self id="edit{{ $talk->id }}" tabindex="-1" aria-labelledby="createLabel" aria-hidden="true">
   <div class="modal-dialog">

@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use Livewire\Component;
 use Rap2hpoutre\FastExcel\FastExcel;
 use App\Models\Visitor;
+use App\Models\Meeting;
 use Sheets;
 
 class Visitors extends Component
@@ -24,28 +25,6 @@ class Visitors extends Component
         $this->visitors = Visitor::where('custid', 'like', '%'.$this->search.'%')
         ->get();
 
-        if ($this->search == null) {
-            foreach ($this->forms as $form) {
-
-                $check = Visitor::where('form_id', $form['id'])->first();
-                if ($check == null) {
-                    do {
-                        $custid = createCustomid();
-                    } while (Visitor::where('custid', $custid)->first() <> null);
-
-                    $visitor = new Visitor([
-                        'custid' => $custid,
-                        'event_id' => $currentEvent,
-                        'form_id' => $form['id'],
-                        'approved' => null,
-                        'present' => null,
-                        'vip' => 0
-                    ]);
-                    $visitor->save();
-                }
-            }
-        }
-
         return view('livewire.visitor.visitor');
     }
 
@@ -53,27 +32,27 @@ class Visitors extends Component
     {
         $visitor = Visitor::find($id);
 
-        if ($this->vip == "on") {
+        if ($this->vip == true) {
             $visitor->vip = true;
         } else {
             $visitor->vip = false;
         }
 
-        if (isset($this->company)) {
-            $visitor->company = $this->company;
-        }
-        if (isset($this->charge)) {
-            $visitor->charge = $this->charge;    
-        }
-        if (isset($this->country)) {
-            $visitor->country = $this->country;
-        }
-        if (isset($this->state)) {
-            $visitor->state = $this->state;
-        }
-        if (isset($this->city)) {
-            $visitor->city = $this->city;
-        }
+        // if (isset($this->company)) {
+        //     $visitor->company = $this->company;
+        // }
+        // if (isset($this->charge)) {
+        //     $visitor->charge = $this->charge;    
+        // }
+        // if (isset($this->country)) {
+        //     $visitor->country = $this->country;
+        // }
+        // if (isset($this->state)) {
+        //     $visitor->state = $this->state;
+        // }
+        // if (isset($this->city)) {
+        //     $visitor->city = $this->city;
+        // }
         $visitor->update();
 
         $this->emit('alert', 'Asistente modificado correctamente');

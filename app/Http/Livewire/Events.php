@@ -7,6 +7,8 @@ use Spatie\Permission\Models\Role;
 use Rap2hpoutre\FastExcel\FastExcel;
 use App\Models\Event;
 use App\Models\Visitor;
+use App\Models\Email;
+use Carbon\Carbon;
 
 class Events extends Component
 {
@@ -16,7 +18,6 @@ class Events extends Component
     protected $rules = [
         'event.title' => 'required',
         'event.date' => 'required',
-        'event.inscription' => 'array',
         'event.approve' => '',
     ];
 
@@ -39,7 +40,6 @@ class Events extends Component
         $this->validate([
             'title' => 'required',
             'date' => 'required',
-            'inscription' => 'required',
         ]);
 
         if ($this->approve) {
@@ -66,6 +66,45 @@ class Events extends Component
         $event->save();
 
         Role::create(['name' => $custid]);
+
+        $date = Carbon::create($this->date);
+
+        $email = new Email([
+            'name' => 'Recordatorio 3 días',
+            'subject' => 'Solo faltan 3 días para el evento',
+            'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/3dias.jpg" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"></div></td></tr></tbody></table>',
+            'date' => $date->subDays(3),
+            'objective' => 'all'
+        ]);
+        $email->save();
+
+        $email = new Email([
+            'name' => 'Recordatorio 1 día',
+            'subject' => 'Solo falta 1 día para el evento',
+            'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/1dia.jpg" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"></div></td></tr></tbody></table>',
+            'date' => $date->subDays(1),
+            'objective' => 'all'
+        ]);
+        $email->save();
+
+        $email = new Email([
+            'name' => 'Recordatorio hoy',
+            'subject' => 'El evento está por comenzar',
+            'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/hoy.jpg" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"></div></td></tr></tbody></table>',
+            'date' => $this->date,
+            'objective' => 'all'
+        ]);
+        $email->save();
+
+        $email = new Email([
+            'name' => 'Gracias',
+            'subject' => '¡Gracias por asistir al evento!',
+            'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/gracias.jpg" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"></div></td></tr></tbody></table>',
+            'date' => $date->addDay(),
+            'objective' => 'all'
+        ]);
+        $email->save();
+
 
         $this->emit('alert', ['title' => '¡Uno más!', 'text' => 'El evento ha sido dado de alta', 'type' => 'success']);
         $this->emit('refresh');

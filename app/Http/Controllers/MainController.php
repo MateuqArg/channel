@@ -11,6 +11,11 @@ use Auth;
 
 class MainController extends Controller
 {
+    public function __construct()
+    {
+        $this->currentEvent = 1;
+    }
+
     public function events()
     {
         $events = Event::get()->all();
@@ -98,5 +103,44 @@ class MainController extends Controller
     public function profile()
     {
         return view('main.profile');
+    }
+
+    public function inviteEnable(Request $request, $token, $type)
+    {
+        $request->session()->put('token', $token);
+        $request->session()->put('type', $type);
+
+        $user = User::where('password', $token)->first();
+
+        return view('main.invite', compact('user', 'type'));
+    }
+
+    public function inviteStore(Request $request)
+    {
+        $token = $request->session()->get('token');
+        $type = $request->session()->get('type');
+
+        $user = User::where('password', $token)->first();
+        $user->password = \Hash::make($request->password);
+        $user->update();
+
+        if ($type = 'organizer') {
+            $user->assignRole('organizer');
+        } else if ($type = 'exhibitor') {
+            $user->assignRole('exhibitor');
+        }
+
+        $user->assignRole('staff');
+
+        return redirect()->back()->with('success', 'Usuario confirmado correctamente');
+    }
+
+    public function meetingAccept(Request $request, $id)
+    {
+        $meeting = Meeting::find($id);
+        $meeting->approved = true;
+        $meeting->update();
+
+        return view('main.meetaccept');
     }
 }

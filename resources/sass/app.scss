@@ -1,0 +1,197 @@
+@import "variables";
+@import "bootstrap";
+
+.text-small {
+  font-size: 85%;
+}
+
+.btn-outline-danger:hover {
+	color: #fff;
+}
+
+.swal2-container.swal2-backdrop-show, .swal2-container.swal2-noanimation {
+  	background: rgba(20, 20, 20, 0.95) !important;
+}
+
+.dropdown-toggle {
+  	outline: 0;
+}
+
+.avatar-card {
+  	position: relative;
+  	display: block;
+}
+
+.active {
+  	border-bottom: 1px solid;
+}
+
+.select2-container--open {
+    z-index: 9999999
+}
+
+html,
+.login {
+  	height: 100%;
+}
+
+.login {
+  	display: flex;
+  	align-items: center;
+  	padding-top: 40px;
+  	padding-bottom: 40px;
+  	background-color: #f5f5f5;
+  	height: 100%;
+}
+
+.form-signin {
+	width: 100%;
+	max-width: 330px;
+	padding: 15px;
+	margin: auto;
+}
+
+.form-signin .checkbox {
+  	font-weight: 400;
+}
+
+.form-signin .form-floating:focus-within {
+  	z-index: 2;
+}
+
+.form-signin input[type="email"] {
+  	margin-bottom: -1px;
+  	border-bottom-right-radius: 0;
+  	border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+  	margin-bottom: 10px;
+  	border-top-left-radius: 0;
+  	border-top-right-radius: 0;
+}
+
+.bd-placeholder-img {
+  	font-size: 1.125rem;
+  	text-anchor: middle;
+  	-webkit-user-select: none;
+  	-moz-user-select: none;
+  	user-select: none;
+}
+
+@media (min-width: 768px) {
+  .bd-placeholder-img-lg {
+    font-size: 3.5rem;
+  }
+}
+
+.btn-create {
+  	position: absolute;
+  	border-radius: 50%;
+  	bottom: 40px;
+  	left: 30px;
+  	padding: 0.5rem 1rem;
+  	font-size: 1.25rem;
+}
+
+.btn-chat {
+  	position: absolute;
+  	border-radius: 50%;
+  	bottom: 40px;
+  	right: 30px;
+  	padding: 0.5rem 1rem;
+  	font-size: 1.25rem;
+  	z-index: 1055;
+}
+
+.btn-add-chat {
+  	position: absolute;
+  	border-radius: 50%;
+  	bottom: 20px;
+  	right: 20px;
+  	padding: 0.5rem 1rem;
+  	font-size: 1.25rem;
+  	z-index: 1055;
+}
+
+.form-inscription {
+  	position: relative;
+  	display: block;
+}
+
+.classes-card {
+  	width: 100%;
+  	height: 150px;
+}
+
+.classes-footer {
+  	width: 100%;
+  	height: 40px;
+  	margin-top: -40px;
+  	background-color: rgba(0, 0, 0, 0.25);
+}
+
+.classes-card-text {
+  	color: #fff;
+  	width: 100%;
+}
+
+.modal-dialog .chat {
+    position: fixed;
+    margin: auto;
+    width: 320px;
+    height: 80%;
+    right: 20px;
+}
+
+.thumbnail-message {
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+  	white-space: nowrap;
+  	width: 67%;
+}
+
+.msg-sender {
+  	background-color: #aec5f2;
+  	color: #000;
+}
+
+.msg-receiver {
+	background-color: #d9d9d9;
+  	color: #000;
+}
+
+.msg-input {
+  	position: sticky;
+  	bottom: 0px;
+  	padding-bottom: 10px;
+}
+
+.gradient {
+	background-image: linear-gradient(to right, #04008B , #ED1C25);
+    color: #fff;
+}
+
+.top-table {
+	margin-left: 4px;
+	margin-right: 4px;
+	padding-top: 10px;
+}
+
+.download-btn {
+	background-color: #fff;
+}
+
+.download-btn:hover {
+	color: #fff;
+}
+
+ th {
+    color: #ffffff;
+    background: #373d49;
+    padding: 5px;
+    padding-right:100px;
+    text-align: center;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+}
