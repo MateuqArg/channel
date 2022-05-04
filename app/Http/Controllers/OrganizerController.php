@@ -25,14 +25,15 @@ class OrganizerController extends Controller
 {
     public function __construct()
     {
-        $this->currentEvent = 1;
+        $this->spread = '1KZXp18tUAQvlpHsI9n8QIH24osjQuECQ0hso7fjZ-Nw';
+        $this->currentEvent = 'Respuestas de formulario 1';
     }
 
     public function eventsIndex(Request $request)
     {
         $visitors = Visitor::where('approved', null)->get();
 
-        $sheets = Sheets::spreadsheet("1hhh76KaFDoJeVE8AC-oTXpIm7WgsESImaY1raUQo4nw")->sheet(strval($this->currentEvent))->get();
+        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
         $forms = Sheets::collection($sheets->pull(0), $sheets);
 
         return view('organizer.events.index', compact('visitors', 'forms'));
@@ -44,7 +45,7 @@ class OrganizerController extends Controller
         // $visitor->approved = true;
         // $visitor->update();
 
-        $sheets = Sheets::spreadsheet("1hhh76KaFDoJeVE8AC-oTXpIm7WgsESImaY1raUQo4nw")->sheet(strval($this->currentEvent))->get();
+        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
         $forms = Sheets::collection($sheets->pull(0), $sheets);
 
         $file = QrCode::format('png')->size(305)->generate(route('organizer.visitor.track', ['custid' => $visitor->custid]));
@@ -145,7 +146,7 @@ class OrganizerController extends Controller
             $track->save();
         }
 
-        $sheets = Sheets::spreadsheet("1hhh76KaFDoJeVE8AC-oTXpIm7WgsESImaY1raUQo4nw")->sheet(strval($this->currentEvent))->get();
+        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
         $forms = Sheets::collection($sheets->pull(0), $sheets);
 
         // // Código para imprimir la etiqueta
@@ -171,68 +172,68 @@ class OrganizerController extends Controller
         if ($visitor->present <> 1) {
             $meetings = Meeting::where('visitor_id', $visitor->id)->where('approved', true)->where('event_id', $this->currentEvent)->get();
 
-            if (!empty($meetings)) {
-                $authorization = ['Authorization' => 'eyJpdiI6Ik9UUXdOVFkyT1RZek5qSTNNVGs0T0E9PSIsInZhbHVlIjoiMEwwVjFjeTVyZ3ZnWlE1U204REtkQk0vZCtSbW4rdGZ1WXg3Uzk2Z2dLST0iLCJtYWMiOiI0MzM2M2NlNDE3YjMyY2ZhNjNlZTIxNGFmMDQwOTQyNjVhMzA3ZGNlMDQzZGQ5NDNlZWY0OTIxNWNhZjI4MmUzIn0='];
+            // if (!empty($meetings)) {
+            //     $authorization = ['Authorization' => 'eyJpdiI6Ik9UUXdOVFkyT1RZek5qSTNNVGs0T0E9PSIsInZhbHVlIjoiMEwwVjFjeTVyZ3ZnWlE1U204REtkQk0vZCtSbW4rdGZ1WXg3Uzk2Z2dLST0iLCJtYWMiOiI0MzM2M2NlNDE3YjMyY2ZhNjNlZTIxNGFmMDQwOTQyNjVhMzA3ZGNlMDQzZGQ5NDNlZWY0OTIxNWNhZjI4MmUzIn0='];
 
-                $client = new Client();
-                $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/getAll', [
-                'headers' => $authorization,
-                'form_params' => [
-                    'filter' => 'Reunión con '.$forms[$visitor->form_id]['Nombre completo'],
-                ]]);
-                $check = json_decode($client->getBody(), true)['data']['data'];
+            //     $client = new Client();
+            //     $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/getAll', [
+            //     'headers' => $authorization,
+            //     'form_params' => [
+            //         'filter' => 'Reunión con '.$forms[$visitor->form_id]['Nombre completo'],
+            //     ]]);
+            //     $check = json_decode($client->getBody(), true)['data']['data'];
 
-                if (!isset($check[0])) {
-                    $client = new Client();
-                    $client = $client->request('POST', 'https://api.esmsv.com/v1/listscontacts/create', [
-                    'headers' => $authorization,
-                    'form_params' => [
-                        'name' => 'Reunión con '.$forms[$visitor->form_id]['Nombre completo'],
-                    ]]);
-                    $list_id = json_decode($client->getBody(), true)['data']['id'];
+            //     if (!isset($check[0])) {
+            //         $client = new Client();
+            //         $client = $client->request('POST', 'https://api.esmsv.com/v1/listscontacts/create', [
+            //         'headers' => $authorization,
+            //         'form_params' => [
+            //             'name' => 'Reunión con '.$forms[$visitor->form_id]['Nombre completo'],
+            //         ]]);
+            //         $list_id = json_decode($client->getBody(), true)['data']['id'];
 
-                    foreach ($meetings as $meeting) {
-                        $exhibitor = User::where('name', $meeting->exhibitor)->first();
-                        $client = new Client();
-                        $client = $client->request('POST', 'https://api.esmsv.com/v1/contacts/getall', [
-                        'headers' => $authorization,
-                        'form_params' => [
-                            'email' => $exhibitor->email,
-                        ]]);
-                        $contacts_ids[] = json_decode($client->getBody(), true)['data']['data'][0]['id'];
-                    }
+            //         foreach ($meetings as $meeting) {
+            //             $exhibitor = User::where('name', $meeting->exhibitor)->first();
+            //             $client = new Client();
+            //             $client = $client->request('POST', 'https://api.esmsv.com/v1/contacts/getall', [
+            //             'headers' => $authorization,
+            //             'form_params' => [
+            //                 'email' => $exhibitor->email,
+            //             ]]);
+            //             $contacts_ids[] = json_decode($client->getBody(), true)['data']['data'][0]['id'];
+            //         }
 
-                    $client = new Client();
-                    $client = $client->request('POST', 'https://api.esmsv.com/v1/contacts/suscribe', [
-                    'headers' => $authorization,
-                    'form_params' => [
-                        'listId' => $list_id,
-                        'contactsIds' => $contacts_ids
-                    ]]);
+            //         $client = new Client();
+            //         $client = $client->request('POST', 'https://api.esmsv.com/v1/contacts/suscribe', [
+            //         'headers' => $authorization,
+            //         'form_params' => [
+            //             'listId' => $list_id,
+            //             'contactsIds' => $contacts_ids
+            //         ]]);
 
-                    $client = new Client();
-                    $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/create', [
-                    'headers' => $authorization,
-                    'form_params' => [
-                        'name' => 'Reunión con '.$forms[$visitor->form_id]['Nombre completo'],
-                        'subject' => 'El invitado '.$forms[$visitor->form_id]['Nombre completo'].' ha ingresado al evento',
-                        'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/header.png" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"><p style="max-width: 600px; font-size: 20px">El invitado '.$forms[$visitor->form_id]['Nombre completo'].' ha ingresado al evento, sugerimos contactarse para coordinar la reunión al email: '.$forms[$visitor->form_id]['Direccion de email'].'.</p></div></td></tr></tbody></table>',
-                        'fromAlias' => 'Channel Talks',
-                        'fromEmail' => 'channeltalks@mediaware.news',
-                        'replyEmail' => 'channeltalks@mediaware.news',
-                        'mailListsIds' => [1],
-                    ]]);
-                    $id = json_decode($client->getBody(), true)['data']['id'];
+            //         $client = new Client();
+            //         $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/create', [
+            //         'headers' => $authorization,
+            //         'form_params' => [
+            //             'name' => 'Reunión con '.$forms[$visitor->form_id]['Nombre completo'],
+            //             'subject' => 'El invitado '.$forms[$visitor->form_id]['Nombre completo'].' ha ingresado al evento',
+            //             'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/header.png" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"><p style="max-width: 600px; font-size: 20px">El invitado '.$forms[$visitor->form_id]['Nombre completo'].' ha ingresado al evento, sugerimos contactarse para coordinar la reunión al email: '.$forms[$visitor->form_id]['Direccion de email'].'.</p></div></td></tr></tbody></table>',
+            //             'fromAlias' => 'Channel Talks',
+            //             'fromEmail' => 'channeltalks@mediaware.news',
+            //             'replyEmail' => 'channeltalks@mediaware.news',
+            //             'mailListsIds' => [$list_id],
+            //         ]]);
+            //         $id = json_decode($client->getBody(), true)['data']['id'];
 
-                    $client = new Client();
-                    $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/send', [
-                    'headers' => $authorization,
-                    'form_params' => [
-                        'id' => $id,
-                        'sendNow' => 1
-                    ]]);
-                }
-            }
+            //         $client = new Client();
+            //         $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/send', [
+            //         'headers' => $authorization,
+            //         'form_params' => [
+            //             'id' => $id,
+            //             'sendNow' => 1
+            //         ]]);
+            //     }
+            // }
         }
 
         $visitor->present = true;
@@ -245,7 +246,7 @@ class OrganizerController extends Controller
     {
         $visitor = Visitor::where('custid', $custid)->first();
 
-        $sheets = Sheets::spreadsheet("1hhh76KaFDoJeVE8AC-oTXpIm7WgsESImaY1raUQo4nw")->sheet(strval($this->currentEvent))->get();
+        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
         $forms = Sheets::collection($sheets->pull(0), $sheets);
 
         // Código para generar la etiqueta
@@ -257,45 +258,81 @@ class OrganizerController extends Controller
 
         $file_name = time().'.'.'png';
 
-        $img = Image::canvas(600, 800, '#fff');
+        $width = 600;
+        $height = 850;
+        $center_x = $width / 2;
+        // $center_y = $height / 2;
+        $max_len = 14;
+        $font_size = 76;
+        $font_height = 35;
 
-        $img->insert($file, 'top', 300, 60);
+        $text = ucwords(strtolower(explode(' ', $forms[$visitor->form_id]['Nombre completo'], 2)[0]));
+        $text = $text .' '. ucwords(strtolower(explode(' ', $forms[$visitor->form_id]['Nombre completo'], 2)[1]));
 
-        // dd(explode(' ', $forms[$visitor->form_id]['Nombre completo'], 2)[0]);
+        $lines = explode("\n", wordwrap($text, $max_len));
+        $y = 450 - ((count($lines) - 1) * $font_height);
+        $img = Image::canvas($width, 800, '#fff');
+        $img->insert($file, 'top', 300, 10);
 
-        $img->text(ucwords(strtolower(explode(' ', $forms[$visitor->form_id]['Nombre completo'], 2)[0])), 300, 480, function($font) {
-            $font->file(public_path("Gotham.ttf"));
-            $font->align('center');
-            $font->color('#000');
-            $font->size(90);
-        });
+        foreach ($lines as $line)
+        {
+            $img->text($line, $center_x, $y, function($font) use ($font_size){
+                $font->file(public_path("Gotham.ttf"));
+                $font->size($font_size);
+                $font->color('#000');
+                $font->align('center');
+            });
 
-        $img->text(ucwords(strtolower(explode(' ', $forms[$visitor->form_id]['Nombre completo'], 2)[1])), 300, 570, function($font) {
-            $font->file(public_path("Gotham.ttf"));
-            $font->align('center');
-            $font->color('#000');
-            $font->size(90);
-        });
+            $y += $font_height * 2;
+        }
 
-        $img->text(ucwords(strtolower($forms[$visitor->form_id]['Cargo'])), 300, 680, function($font) {
-            $font->file(public_path("Gotham.ttf"));
-            $font->align('center');
-            $font->color('#000');
-            $font->size(45);
-        });
+        $max_len = 23;
+        $font_size = 45;
+        $font_height = 30;
 
-        $img->text(ucwords(strtolower($forms[$visitor->form_id]['Empresa'])), 300, 760, function($font) {
-            $font->file(public_path("Gotham.ttf"));
-            $font->align('center');
-            $font->color('#000');
-            $font->size(60);
-        });
+        $text = ucwords(strtolower($forms[$visitor->form_id]['Cargo']));
+
+        $lines = explode("\n", wordwrap($text, $max_len));
+        $y2 = $y - ((count($lines) - 1) * $font_height);
+
+        foreach ($lines as $line)
+        {
+            $img->text($line, $center_x, $y, function($font) use ($font_size){
+                $font->file(public_path("Gotham.ttf"));
+                $font->size($font_size);
+                $font->color('#000');
+                $font->align('center');
+            });
+
+            $y += $font_height * 2;
+        }
+
+        $y = $y + 20;
+
+        $max_len = 20;
+        $font_size = 60;
+        $font_height = 30;
+
+        $text = ucwords(strtolower($forms[$visitor->form_id]['Empresa']));
+
+        $lines = explode("\n", wordwrap($text, $max_len));
+        $y2 = $y - ((count($lines) - 1) * $font_height);
+
+        foreach ($lines as $line)
+        {
+            $img->text($line, $center_x, $y, function($font) use ($font_size){
+                $font->file(public_path("Gotham.ttf"));
+                $font->size($font_size);
+                $font->color('#000');
+                $font->align('center');
+            });
+
+            $y += $font_height * 2;
+        }
 
         $img->save(public_path('uploads/'.$file_name));
         Storage::disk('public_uploads')->delete($qr_file);
         return $img->response("png");
-
-        // return redirect()->back();
     }
 
     public function visitorTrack(Request $request, $custid)
@@ -307,7 +344,7 @@ class OrganizerController extends Controller
 
             $talks = Talk::where('event_id', $visitor->event_id)->get();
 
-            $sheets = Sheets::spreadsheet("1hhh76KaFDoJeVE8AC-oTXpIm7WgsESImaY1raUQo4nw")->sheet(strval($this->currentEvent))->get();
+            $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
             $header = $sheets->pull(0);
             $forms = Sheets::collection($header, $sheets);
 
@@ -379,7 +416,8 @@ class OrganizerController extends Controller
         $check =  User::where('email', $request->email)->first();
 
         if (empty($check)) {
-            $event = Event::find($this->currentEvent);
+            $event = Event::find(substr($this->currentEvent, strrpos($this->currentEvent, ' ') + 1));
+
             $authorization = ['Authorization' => 'eyJpdiI6Ik9UUXdOVFkyT1RZek5qSTNNVGs0T0E9PSIsInZhbHVlIjoiMEwwVjFjeTVyZ3ZnWlE1U204REtkQk0vZCtSbW4rdGZ1WXg3Uzk2Z2dLST0iLCJtYWMiOiI0MzM2M2NlNDE3YjMyY2ZhNjNlZTIxNGFmMDQwOTQyNjVhMzA3ZGNlMDQzZGQ5NDNlZWY0OTIxNWNhZjI4MmUzIn0='];
 
             $client = new Client();
@@ -438,7 +476,7 @@ class OrganizerController extends Controller
                     'fromAlias' => 'Channel Talks',
                     'fromEmail' => 'channeltalks@mediaware.news',
                     'replyEmail' => 'channeltalks@mediaware.news',
-                    'mailListsIds' => [1],
+                    'mailListsIds' => [$list_id],
                 ]]);
                 $id = json_decode($client->getBody(), true)['data']['id'];
 

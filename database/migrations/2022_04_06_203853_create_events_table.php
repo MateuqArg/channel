@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('custid');
             $table->string('title');
             $table->date('date');
-            $table->string('inscription');
             $table->boolean('approve');
             $table->timestamps();
         });

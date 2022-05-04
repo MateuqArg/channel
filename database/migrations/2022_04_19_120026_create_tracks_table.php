@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->integer('visitor_id');
             $table->integer('talk_id')->nullable();
-            $table->string('extra');
+            $table->string('extra')->nullable();
             $table->timestamps();
         });
     }

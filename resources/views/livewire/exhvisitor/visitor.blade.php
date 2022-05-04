@@ -38,12 +38,12 @@
         </tr>
       </thead>
       <tbody>
-        @if (count($visitors))
+        @if(count($visitors))
         @foreach($visitors as $visitor)
         <tr>
           @if(!\Auth::user()->hasRole('staff'))
           <td>
-            @if($visitor->event->id == $this->currentEvent)
+            @if($visitor->event->id == substr($this->currentEvent, strrpos($this->currentEvent, ' ') + 1))
             @include('livewire.exhvisitor.actions', ['visitor' => $visitor])
             @endif
           </td>
@@ -63,7 +63,7 @@
         @endforeach
       </tbody>
     </table>
-    @if ($visitors->hasPages())
+    @if($visitors->hasPages())
       {{ $visitors->links() }}
     @endif
     @endif

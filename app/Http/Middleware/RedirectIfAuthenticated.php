@@ -26,7 +26,7 @@ class RedirectIfAuthenticated
                 if (Auth::user()->hasRole('visitor')) {
                     return redirect()->url('/');
                 } else if (Auth::user()->hasRole('exhibitor')) {
-                    return redirect()->route('exhibitor.events.index');
+                    return redirect()->route('exhibitor.visitors');
                 } else if (Auth::user()->hasRole('organizer')) {
                     return redirect()->route('organizer.events.index');
                 }

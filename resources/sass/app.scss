@@ -86,7 +86,7 @@ html,
 }
 
 .btn-create {
-  	position: absolute;
+  	position: sticky;
   	border-radius: 50%;
   	bottom: 40px;
   	left: 30px;
@@ -95,7 +95,7 @@ html,
 }
 
 .btn-chat {
-  	position: absolute;
+  	position: sticky;
   	border-radius: 50%;
   	bottom: 40px;
   	right: 30px;
@@ -105,7 +105,7 @@ html,
 }
 
 .btn-add-chat {
-  	position: absolute;
+  	position: sticky;
   	border-radius: 50%;
   	bottom: 20px;
   	right: 20px;

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Event;
 use App\Models\Meeting;
+use App\Models\Track;
 
 class Visitor extends Model
 {
@@ -26,5 +27,10 @@ class Visitor extends Model
     public function meetings()
     {
         return $this->hasMany(Meeting::class);
+    }
+
+    public function tracks()
+    {
+        return $this->hasMany(Track::class);
     }
 }

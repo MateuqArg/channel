@@ -7,13 +7,14 @@ use Rap2hpoutre\FastExcel\FastExcel;
 use App\Models\Visitor;
 use App\Models\Meeting;
 use App\Models\User;
+use App\Models\Talk;
 use GuzzleHttp\Client;
 use Sheets;
+use Auth;
 
 class Exhvisitors extends Component
 {
     use WithPagination;
-
     protected $paginationTheme = 'bootstrap';
 
     public $search, $company, $charge, $country, $state, $city, $vip;
@@ -22,6 +23,12 @@ class Exhvisitors extends Component
 
     public $listeners = ['meet'];
 
+    public function __construct()
+    {
+        $this->spread = '1KZXp18tUAQvlpHsI9n8QIH24osjQuECQ0hso7fjZ-Nw';
+        $this->currentEvent = 'Respuestas de formulario 1';
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -29,9 +36,7 @@ class Exhvisitors extends Component
 
     public function render()
     {
-        $this->currentEvent = 1;
-
-        $sheets = Sheets::spreadsheet("1hhh76KaFDoJeVE8AC-oTXpIm7WgsESImaY1raUQo4nw")->sheet(strval($this->currentEvent))->get();
+        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
         $header = $sheets->pull(0);
         $this->forms = Sheets::collection($header, $sheets);
 
@@ -55,7 +60,7 @@ class Exhvisitors extends Component
             $custid = createCustomid();
         } while (Meeting::where('custid', $custid)->first() <> null);
 
-        $check = Meeting::where('event_id', $this->currentEvent)->where('visitor_id', $id)->where('exhibitor', \Auth::user()->name)->first();
+        $check = Meeting::where('event_id', $this->currentEvent)->where('visitor_id', $id)->where('exhibitor', Auth::user()->name)->first();
 
         if(empty($check)) {
             $visitor = Visitor::find($id);
@@ -64,7 +69,7 @@ class Exhvisitors extends Component
                 'custid' => $custid,
                 'event_id' => $this->currentEvent,
                 'visitor_id' => $visitor->id,
-                'exhibitor' => \Auth::user()->name,
+                'exhibitor' => Auth::user()->name,
                 'approved' => null,
                 'requested' => 'exhibitor'
             ]);
@@ -76,7 +81,7 @@ class Exhvisitors extends Component
             $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/getAll', [
             'headers' => $authorization,
             'form_params' => [
-                'filter' => 'Reunión con '.\Auth::user()->name,
+                'filter' => 'Reunión con '.Auth::user()->name,
             ]]);
             $check = json_decode($client->getBody(), true)['data']['data'];
 
@@ -85,7 +90,7 @@ class Exhvisitors extends Component
                 $client = $client->request('POST', 'https://api.esmsv.com/v1/listscontacts/create', [
                 'headers' => $authorization,
                 'form_params' => [
-                    'name' => 'Reunión con '.\Auth::user()->name,
+                    'name' => 'Reunión con '.Auth::user()->name,
                 ]]);
                 $list_id = json_decode($client->getBody(), true)['data']['id'];
 
@@ -110,9 +115,9 @@ class Exhvisitors extends Component
                 $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/create', [
                 'headers' => $authorization,
                 'form_params' => [
-                    'name' => 'Reunión con '.\Auth::user()->name,
-                    'subject' => 'El expositor '.\Auth::user()->name.' ha solicitado una reunión con usted',
-                    'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/header.png" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"><p style="max-width: 600px; font-size: 20px">El expositor '.\Auth::user()->name.' ha solicitado una reunión con usted. Puede confirmar esta reunión <a href="'.route('meeting.accept', ['id' => $meeting->id]).'">AQUÍ</a></p></div></td></tr></tbody></table>',
+                    'name' => 'Reunión con '.Auth::user()->name,
+                    'subject' => 'El expositor '.Auth::user()->name.' ha solicitado una reunión con usted',
+                    'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/header.png" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"><p style="max-width: 600px; font-size: 20px">El expositor '.Auth::user()->name.' ha solicitado una reunión con usted. Puede confirmar esta reunión <a href="'.route('meeting.accept', ['id' => $meeting->id]).'">AQUÍ</a></p></div></td></tr></tbody></table>',
                     'fromAlias' => 'Channel Talks',
                     'fromEmail' => 'channeltalks@mediaware.news',
                     'replyEmail' => 'channeltalks@mediaware.news',
@@ -133,7 +138,18 @@ class Exhvisitors extends Component
 
     public function download()
     {
-        $export = (new FastExcel($this->visitors))->download('asistentes.xlsx');
+        $talks = Talk::where('exhibitor_id', Auth::user()->id)->get();
+
+        $ids = [];
+        foreach ($talks as $talk) {
+            $ids[] = $talk->id;
+        }
+
+        $data = Visitor::whereHas('tracks', function($q) use($ids){
+            $q->whereIn('talk_id', $ids);
+        })->get();
+
+        $export = (new FastExcel($data))->download('asistentes.xlsx');
 
         $file_name = "asistentes.xlsx";
 

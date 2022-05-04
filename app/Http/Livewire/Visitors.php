@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire;
 
-use Livewire\Component;
+use Livewire\{Component, WithPagination};
 use Rap2hpoutre\FastExcel\FastExcel;
 use App\Models\Visitor;
 use App\Models\Meeting;
@@ -10,22 +10,44 @@ use Sheets;
 
 class Visitors extends Component
 {
-    public $search, $visitors, $company, $charge, $country, $state, $city, $vip;
+    use WithPagination;
+    protected $paginationTheme = 'bootstrap';
+
+    public $search, $company, $charge, $country, $state, $city, $vip;
+    public $readyToLoad = false;
+    public $cant = '10';
 
     public $listeners = ['destroy'];
 
+    public function __construct()
+    {
+        $this->spread = '1KZXp18tUAQvlpHsI9n8QIH24osjQuECQ0hso7fjZ-Nw';
+        $this->currentEvent = 'Respuestas de formulario 1';
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
-        $currentEvent = 1;
-
-        $sheets = Sheets::spreadsheet("1hhh76KaFDoJeVE8AC-oTXpIm7WgsESImaY1raUQo4nw")->sheet(strval($currentEvent))->get();
+        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
         $header = $sheets->pull(0);
         $this->forms = Sheets::collection($header, $sheets);
 
-        $this->visitors = Visitor::where('custid', 'like', '%'.$this->search.'%')
-        ->get();
+        if ($this->readyToLoad) {
+            $visitors = Visitor::where('custid', 'like', '%'.$this->search.'%')->orderBy('event_id')->paginate($this->cant);
+        } else {
+            $visitors = [];
+        }
 
-        return view('livewire.visitor.visitor');
+        return view('livewire.visitor.visitor', compact('visitors'));
+    }
+
+    public function loadVisitors()
+    {
+        $this->readyToLoad = true;
     }
 
     public function update($id)

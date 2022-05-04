@@ -25,6 +25,8 @@ class CheckEmails implements ShouldQueue
      */
     public function __construct()
     {
+        $this->spread = '1KZXp18tUAQvlpHsI9n8QIH24osjQuECQ0hso7fjZ-Nw';
+        $this->currentEvent = 'Respuestas de formulario 1';
     }
 
     /**
@@ -35,7 +37,7 @@ class CheckEmails implements ShouldQueue
     public function handle()
     {
         $currentEvent = 1;
-        $sheets = Sheets::spreadsheet("1hhh76KaFDoJeVE8AC-oTXpIm7WgsESImaY1raUQo4nw")->sheet(strval($currentEvent))->get();
+        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
         $forms = Sheets::collection($sheets->pull(0), $sheets);
 
         $emails = Email::where('sended', false)->get();

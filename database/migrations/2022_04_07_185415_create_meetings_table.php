@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('custid');
             $table->integer('event_id');
             $table->integer('visitor_id');
-            $table->integer('exhibitor_id');
+            $table->string('exhibitor');
             $table->boolean('approved')->nullable()->default(null);
             $table->string('requested');
             $table->timestamps();

@@ -1,6 +1,14 @@
-<div class="container-fluid">
+<div class="container-fluid" wire:init="loadVisitors">
   <div class="row">
     <div class="col d-flex gradient top-table">
+      <div class="d-flex">
+        <select wire:model="cant" class="mx-2 form-select">
+          <option value=10>10</option>
+          <option value=25>25</option>
+          <option value=50>50</option>
+          <option value=100>100</option>
+        </select>
+      </div>
       <div>
         <input type="text" wire:model="search" class="form-control" placeholder="Buscar por id, nombre o empresa">
       </div>
@@ -30,11 +38,14 @@
         </tr>
       </thead>
       <tbody>
+        @if(count($visitors))
         @foreach($visitors as $visitor)
         <tr>
           @if(!\Auth::user()->hasRole('staff'))
           <td>
+            @if($visitor->event->id == substr($this->currentEvent, strrpos($this->currentEvent, ' ') + 1))
             @include('livewire.visitor.actions', ['visitor' => $visitor])
+            @endif
           </td>
           @endif
           <td>{{ $visitor->id }}</td>
@@ -52,5 +63,9 @@
         @endforeach
       </tbody>
     </table>
+    @if($visitors->hasPages())
+      {{ $visitors->links() }}
+    @endif
+    @endif
   </div>
 </div>

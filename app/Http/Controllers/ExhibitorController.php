@@ -16,7 +16,8 @@ class ExhibitorController extends Controller
 {
     public function __construct()
     {
-        $this->currentEvent = 1;
+        $this->spread = '1KZXp18tUAQvlpHsI9n8QIH24osjQuECQ0hso7fjZ-Nw';
+        $this->currentEvent = 'Respuestas de formulario 1';
     }
 
     // public function eventsIndex()
@@ -26,7 +27,7 @@ class ExhibitorController extends Controller
     //     $visitors = Visitor::where('approved', true)->whereDoesntHave('meetings', function ($meetingQuery) {
     //         $meetingQuery->where('exhibitor', \Auth::user()->name);
     //     })->get();
-    //     $sheets = Sheets::spreadsheet("1hhh76KaFDoJeVE8AC-oTXpIm7WgsESImaY1raUQo4nw")->sheet(strval($this->currentEvent))->get();
+    //     $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
     //     $forms = Sheets::collection($sheets->pull(0), $sheets);
 
     //     return view('exhibitor.events.index', compact('events', 'meetings', 'visitors', 'forms'));
@@ -35,7 +36,7 @@ class ExhibitorController extends Controller
     public function visitors()
     {
         $meetings = Meeting::where('approved', null)->where('exhibitor', \Auth::user()->name)->where('requested', 'visitor')->get();
-        $sheets = Sheets::spreadsheet("1hhh76KaFDoJeVE8AC-oTXpIm7WgsESImaY1raUQo4nw")->sheet(strval($this->currentEvent))->get();
+        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
         $forms = Sheets::collection($sheets->pull(0), $sheets);
 
         return view('exhibitor.visitors', compact('meetings', 'forms'));
@@ -81,19 +82,19 @@ class ExhibitorController extends Controller
         // return redirect()->back()->with('successrequest', 'Reunión solicitada');
     }
 
-    public function visitorsDownload(Request $request)
-    {
-        // $visitors = 
+    // public function visitorsDownload(Request $request)
+    // {
+    //     // $visitors = 
 
-        $request->excel->storeAs('/', 'excels/'.$custid.'.'.$ext, 'public_uploads');
-        $collection = fastexcel()->import(public_path().'/excels/'.$custid.'.'.$ext);
+    //     $request->excel->storeAs('/', 'excels/'.$custid.'.'.$ext, 'public_uploads');
+    //     $collection = fastexcel()->import(public_path().'/excels/'.$custid.'.'.$ext);
 
-        unlink(public_path().'/excels/'.$custid.'.'.$ext);
+    //     unlink(public_path().'/excels/'.$custid.'.'.$ext);
         
-        dd($collection);
+    //     dd($collection);
 
-        // return redirect()->back()->with('successrequest', 'Reunión solicitada');
-    }
+    //     // return redirect()->back()->with('successrequest', 'Reunión solicitada');
+    // }
 
     public function staffIndex()
     {
@@ -104,8 +105,8 @@ class ExhibitorController extends Controller
     {
         $check =  User::where('email', $request->email)->first();
 
-        if (empty($check)) {
-            $event = Event::find($this->currentEvent);
+        if (!$check) {
+            $event = Event::find(substr($this->currentEvent, strrpos($this->currentEvent, ' ') + 1));
             $authorization = ['Authorization' => 'eyJpdiI6Ik9UUXdOVFkyT1RZek5qSTNNVGs0T0E9PSIsInZhbHVlIjoiMEwwVjFjeTVyZ3ZnWlE1U204REtkQk0vZCtSbW4rdGZ1WXg3Uzk2Z2dLST0iLCJtYWMiOiI0MzM2M2NlNDE3YjMyY2ZhNjNlZTIxNGFmMDQwOTQyNjVhMzA3ZGNlMDQzZGQ5NDNlZWY0OTIxNWNhZjI4MmUzIn0='];
 
             $client = new Client();
@@ -164,7 +165,7 @@ class ExhibitorController extends Controller
                     'fromAlias' => 'Channel Talks',
                     'fromEmail' => 'channeltalks@mediaware.news',
                     'replyEmail' => 'channeltalks@mediaware.news',
-                    'mailListsIds' => [1],
+                    'mailListsIds' => [$list_id],
                 ]]);
                 $id = json_decode($client->getBody(), true)['data']['id'];
 
