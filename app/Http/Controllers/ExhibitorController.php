@@ -42,6 +42,14 @@ class ExhibitorController extends Controller
         return view('exhibitor.visitors', compact('meetings', 'forms'));
     }
 
+    public function groups()
+    {
+        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
+        $forms = Sheets::collection($sheets->pull(0), $sheets);
+
+        return view('exhibitor.groups', compact('forms'));
+    }
+
     public function meetingAccept(Request $request, $id)
     {
         $meeting = Meeting::find($id);

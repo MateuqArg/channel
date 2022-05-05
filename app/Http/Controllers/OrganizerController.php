@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Session;
 use Spatie\Permission\Models\Role;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Models\Event;
@@ -341,27 +342,15 @@ class OrganizerController extends Controller
         $entrys = Track::where('visitor_id', $visitor->id)->where('extra', 'enter')->first();
 
         if (!empty($entrys)) {
-
-            $talks = Talk::where('event_id', $visitor->event_id)->get();
-
-            $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
-            $header = $sheets->pull(0);
-            $forms = Sheets::collection($header, $sheets);
-
-            return view('organizer.visitor.track', compact('visitor', 'talks', 'forms'));
-        }
-    }
-
-    public function trackStore(Request $request, $id)
-    {
-        $check = Track::where('visitor_id', $id)->where('talk_id', $request->talk)->first();
-
-        if (empty($check)) {
-            $track = new Track([
-                'visitor_id' => $id,
-                'talk_id' => $request->talk,
-            ]);
-            $track->save();
+            $check = Track::where('visitor_id', $visitor->id)->where('talk_id', Session::get('talk_id'))->first();
+            // dd($check);
+            if (empty($check)) {
+                $track = new Track([
+                    'visitor_id' => $visitor->id,
+                    'talk_id' => Session::get('talk_id'),
+                ]);
+                $track->save();
+            }
         }
 
         return redirect()->back()->with('alert');

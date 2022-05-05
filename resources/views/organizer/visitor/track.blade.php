@@ -30,10 +30,6 @@
   </div>
 </div>
 
-{{-- <a class="btn btn-success btn-create" href="{{  }}"><i class="bi bi-qr-code"></i></a> --}}
-
-{{-- @include('includes.footer') --}}
-
 <script>
   $(document).ready(function() {
     $('#talks').select2({theme: 'bootstrap-5'});

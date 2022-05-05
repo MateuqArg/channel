@@ -74,6 +74,10 @@ Route::name('exhibitor.')->prefix('exhibitor')->middleware(['auth'], ['role:exhi
     Route::name('visitors.')->prefix('visitors')->group(function () {
         Route::get('/', [ExhibitorController::class, 'visitors'])->name('index');
     });
+
+    Route::name('groups.')->prefix('groups')->group(function () {
+        Route::get('/', [ExhibitorController::class, 'groups'])->name('index');
+    });
     
     Route::name('invite.')->prefix('invite')->group(function () {
         Route::get('/', [ExhibitorController::class, 'inviteIndex'])->name('index');

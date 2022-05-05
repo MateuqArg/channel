@@ -1,5 +1,5 @@
 <header class="p-3 mb-2 border-bottom">
-    <div class="container">
+    <div class="container-fluid">
       <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
         <a href="{{ route('organizer.events.index') }}" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none">
           <img src="{{ asset('images/logo.png') }}" class="me-2" alt="" height="40">
@@ -11,12 +11,16 @@
           <li><a href="{{ route('organizer.exhibitor.index') }}" class="nav-link px-2 link-dark
             {{ Request::is('organizer/exhibitor') ? "active" : "" }}">Expositores</a></li>
           <li><a href="{{ route('organizer.talk.index') }}" class="nav-link px-2 link-dark
-            {{ Request::is('organizer/talk') ? "active" : "" }}">Charlas</a></li>
+            {{ Request::is('organizer/talk') ? "active" : "" }}">Grupos</a></li>
           <li><a href="{{ route('organizer.visitors.index') }}" class="nav-link px-2 link-dark
             {{ Request::is('organizer/visitors') ? "active" : "" }}">Asistentes</a></li>
           <li><a href="{{ route('organizer.staff.index') }}" class="nav-link px-2 link-dark
             {{ Request::is('organizer/staff') ? "active" : "" }}">Personal</a></li>
         </ul>
+
+        <div class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
+          <p class="mb-0">{{ \Auth::user()->name }}</p>
+        </div>
 
         <div class="dropdown text-end">
           <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="user" data-bs-toggle="dropdown" aria-expanded="false">
@@ -33,6 +37,8 @@
             </li>
           </ul>
         </div>
+
+        @livewire('tracks')
       </div>
     </div>
   </header>

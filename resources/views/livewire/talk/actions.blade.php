@@ -4,12 +4,12 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="editLabel">Editar charla</h5>
+        <h5 class="modal-title" id="editLabel">Editar grupo</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <div class="mb-3" wire:ignore>
-          <label for="events" class="form-label">Selecciona el evento relacionado a la charla</label>
+          <label for="events" class="form-label">Selecciona el evento relacionado al grupo</label>
           <select class="form-control" wire:model.defer="talk.event" id="events{{ $talk->id }}">
               @foreach($events as $event)
               <option value="{{ $event->id }}">{{ $event->title }}</option>

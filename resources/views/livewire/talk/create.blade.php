@@ -4,7 +4,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="createLabel">Dar de alta charla</h5>
+        <h5 class="modal-title" id="createLabel">Dar de alta grupo</h5>
         {{-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> --}}
       </div>
       <div class="modal-body">
@@ -15,7 +15,7 @@
                 <input type="text" wire:model.defer="cretalk.title" id="title" class="form-control" aria-describedby="titleHelp">
               </div>
               <div class="mb-3" wire:ignore>
-                <label for="event" class="form-label">Selecciona el evento relacionado a la charla</label>
+                <label for="event" class="form-label">Selecciona el evento relacionado al grupo</label>
                 <select class="form-control" wire:model.defer="cretalk.event" id="crevents">
                   @foreach($events as $event)
                   <option value="{{ $event->id }}">{{ $event->title }}</option>
