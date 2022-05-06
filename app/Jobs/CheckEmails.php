@@ -36,7 +36,6 @@ class CheckEmails implements ShouldQueue
      */
     public function handle()
     {
-        $currentEvent = 1;
         $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
         $forms = Sheets::collection($sheets->pull(0), $sheets);
 
@@ -45,7 +44,7 @@ class CheckEmails implements ShouldQueue
            $date = Carbon::create($email->date);
            if ($date->isToday()) {
                if ($email->objective == 'all') {
-                   $visitors = Visitor::where('event_id', $currentEvent)->where('approved', true)->get();
+                   $visitors = Visitor::where('event_id', substr($this->currentEvent, strrpos($this->currentEvent, ' ') + 1))->where('approved', true)->get();
 
                     $authorization = ['Authorization' => 'eyJpdiI6Ik9UUXdOVFkyT1RZek5qSTNNVGs0T0E9PSIsInZhbHVlIjoiMEwwVjFjeTVyZ3ZnWlE1U204REtkQk0vZCtSbW4rdGZ1WXg3Uzk2Z2dLST0iLCJtYWMiOiI0MzM2M2NlNDE3YjMyY2ZhNjNlZTIxNGFmMDQwOTQyNjVhMzA3ZGNlMDQzZGQ5NDNlZWY0OTIxNWNhZjI4MmUzIn0='];
 

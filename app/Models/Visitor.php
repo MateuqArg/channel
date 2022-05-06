@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Event;
 use App\Models\Meeting;
 use App\Models\Track;
+use App\Models\Group;
 
 class Visitor extends Model
 {
@@ -32,5 +33,10 @@ class Visitor extends Model
     public function tracks()
     {
         return $this->hasMany(Track::class);
+    }
+
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class, 'group_visitor');
     }
 }

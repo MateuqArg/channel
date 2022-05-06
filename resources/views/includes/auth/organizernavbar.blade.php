@@ -15,7 +15,7 @@
           <li><a href="{{ route('organizer.visitors.index') }}" class="nav-link px-2 link-dark
             {{ Request::is('organizer/visitors') ? "active" : "" }}">Asistentes</a></li>
           <li><a href="{{ route('organizer.staff.index') }}" class="nav-link px-2 link-dark
-            {{ Request::is('organizer/staff') ? "active" : "" }}">Personal</a></li>
+            {{ Request::is('organizer/staff') ? "active" : "" }}">Staff</a></li>
         </ul>
 
         <div class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">

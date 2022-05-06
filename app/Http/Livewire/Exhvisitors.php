@@ -3,11 +3,8 @@
 namespace App\Http\Livewire;
 
 use Livewire\{Component, WithPagination};
+use App\Models\{Visitor, Meeting, User, Talk};
 use Rap2hpoutre\FastExcel\FastExcel;
-use App\Models\Visitor;
-use App\Models\Meeting;
-use App\Models\User;
-use App\Models\Talk;
 use GuzzleHttp\Client;
 use Sheets;
 use Auth;
@@ -52,6 +49,21 @@ class Exhvisitors extends Component
     public function loadVisitors()
     {
         $this->readyToLoad = true;
+    }
+
+    public function update($id)
+    {
+        $visitor = Visitor::find($id);
+
+        if ($this->vip == true) {
+            $visitor->vip = true;
+        } else {
+            $visitor->vip = false;
+        }
+        $visitor->update();
+
+        $this->emit('alert', 'Asistente modificado correctamente');
+        $this->emit('cleanData');
     }
 
     public function meet($id)

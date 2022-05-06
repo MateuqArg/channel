@@ -13,7 +13,7 @@
           <li><a href="{{ route('exhibitor.invite.index') }}" class="nav-link px-2 link-dark
             {{ Request::is('exhibitor/invite') ? "active" : "" }}">Invitar clientes</a></li>
           <li><a href="{{ route('exhibitor.staff.index') }}" class="nav-link px-2 link-dark
-            {{ Request::is('exhibitor/staff') ? "active" : "" }}">Personal</a></li>
+            {{ Request::is('exhibitor/staff') ? "active" : "" }}">Staff</a></li>
         </ul>
 
         <div class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">

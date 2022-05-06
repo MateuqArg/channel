@@ -37,10 +37,10 @@ class AuthenticatedSessionController extends Controller
 
         if (Auth::user()->hasRole('visitor')) {
             $default = url('/');
-        } else if (Auth::user()->hasRole('exhibitor')) {
-            $default = route('exhibitor.visitors');
         } else if (Auth::user()->hasRole('organizer')) {
             $default = route('organizer.events.index');
+        } else if (Auth::user()->hasRole('exhibitor')) {
+            $default = route('exhibitor.visitors');
         }
 
         $talk = Talk::first();

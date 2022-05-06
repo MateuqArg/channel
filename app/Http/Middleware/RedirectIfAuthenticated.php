@@ -25,10 +25,10 @@ class RedirectIfAuthenticated
             if (Auth::guard($guard)->check()) {
                 if (Auth::user()->hasRole('visitor')) {
                     return redirect()->url('/');
-                } else if (Auth::user()->hasRole('exhibitor')) {
-                    return redirect()->route('exhibitor.visitors');
                 } else if (Auth::user()->hasRole('organizer')) {
                     return redirect()->route('organizer.events.index');
+                } else if (Auth::user()->hasRole('exhibitor')) {
+                    return redirect()->route('exhibitor.visitors');
                 }
             }
         }

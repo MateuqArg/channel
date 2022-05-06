@@ -10,26 +10,6 @@
       </div>
       <div class="modal-body">
           <div class="mb-3">
-            {{-- <div class="mb-3">
-              <label for="company" class="form-label">Empresa</label>
-              <input type="text" wire:model.defer="company" id="company" class="form-control" aria-describedby="companyHelp">
-            </div>
-            <div class="mb-3">
-              <label for="charge" class="form-label">Cargo</label>
-              <input type="text" wire:model.defer="charge" id="charge" class="form-control" aria-describedby="chargeHelp">
-            </div>
-            <div class="mb-3">
-              <label for="country" class="form-label">País</label>
-              <input type="text" wire:model.defer="country" id="country" class="form-control" aria-describedby="countryHelp">
-            </div>
-            <div class="mb-3">
-              <label for="state" class="form-label">Provincia</label>
-              <input type="text" wire:model.defer="state" id="state" class="form-control" aria-describedby="stateHelp">
-            </div>
-            <div class="mb-3">
-              <label for="city" class="form-label">Ciudad</label>
-              <input type="text" wire:model.defer="city" id="city" class="form-control" aria-describedby="cityHelp">
-            </div> --}}
             <div class="mb-3 form-check">
               <label class="form-check-label" for="vip">¿Este asistente es de tipo VIP?</label>
               <input class="form-check-input" type="checkbox" wire:model.defer="vip" id="vip" aria-describedby="vipHelp">
@@ -59,15 +39,6 @@
   });
 </script>
 <script>
-  window.livewire.on('alert', function(){
-    $('#edit{{ $visitor->id }}').modal('hide');
-    Swal.fire(
-      '¡Eliminado!',
-      'El asistente ha sido modificado',
-      'success'
-    )
-  })
-
   $(document).on("click", "#delete-btn", function () {
     Swal.fire({
       title: '¿Estás seguro?',

@@ -59,22 +59,6 @@ class Visitors extends Component
         } else {
             $visitor->vip = false;
         }
-
-        // if (isset($this->company)) {
-        //     $visitor->company = $this->company;
-        // }
-        // if (isset($this->charge)) {
-        //     $visitor->charge = $this->charge;    
-        // }
-        // if (isset($this->country)) {
-        //     $visitor->country = $this->country;
-        // }
-        // if (isset($this->state)) {
-        //     $visitor->state = $this->state;
-        // }
-        // if (isset($this->city)) {
-        //     $visitor->city = $this->city;
-        // }
         $visitor->update();
 
         $this->emit('alert', 'Asistente modificado correctamente');
