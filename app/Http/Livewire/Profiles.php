@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use Livewire\{Component, WithFileUploads};
+use Storage;
 use Auth;
 
 class Profiles extends Component
@@ -31,7 +32,8 @@ class Profiles extends Component
          $user->phone = $this->phone;   
         }
         if($this->avatar) {
-         Storage::disk('public_uploads')->put($this->avatar);
+         $avatar = Storage::disk('public_uploads')->put('avatars', $this->avatar);
+         $user->avatar = basename($avatar);
         }
         $user->save();
     }

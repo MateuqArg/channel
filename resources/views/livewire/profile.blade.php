@@ -23,10 +23,14 @@
                 <label for="phone" class="form-label">Teléfono</label>
                 <input type="number" class="form-control" id="phone" wire:model="phone">
             </div>
-            <img class="avatar rounded-circle" src="{{ asset('avatars/'.$user->avatar) }}">
+            @if ($avatar)
+                <img class="w-100" src="{{ $avatar->temporaryUrl() }}" alt="">
+            @else
+                <img class="avatar rounded-circle w-100" src="{{ asset('avatars/'.$user->avatar) }}">
+            @endif
             <div class="mb-3">
-                <label for="file" class="form-label">Avatar</label>
-                <input type="file" class="form-control" id="file" wire:model="avatar">
+                <label for="avatar" class="form-label">Avatar</label>
+                <input type="file" class="form-control" id="avatar" wire:model="avatar">
             </div>
       </div>
       <div class="modal-footer">

@@ -50,7 +50,7 @@ class OrganizerController extends Controller
         $forms = Sheets::collection($sheets->pull(0), $sheets);
 
         $file = QrCode::format('png')->size(305)->generate(route('organizer.visitor.track', ['custid' => $visitor->custid]));
-        $qr_file = 'qr.png';
+        $qr_file = $file_name = time().'.'.'png';
         Storage::disk('public_uploads')->put($qr_file, $file);
         $file = Storage::disk('public_uploads')->get($qr_file);
 
