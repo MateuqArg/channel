@@ -72,7 +72,29 @@ class Visitors extends Component
 
     public function download()
     {
-        $export = (new FastExcel(Visitors::all()))->download('asistentes.xlsx');
+        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
+        $header = $sheets->pull(0);
+        $forms = Sheets::collection($header, $sheets);
+        $all = Visitor::all();
+
+        foreach ($all as $single) {
+            $data[] = array(
+                'ID' => $single->id,
+                'ID público' => $single->custid,
+                'Evento' => $single->event->title,
+                'Nombre' => $forms[$single->form_id]['Nombre completo'],
+                'Correo' => $forms[$single->form_id]['Direccion de email'],
+                'Teléfono' => $forms[$single->form_id]['Telefono'],
+                'Empresa' => $forms[$single->form_id]['Empresa'],
+                'Cargo' => $forms[$single->form_id]['Cargo'],
+                'Provincia' => $forms[$single->form_id]['Provincia'],
+                'Ciudad' => $forms[$single->form_id]['Localidad'],
+                '¿Aprobado?' => $single->approved,
+                '¿Presente?' => $single->present,
+            );
+        }
+
+        $export = (new FastExcel($data))->download('asistentes.xlsx');
 
         $file_name = "asistentes.xlsx";
 

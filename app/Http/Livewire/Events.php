@@ -141,7 +141,19 @@ class Events extends Component
 
     public function download()
     {
-        $export = (new FastExcel(Event::all()))->download('eventos.xlsx');
+        $all = Event::all();
+
+        foreach ($all as $single) {
+            $data[] = array(
+                'ID' => $single->id,
+                'ID público' => $single->custid,
+                'Nombre' => $single->title,
+                'Fecha' => $single->date,
+                '¿Hace falta aprobar las inscripciones?' => $single->approve
+            ); 
+        }
+
+        $export = (new FastExcel($data))->download('eventos.xlsx');
 
         $file_name = "eventos.xlsx";
 

@@ -1,4 +1,4 @@
-<a data-bs-toggle="modal" data-bs-target="#create" class="btn btn-success btn-create" id="create-btn"><i class="bi bi-plus-lg"></i></a>
+<a data-bs-toggle="modal" data-bs-target="#create" class="btn btn-success btn-create" style="position: absolute;" id="create-btn"><i class="bi bi-plus-lg"></i></a>
 
 <div class="modal fade" wire:ignore.self id="create" tabindex="-1" aria-labelledby="createLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -13,14 +13,14 @@
                 <br>
                 <input type="text" wire:model.defer="cregroup.title" id="title" class="form-control" aria-describedby="titleHelp">
               </div>
-              {{-- <div class="mb-3" wire:ignore>
-                <label for="event" class="form-label">Selecciona el evento relacionado al grupo</label>
-                <select class="form-control" wire:model="group.visitor" id="visitors" multiple="multiple">
+              <div class="mb-3" wire:ignore>
+                {{-- <label for="event" class="form-label">Selecciona el evento relacionado al grupo</label> --}}
+                {{-- <select class="form-control" wire:model="cregroup.visitor" id="visitors" multiple="multiple">
                   @foreach($visitors as $visitor)
                   <option value="{{ $visitor->id }}">{{ $forms[$visitor->form_id]['Nombre completo'] }}</option>
                   @endforeach
-                </select>
-              </div> --}}
+                </select> --}}
+              </div>
           </div>
       </div>
       <div class="modal-footer">
@@ -32,11 +32,11 @@
 </div>
 
 <script>
-  // $(document).ready(function() {
-  //   $('#visitors').select2({theme: 'bootstrap-5', dropdownParent: $('#create')});
-  // });
-  // $('#visitors').on('change', function (e) {
-  //       var data = $('#visitors').select2("val");
-  //       // @this.set('group.visitor', data);
-  //   });
+  $(document).ready(function() {
+    $('#visitors').select2({theme: 'bootstrap-5', dropdownParent: $('#create')});
+  });
+  $('#visitors').on('change', function (e) {
+        var data = $('#visitors').select2("val");
+        @this.set('group.visitor', data);
+    });
 </script>

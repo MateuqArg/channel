@@ -8,31 +8,29 @@
         {{-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> --}}
       </div>
       <div class="modal-body">
+          @if(Session::has('success'))
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+              <p class="mb-0"><i class="bi bi-check-circle-fill"></i> {{ Session::get('success') }}</p>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          @endif
+          @csrf
+      <form method="POST" action="{{ route('organizer.exhibitor.create') }}" enctype="multipart/form-data">
+      @csrf
           <div class="mb-3">
-            <div class="mb-3" wire:ignore>
-                <label for="event" class="form-label">Selecciona el/los usuario/s que será expositor</label>
-                <select class="form-control" id="users" multiple="multiple">
-                  @foreach($users as $user)
-                  <option value="{{ $user->id }}">{{ $user->name }}</option>
-                  @endforeach
-                </select>
-              </div>
+              <label for="name" class="form-label">Nombre</label>
+              <input type="text" name="name" class="form-control" id="name" aria-describedby="nameHelp">
+          </div>
+          <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp">
           </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-arrow-left"></i></button>
-        <button wire:click="create()" class="btn btn-success"><i class="bi bi-send"></i> ENVIAR</button>
+        <button type="submit" class="btn btn-success"><i class="bi bi-send"></i> ENVIAR</button>
       </div>
+      </form>
     </div>
   </div>
 </div>
-
-<script>
-  $(document).ready(function() {
-    $('#users').select2({theme: 'bootstrap-5', dropdownParent: $('#create')});
-  });
-  $('#users').on('change', function (e) {
-        var data = $('#users').select2("val");
-        @this.set('user.id', data);
-    });
-</script>

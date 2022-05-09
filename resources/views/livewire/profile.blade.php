@@ -1,4 +1,4 @@
-<div class="modal avatar-card">
+<div class="modal avatar-card" wire:init="autoload">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -13,24 +13,24 @@
         @endif
             <div class="mb-3">
                 <label for="name" class="form-label">Nombre</label>
-                <input type="name" name="name" class="form-control" id="name" wire:model="name">
+                <input type="name" class="form-control" id="name" wire:model="name">
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" name="email" class="form-control" id="email" wire:model="email">
+                <input type="email" class="form-control" id="email" wire:model="email">
             </div>
             <div class="mb-3">
                 <label for="phone" class="form-label">Teléfono</label>
-                <input type="number" name="phone" class="form-control" id="phone" wire:model="phone">
+                <input type="number" class="form-control" id="phone" wire:model="phone">
             </div>
             <img class="avatar rounded-circle" src="{{ asset('avatars/'.$user->avatar) }}">
             <div class="mb-3">
                 <label for="file" class="form-label">Avatar</label>
-                <input type="file" name="avatar" class="form-control" id="file" wire:model="avatar">
+                <input type="file" class="form-control" id="file" wire:model="avatar">
             </div>
       </div>
       <div class="modal-footer">
-        <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> GUARDAR</button>
+        <button wire:click="update" class="btn btn-success"><i class="bi bi-save"></i> GUARDAR</button>
       </div>
     </div>
   </div>

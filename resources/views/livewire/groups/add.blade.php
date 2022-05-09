@@ -4,31 +4,35 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="createLabel">Dar de alta grupo</h5>
+        <h5 class="modal-title" id="createLabel">Agregar asistentes al grupo</h5>
       </div>
       <div class="modal-body">
           <div class="mb-3">
-              <div class="mb-3">
-                <label for="title" class="form-label">Titulo</label>
-                <br>
-                <input type="text" wire:model.defer="cregroup.title" id="title" class="form-control" aria-describedby="titleHelp">
+              <div class="mb-3" wire:ignore>
+                <label for="event" class="form-label">Selecciona el evento relacionado al grupo</label>
+                <select class="form-control" id="visitors" multiple="multiple">
+                  @foreach($allvisitors as $visitor)
+                  <option value="{{ $visitor->id }}">{{ $forms[$visitor->form_id]['Nombre completo'] }}</option>
+                  @endforeach
+                </select>
               </div>
           </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-arrow-left"></i></button>
-        <button wire:click="create()" class="btn btn-success"><i class="bi bi-send"></i> ENVIAR</button>
+        <button id="add" class="btn btn-success"><i class="bi bi-send"></i> ENVIAR</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  // $(document).ready(function() {
-  //   $('#visitors').select2({theme: 'bootstrap-5', dropdownParent: $('#create')});
-  // });
-  // $('#visitors').on('change', function (e) {
-  //       var data = $('#visitors').select2("val");
-  //       // @this.set('group.visitor', data);
-  //   });
+  $(document).ready(function() {
+    $('#visitors').select2({theme: 'bootstrap-5', dropdownParent: $('#create')});
+  });
+  $('#add').on('click', function (e) {
+        var data = $('#visitors').select2("val");
+        window.Livewire.emit('addVisitors', data)
+        // @this.set('visitor', data);
+    });
 </script>

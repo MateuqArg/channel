@@ -130,8 +130,6 @@ class MainController extends Controller
             $user->assignRole('exhibitor');
         }
 
-        $user->assignRole('staff');
-
         return redirect()->back()->with('success', 'Usuario confirmado correctamente');
     }
 

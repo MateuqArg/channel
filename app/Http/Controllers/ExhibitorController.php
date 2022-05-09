@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Models\{Event,  Meeting, Visitor, User, Group};
+use App\Models\{Event, Meeting, Visitor, User, Group, Talk};
 use Rap2hpoutre\FastExcel\FastExcel;
 use GuzzleHttp\Client;
 use Sheets;
@@ -44,12 +44,27 @@ class ExhibitorController extends Controller
         $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
         $forms = Sheets::collection($sheets->pull(0), $sheets);
 
-        return view('exhibitor.groups', compact('forms'));
+        $talks = Talk::where('exhibitor_id', \Auth::user()->id)->get();
+        $ids = [];
+        foreach ($talks as $talk) {
+            $ids[] = $talk->id;
+        }
+
+        $visitors = Visitor::whereHas('tracks', function($q) use($ids){
+            $q->whereIn('talk_id', $ids);
+        })->get();
+
+        return view('exhibitor.groups', compact('forms', 'visitors'));
     }
 
     public function groupShow(Request $request, $id)
     {
         return view('exhibitor.group', compact('id'));
+    }
+
+    public function groupAll(Request $request)
+    {
+        return view('exhibitor.all');
     }
 
     public function meetingAccept(Request $request, $id)
@@ -142,12 +157,12 @@ class ExhibitorController extends Controller
             'headers' => $authorization,
             'form_params' => [
                 'name' => 'Invitación a cliente: '.$request->name,
-                'subject' => 'Has sido invitado a ser organizador del evento '.$event->title,
+                'subject' => \Auth::user()->name.' lo invita al evento '.$event->title,
                 'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/header.png" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"><p style="max-width: 600px; font-size: 20px">¡Hola! '.\Auth::user()->name.' lo invita al evento '.$event->title.', para registrarte ingresa al siguiente link <a href="https://forms.gle/vG42TQ79DuYFnQkn6">AQUI</a>.</p></div></td></tr></tbody></table>',
                 'fromAlias' => 'Channel Talks',
                 'fromEmail' => 'channeltalks@mediaware.news',
                 'replyEmail' => 'channeltalks@mediaware.news',
-                'mailListsIds' => [1],
+                'mailListsIds' => [$list_id],
             ]]);
             $id = json_decode($client->getBody(), true)['data']['id'];
 

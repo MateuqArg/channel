@@ -150,16 +150,20 @@ class Exhvisitors extends Component
 
     public function download()
     {
-        $talks = Talk::where('exhibitor_id', Auth::user()->id)->get();
+        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
+        $header = $sheets->pull(0);
+        $forms = Sheets::collection($header, $sheets);
+        $all = Visitor::all();
 
-        $ids = [];
-        foreach ($talks as $talk) {
-            $ids[] = $talk->id;
+        foreach ($all as $single) {
+            $data[] = array(
+                'ID' => $single->id,
+                'ID público' => $single->custid,
+                'Nombre' => $forms[$single->form_id]['Nombre completo'],
+                'Empresa' => $forms[$single->form_id]['Empresa'],
+                'Cargo' => $forms[$single->form_id]['Cargo'],
+            );
         }
-
-        $data = Visitor::whereHas('tracks', function($q) use($ids){
-            $q->whereIn('talk_id', $ids);
-        })->get();
 
         $export = (new FastExcel($data))->download('asistentes.xlsx');
 

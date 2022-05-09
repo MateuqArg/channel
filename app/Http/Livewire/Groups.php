@@ -8,7 +8,7 @@ use Sheets;
 
 class Groups extends Component
 {
-    public $cregroup, $group;
+    public $cregroup, $visitors;
     public $listeners = ['selected'];
 
     protected $rules = [
@@ -30,22 +30,13 @@ class Groups extends Component
 
     public function render()
     {
-        $talks = Talk::where('exhibitor_id', \Auth::user()->id)->get();
-        $ids = [];
-        foreach ($talks as $talk) {
-            $ids[] = $talk->id;
-        }
-
-        $visitors = Visitor::whereHas('tracks', function($q) use($ids){
-            $q->whereIn('talk_id', $ids);
-        })->get();
 
         $groups = Group::where('exhibitor_id', \Auth::user()->id)->get();
 
         $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
         $forms = Sheets::collection($sheets->pull(0), $sheets);
 
-        return view('livewire.groups.group', compact('groups', 'visitors', 'forms'));
+        return view('livewire.groups.group', compact('groups', 'forms'));
     }
 
     public function create()
@@ -55,5 +46,14 @@ class Groups extends Component
             'exhibitor_id' => \Auth::user()->id
         ]);
         $group->save();
+    }
+
+    public function destroy($id)
+    {
+        Visitor::find($id);
+
+        $visitor->groups()->attach($group->id);
+
+        $this->emit('alert', ['title' => '¡Adiós!', 'text' => 'La charla ha sido eliminada', 'type' => 'success']);
     }
 }

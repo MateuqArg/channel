@@ -8,7 +8,7 @@ use Rap2hpoutre\FastExcel\FastExcel;
 use GuzzleHttp\Client;
 use Sheets;
 
-class Groupshow extends Component
+class Groupall extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
@@ -43,25 +43,20 @@ class Groupshow extends Component
 
     public function render()
     {
-        $group = Group::find($this->gid);
-        $visitors = Visitor::whereHas('groups', function($q) use($group){
-            $q->where('title', $group->title);
-        })->paginate($this->cant);
-
         $talks = Talk::where('exhibitor_id', \Auth::user()->id)->get();
         $ids = [];
         foreach ($talks as $talk) {
             $ids[] = $talk->id;
         }
 
-        $allvisitors = Visitor::whereHas('tracks', function($q) use($ids){
+        $visitors = Visitor::whereHas('tracks', function($q) use($ids){
             $q->whereIn('talk_id', $ids);
-        })->get();
+        })->paginate($this->cant);
 
         $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
         $forms = Sheets::collection($sheets->pull(0), $sheets);
 
-        return view('livewire.groups.show', compact('group', 'forms', 'visitors', 'allvisitors'));
+        return view('livewire.groups.all', compact('forms', 'visitors'));
     }
 
     public function loadVisitors()
@@ -91,16 +86,22 @@ class Groupshow extends Component
         // $event->save();
     }
 
-    public function sendEmail($group)
+    public function sendEmail()
     {
         $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
         $forms = Sheets::collection($sheets->pull(0), $sheets);
 
         // $visitors = Visitor::where('custid',)->get();
         if (strtolower($this->email->receiver) == 'todos') {
-            $visitors = Visitor::whereHas('groups', function($q) use($group){
-                $q->where('title', $group);
-            })->get();
+            $talks = Talk::where('exhibitor_id', \Auth::user()->id)->get();
+            $ids = [];
+            foreach ($talks as $talk) {
+                $ids[] = $talk->id;
+            }
+
+            $visitors = Visitor::whereHas('tracks', function($q) use($ids){
+                $q->whereIn('talk_id', $ids);
+            });
         }
 
         $authorization = ['Authorization' => 'eyJpdiI6Ik9UUXdOVFkyT1RZek5qSTNNVGs0T0E9PSIsInZhbHVlIjoiMEwwVjFjeTVyZ3ZnWlE1U204REtkQk0vZCtSbW4rdGZ1WXg3Uzk2Z2dLST0iLCJtYWMiOiI0MzM2M2NlNDE3YjMyY2ZhNjNlZTIxNGFmMDQwOTQyNjVhMzA3ZGNlMDQzZGQ5NDNlZWY0OTIxNWNhZjI4MmUzIn0='];
@@ -158,14 +159,22 @@ class Groupshow extends Component
 
     public function download()
     {
-        $group = Group::find($this->gid);
-        $title = $group->title;
+        $talks = Talk::where('exhibitor_id', \Auth::user()->id)->get();
+
+        $ids = [];
+        foreach ($talks as $talk) {
+            $ids[] = $talk->id;
+        }
+
+        $all = Visitor::whereHas('tracks', function($q) use($ids){
+            $q->whereIn('talk_id', $ids);
+        })->get();
 
         $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
         $header = $sheets->pull(0);
         $forms = Sheets::collection($header, $sheets);
 
-        foreach ($group->visitors as $single) {
+        foreach ($all as $single) {
             $data[] = array(
                 'ID' => $single->id,
                 'ID público' => $single->custid,
@@ -179,9 +188,9 @@ class Groupshow extends Component
                 '¿Presente?' => $single->present,
             );
         }
-        $export = (new FastExcel($data))->download($title.'.xlsx');
+        $export = (new FastExcel($data))->download('asistentes.xlsx');
 
-        $file_name = $title.'.xlsx';
+        $file_name = "asistentes.xlsx";
 
         $export->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', true);
         $export->headers->set('Content-Disposition', 'attachment; ' .

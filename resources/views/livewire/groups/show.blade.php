@@ -43,8 +43,8 @@
           <th scope="col">Ciudad</th>
         </tr>
       </thead>
+    @if(count($visitors))
       <tbody>
-        @if(count($visitors))
         @foreach($visitors as $visitor)
         <tr>
           @if(!\Auth::user()->hasRole('staff'))
@@ -68,14 +68,14 @@
         </tr>
         @endforeach
       </tbody>
+    @endif
     </table>
     @if($visitors->hasPages())
       {{ $visitors->links() }}
     @endif
-    @endif
   </div>
 
-{{-- @include('livewire.groups.add') --}}
+@include('livewire.groups.add')
 
 <script>
     // $(document).on("click", "#send-all-btn", function () {

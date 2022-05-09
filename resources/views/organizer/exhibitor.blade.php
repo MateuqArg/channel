@@ -8,7 +8,7 @@
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title">Invitar personal</h5>
+                    <h5 class="modal-title">Invitar expositor</h5>
                   </div>
                   <div class="modal-body">
                     @if(Session::has('success'))
@@ -27,26 +27,6 @@
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp">
-                    </div>
-                    <div class="mb-3">
-                        <div class="form-check form-switch">
-                          <input class="form-check-input" type="checkbox" role="switch" name="staff" id="staff" checked>
-                          <label class="form-check-label" for="staff">Crear como cuenta de solo lectura</label>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <div class="form-check">
-                          <input class="form-check-input" type="radio" name="type" value="organizador" id="organizer" checked>
-                          <label class="form-check-label" for="organizer">
-                            Organizador
-                          </label>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="radio" name="type" value="expositor" id="exhibitor">
-                          <label class="form-check-label" for="exhibitor">
-                            Expositor
-                          </label>
-                        </div>
                     </div>
                   </div>
                   <div class="modal-footer">

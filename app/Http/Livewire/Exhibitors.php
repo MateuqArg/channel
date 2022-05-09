@@ -74,7 +74,19 @@ class Exhibitors extends Component
 
     public function download()
     {
-        $export = (new FastExcel(User::all()))->download('expositores.xlsx');
+        $all = User::role('exhibitor')->get();
+
+        foreach ($all as $single) {
+            $data[] = array(
+                'ID' => $single->id,
+                'ID público' => $single->custid,
+                'Nombre' => $single->name,
+                'Email' => $single->email,
+                'Teléfono' => $single->phone,
+            ); 
+        }
+
+        $export = (new FastExcel($data))->download('expositores.xlsx');
 
         $file_name = "expositores.xlsx";
 

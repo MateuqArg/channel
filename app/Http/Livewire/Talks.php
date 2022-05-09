@@ -95,7 +95,19 @@ class Talks extends Component
 
     public function download()
     {
-        $export = (new FastExcel(Talk::all()))->download('charlas.xlsx');
+        $all = Talk::all();
+
+        foreach ($all as $single) {
+            $data[] = array(
+                'ID' => $single->id,
+                'ID público' => $single->custid,
+                'Evento' => $single->event->title,
+                'Expositor' => $single->exhibitor->name,
+                'Titulo' => $single->title,
+            ); 
+        }
+
+        $export = (new FastExcel($data))->download('charlas.xlsx');
 
         $file_name = "charlas.xlsx";
 

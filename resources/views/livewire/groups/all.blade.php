@@ -1,4 +1,10 @@
 <div class="container-fluid" wire:init="loadVisitors">
+    <div class="row">
+        <div class="col"><h3 class="m-2">Todos los contactos</h3></div>
+        <div class="col">
+            <a class="btn btn-outline-success" style="float: right;" id="send-all-btn" data-bs-toggle="modal" data-bs-target="#send"><i class="bi bi-envelope-plus"></i> Enviar correo</a>
+        </div>
+    </div>
   <div class="row">
     <div class="col d-flex gradient top-table">
       <div class="d-flex">
@@ -21,39 +27,70 @@
     <table class="table">
       <thead class="gradient">
         <tr>
-          @if(!\Auth::user()->hasRole('staff'))
+          {{-- @if(!\Auth::user()->hasRole('staff'))
           <th scope="col">Acciones</th>
-          @endif
+          @endif --}}
           <th scope="col">ID</th>
           <th scope="col">ID público</th>
           <th scope="col">Nombre</th>
+          <th scope="col">¿Presente?</th>
+          <th scope="col">Email</th>
+          <th scope="col">Teléfono</th>
           <th scope="col">Empresa</th>
           <th scope="col">Cargo</th>
+          <th scope="col">Provincia</th>
+          <th scope="col">Ciudad</th>
         </tr>
       </thead>
+    @if(count($visitors))
       <tbody>
-        @if(count($visitors))
         @foreach($visitors as $visitor)
         <tr>
-          @if(!\Auth::user()->hasRole('staff'))
+          @include('livewire.groups.allactions', ['visitor' => $visitor])
+          {{-- @if(!\Auth::user()->hasRole('staff'))
           <td>
             @if($visitor->event->id == substr($this->currentEvent, strrpos($this->currentEvent, ' ') + 1))
-            @include('livewire.exhvisitor.actions', ['visitor' => $visitor])
+            @include('livewire.groups.allactions', ['visitor' => $visitor])
             @endif
           </td>
-          @endif
+          @endif --}}
           <td>{{ $visitor->id }}</td>
           <td>{{ $visitor->custid }}</td>
           <td>{{ $forms[$visitor->form_id]['Nombre completo'] }}</td>
+          <td>{{ $visitor->present ? "Si" : "No" }}</td>
+          <td>{{ $forms[$visitor->form_id]['Direccion de email'] }}</td>
+          <td>{{ $forms[$visitor->form_id]['Telefono'] }}</td>
           <td>{{ $forms[$visitor->form_id]['Empresa'] }}</td>
           <td>{{ $forms[$visitor->form_id]['Cargo'] }}</td>
+          <td>{{ $forms[$visitor->form_id]['Provincia'] }}</td>
+          <td>{{ $forms[$visitor->form_id]['Localidad'] }}</td>
         </tr>
         @endforeach
       </tbody>
+    @endif
     </table>
     @if($visitors->hasPages())
       {{ $visitors->links() }}
     @endif
-    @endif
   </div>
+
+{{-- @include('livewire.groups.add') --}}
+
+<script>
+    // $(document).on("click", "#send-all-btn", function () {
+    //     // $('#receiver').val('Todos');
+    // });
+</script>
+<script>
+    window.livewire.on('alert', event => {
+      $('#send').modal('hide');
+      $('#create').modal('hide');
+      Swal.fire({
+        title: event.title,
+        html: event.text,
+        icon: event.type,
+        timer: 2000,
+      })
+    })
+  </script>
 </div>

@@ -22,6 +22,8 @@ use App\Http\Controllers\MainController;
 
 Route::get('/invite/{token}/{type}', [MainController::class, 'inviteEnable'])->name('staff.enable');
 Route::post('/invite/store', [MainController::class, 'inviteStore'])->name('staff.store');
+Route::get('/invite/{token}', [MainController::class, 'exhibitorEnable'])->name('exhibitor.enable');
+// Route::post('/invite/store', [MainController::class, 'inviteStore'])->name('staff.store');
 Route::get('/meeting/accept/{id}', [MainController::class, 'meetingAccept'])->name('meeting.accept');
 
 Route::get('/profile', [MainController::class, 'profile'])->name('profile');
@@ -52,7 +54,7 @@ Route::name('organizer.')->prefix('organizer')->middleware(['auth'], ['role:orga
 
     Route::name('exhibitor.')->prefix('exhibitor')->group(function () {
         Route::get('/', [OrganizerController::class, 'exhibitors'])->name('index');
-        Route::get('/create', [OrganizerController::class, 'exhibitorsCreate'])->name('create');
+        Route::post('/create', [OrganizerController::class, 'exhibitorsCreate'])->name('create');
     });
 
     Route::name('talk.')->prefix('talk')->group(function () {
@@ -77,7 +79,8 @@ Route::name('exhibitor.')->prefix('exhibitor')->middleware(['auth'], ['role:exhi
 
     Route::name('groups.')->prefix('groups')->group(function () {
         Route::get('/', [ExhibitorController::class, 'groups'])->name('index');
-        Route::get('/{id}', [ExhibitorController::class, 'groupShow'])->name('show');
+        Route::get('/show/{id}', [ExhibitorController::class, 'groupShow'])->name('show');
+        Route::get('/all', [ExhibitorController::class, 'groupAll'])->name('all');
     });
     
     Route::name('invite.')->prefix('invite')->group(function () {
