@@ -43,11 +43,6 @@ class Groupshow extends Component
 
     public function render()
     {
-        $group = Group::find($this->gid);
-        $visitors = Visitor::whereHas('groups', function($q) use($group){
-            $q->where('title', $group->title);
-        })->paginate($this->cant);
-
         $talks = Talk::where('exhibitor_id', \Auth::user()->id)->get();
         $ids = [];
         foreach ($talks as $talk) {
@@ -60,6 +55,22 @@ class Groupshow extends Component
 
         $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
         $forms = Sheets::collection($sheets->pull(0), $sheets);
+
+        foreach ($forms as $form) {
+            $names[$form['id']] = $form['Nombre completo'];
+        }
+
+        $input = preg_quote($this->search, '~');
+
+        $ids = [];
+        foreach (preg_grep('~' . $input . '~', $names) as $key => $result) {
+            $ids[] = $key;
+        }
+
+        $group = Group::find($this->gid);
+        $visitors = Visitor::whereHas('groups', function($q) use($group){
+            $q->where('title', $group->title);
+        })->orWhere('id', $ids)->paginate($this->cant);
 
         return view('livewire.groups.show', compact('group', 'forms', 'visitors', 'allvisitors'));
     }

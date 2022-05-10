@@ -32,7 +32,7 @@ class Profiles extends Component
          $user->phone = $this->phone;   
         }
         if($this->avatar) {
-         $avatar = Storage::disk('public_uploads')->put('avatars', $this->avatar);
+         $avatar = Storage::disk('public_uploads')->put('/', $this->avatar);
          $user->avatar = basename($avatar);
         }
         $user->save();

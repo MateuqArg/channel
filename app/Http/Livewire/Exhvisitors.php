@@ -37,8 +37,22 @@ class Exhvisitors extends Component
         $header = $sheets->pull(0);
         $this->forms = Sheets::collection($header, $sheets);
 
+        foreach ($this->forms as $form) {
+            $names[$form['id']] = $form['Nombre completo'];
+        }
+
+        $input = preg_quote($this->search, '~');
+
+        $ids = [];
+        foreach (preg_grep('~' . $input . '~', $names) as $key => $result) {
+            $ids[] = $key;
+        }
+
         if ($this->readyToLoad) {
-            $visitors = Visitor::where('custid', 'like', '%'.$this->search.'%')->orderBy('event_id')->paginate($this->cant);
+            $visitors = Visitor::
+            where('custid', 'like', '%'.$this->search.'%')
+            ->orWhere('id', $ids)
+            ->orderBy('event_id')->paginate($this->cant);
         } else {
             $visitors = [];
         }

@@ -24,7 +24,7 @@
 
         <div class="dropdown text-end">
           <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="user" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="https://github.com/mdo.png" width="32" height="32" class="rounded-circle">
+            <img src="{{ asset('/uploads/'.\Auth::user()->avatar) }}" width="32" height="32" class="rounded-circle">
           </a>
           <ul class="dropdown-menu text-small" aria-labelledby="user">
             <li><a class="dropdown-item" href="{{ route('profile') }}">Perfil</a></li>

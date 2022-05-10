@@ -49,12 +49,23 @@ class Groupall extends Component
             $ids[] = $talk->id;
         }
 
-        $visitors = Visitor::whereHas('tracks', function($q) use($ids){
-            $q->whereIn('talk_id', $ids);
-        })->paginate($this->cant);
-
         $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
         $forms = Sheets::collection($sheets->pull(0), $sheets);
+
+        foreach ($forms as $form) {
+            $names[$form['id']] = $form['Nombre completo'];
+        }
+
+        $input = preg_quote($this->search, '~');
+
+        $ids = [];
+        foreach (preg_grep('~' . $input . '~', $names) as $key => $result) {
+            $ids[] = $key;
+        }
+
+        $visitors = Visitor::whereHas('tracks', function($q) use($ids){
+            $q->whereIn('talk_id', $ids);
+        })->orWhere('id', $ids)->paginate($this->cant);
 
         return view('livewire.groups.all', compact('forms', 'visitors'));
     }
