@@ -70,7 +70,7 @@ class Groupshow extends Component
         $group = Group::find($this->gid);
         $visitors = Visitor::whereHas('groups', function($q) use($group){
             $q->where('title', $group->title);
-        })->orWhere('id', $ids)->paginate($this->cant);
+        })->where('id', $ids)->paginate($this->cant);
 
         return view('livewire.groups.show', compact('group', 'forms', 'visitors', 'allvisitors'));
     }

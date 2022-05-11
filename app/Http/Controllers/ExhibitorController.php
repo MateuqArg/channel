@@ -291,4 +291,10 @@ class ExhibitorController extends Controller
 
         return redirect()->back()->with('success', 'Este expositor ya existe');
     }
+
+    public function simulate(Request $request)
+    {
+        \Auth::loginUsingId(\Session::get('simulate'), true);
+        return redirect()->route('organizer.events.index');
+    }
 }

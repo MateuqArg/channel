@@ -70,6 +70,11 @@ Route::name('organizer.')->prefix('organizer')->middleware(['auth'], ['role:orga
     Route::name('visitors.')->prefix('visitors')->group(function () {
         Route::get('/', [OrganizerController::class, 'visitors'])->name('index');
     });
+
+    Route::name('simulate.')->prefix('simulate')->group(function () {
+        Route::get('/', [OrganizerController::class, 'simulateIndex'])->name('index');
+        Route::post('/send', [OrganizerController::class, 'simulate'])->name('send');
+    });
 });
 
 Route::name('exhibitor.')->prefix('exhibitor')->middleware(['auth'], ['role:exhibitor'])->group(function () {
@@ -101,6 +106,10 @@ Route::name('exhibitor.')->prefix('exhibitor')->middleware(['auth'], ['role:exhi
 
     Route::get('/talks', [ExhibitorController::class, 'talks'])->name('talks');
     Route::get('/visitors', [ExhibitorController::class, 'visitors'])->name('visitors');
+
+    Route::name('simulate.')->prefix('simulate')->group(function () {
+        Route::get('/send', [ExhibitorController::class, 'simulate'])->name('send');
+    });
 });
 
 require __DIR__.'/auth.php';

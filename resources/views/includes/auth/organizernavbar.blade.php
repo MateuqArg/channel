@@ -19,6 +19,10 @@
         </ul>
 
         <div class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
+          <a href="" id="simulate-btn" data-bs-toggle="modal" data-bs-target="#simulate" class="mb-0">Ver como expositor</a>
+        </div>
+
+        <div class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
           <p class="mb-0">{{ \Auth::user()->name }}</p>
         </div>
 
@@ -41,4 +45,37 @@
         @livewire('tracks')
       </div>
     </div>
-  </header>
+
+  <div class="modal fade" id="simulate" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="simulateLabel">Visualizar página como expositor</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="{{ route('organizer.simulate.send') }}" method="POST">
+            @csrf
+            <div class="mb-3">
+                <label for="talks" class="form-label">Seleccionar entre la lista de expositores</label>
+                <select class="form-control" name="userid" id="userid">
+                  @foreach($exhibitors as $user)
+                  <option value="{{ $user->id }}">{{ $user->name }}</option>
+                  @endforeach
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-arrow-left"></i></button>
+          <button type="submit" class="btn btn-success"><i class="bi bi-send"></i> ENVIAR</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+  $(document).ready(function() {
+    $('#userid').select2({theme: 'bootstrap-5'});
+  });
+</script>
+</header>

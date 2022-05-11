@@ -306,6 +306,7 @@ class OrganizerController extends Controller
         $visitor->present = true;
         $visitor->update();
 
+        // return \Response::download(public_path('/images/1.png'));
         return view('organizer.visitor.scan', compact('visitor', 'forms'));
     }
 
@@ -376,7 +377,7 @@ class OrganizerController extends Controller
 
         $y = $y + 20;
 
-        $max_len = 20;
+        $max_len = 18;
         $font_size = 60;
         $font_height = 30;
 
@@ -399,7 +400,8 @@ class OrganizerController extends Controller
 
         $img->save(public_path('uploads/'.$file_name));
         Storage::disk('public_uploads')->delete($qr_file);
-        return $img->response("png");
+        return \Response::download(public_path('uploads/'.$file_name));
+        // return $img->response("png");
     }
 
     public function visitorTrack(Request $request, $custid)
@@ -538,6 +540,18 @@ class OrganizerController extends Controller
     public function staffIndex()
     {
         return view('organizer.staff');
+    }
+
+    public function simulateIndex()
+    {
+        return view('organizer.simulate');
+    }
+
+    public function simulate(Request $request)
+    {
+        Session::put('simulate', Auth::user()->id);
+        Auth::loginUsingId($request->userid, true);
+        return redirect()->route('exhibitor.visitors');
     }
 
     // public function staffSend(Request $request)

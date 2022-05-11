@@ -37,20 +37,33 @@ class Visitors extends Component
         $this->forms = Sheets::collection($header, $sheets);
 
         foreach ($this->forms as $form) {
-            $names[$form['id']] = $form['Nombre completo'];
+            $names[$form['id']] = strtolower($form['Nombre completo']);
         }
 
-        $input = preg_quote($this->search, '~');
+        foreach ($this->forms as $form) {
+            $companies[$form['id']] = strtolower($form['Empresa']);
+        }
+
+        if (substr($this->search, 0, 4) == 'http') {
+//return redirect()->to('/organizer/visitor/'.substr($this->search, -6));
+            $this->search = substr($this->search, -6);
+        }
+
+        $input = preg_quote(strtolower($this->search), '~');
 
         $ids = [];
         foreach (preg_grep('~' . $input . '~', $names) as $key => $result) {
             $ids[] = $key;
         }
 
+        foreach (preg_grep('~' . $input . '~', $companies) as $key => $result) {
+            $ids[] = $key;
+        }
+
         if ($this->readyToLoad) {
             $visitors = Visitor::
             where('custid', 'like', '%'.$this->search.'%')
-            ->orWhere('id', $ids)
+            ->orWhereIn('id', $ids)
             ->orderBy('event_id')->paginate($this->cant);
         } else {
             $visitors = [];

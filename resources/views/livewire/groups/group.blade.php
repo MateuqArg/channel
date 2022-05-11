@@ -15,4 +15,16 @@
   @if(!\Auth::user()->hasRole('staff'))
   @include('livewire.groups.create')
   @endif
+
+  <script>
+    window.livewire.on('alert', event => {
+      $('#create').modal('hide');
+      Swal.fire({
+        title: event.title,
+        html: event.text,
+        icon: event.type,
+        timer: 2000,
+      })
+    })
+  </script>
 </div>

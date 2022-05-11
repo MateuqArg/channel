@@ -8,13 +8,13 @@ use Sheets;
 
 class Groups extends Component
 {
-    public $cregroup, $visitors;
+    public $cregroup, $title, $visitors;
     public $listeners = ['selected'];
 
-    protected $rules = [
-        'cregroup.title' => 'required',
-        'cregroup.visitor' => 'array',
-    ];
+    // protected $rules = [
+    //     'cregroup.title' => 'required',
+    //     'cregroup.visitor' => 'array',
+    // ];
 
     public function mount(Group $group)
     {
@@ -41,11 +41,14 @@ class Groups extends Component
 
     public function create()
     {
+        // dd($this->title);
         $group = new Group([
-            'title' => $this->group->title,
+            'title' => $this->title,
             'exhibitor_id' => \Auth::user()->id
         ]);
         $group->save();
+
+        $this->emit('alert', ['title' => '¡Agregado!', 'text' => 'El grupo ha sido dado de alta', 'type' => 'success']);
     }
 
     public function destroy($id)

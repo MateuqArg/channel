@@ -4,9 +4,7 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use Rap2hpoutre\FastExcel\FastExcel;
-use App\Models\Talk;
-use App\Models\Event;
-use App\Models\User;
+use App\Models\{Talk, Event, User, Group};
 
 class Talks extends Component
 {
@@ -62,6 +60,12 @@ class Talks extends Component
             'title' => $this->cretalk->title
         ]);
         $talk->save();
+
+        $group = new Group([
+            'title' => $this->cretalk->title,
+            'exhibitor_id' => $this->cretalk->exhibitor,
+        ]);
+        $group->save();
 
         $this->emit('alert', ['title' => '¡Una más!', 'text' => 'La charla ha sido dada de alta', 'type' => 'success']);
         $this->emit('refresh');

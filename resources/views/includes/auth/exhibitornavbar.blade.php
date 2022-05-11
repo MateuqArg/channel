@@ -16,6 +16,12 @@
             {{ Request::is('exhibitor/staff') ? "active" : "" }}">Staff</a></li>
         </ul>
 
+        @if (Session::get('simulate'))
+        <div class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
+          <a href="{{ route('exhibitor.simulate.send') }}" class="mb-0">Ver como organizador</a>
+        </div>
+        @endif
+
         <div class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
           <p class="mb-0">{{ \Auth::user()->name }}</p>
         </div>

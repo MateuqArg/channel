@@ -4,7 +4,7 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Session;
-use App\Models\{Talk, Track, Visitor};
+use App\Models\{Talk, Track, Visitor, Group};
 
 class Tracks extends Component
 {
@@ -51,14 +51,17 @@ class Tracks extends Component
         if (!empty($visitor)) {
             $check = Track::where('visitor_id', $visitor->id)->where('talk_id', Session::get('talk_id'))->first();
 
-            if (empty($check)) {
+            // if (empty($check)) {
                 $track = new Track([
                     'visitor_id' => $visitor->id,
                     'talk_id' => Session::get('talk_id'),
                 ]);
                 $track->save();
-
-            }
+// dd(Session::get('talk'));
+                $group = Group::where('title', Session::get('talk'))->first();
+                // dd($group->id);
+                $visitor->groups()->attach($group->id);
+            // }
             $this->link = null;
             $this->emit('alert', ['title' => '¡Aceptado!', 'text' => 'El ingreso ha sido registrado correctamente', 'type' => 'success']);
         } else {

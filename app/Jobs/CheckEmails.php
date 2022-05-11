@@ -25,8 +25,6 @@ class CheckEmails implements ShouldQueue
      */
     public function __construct()
     {
-        $this->spread = '1KZXp18tUAQvlpHsI9n8QIH24osjQuECQ0hso7fjZ-Nw';
-        $this->currentEvent = 'Respuestas de formulario 1';
     }
 
     /**
@@ -36,7 +34,10 @@ class CheckEmails implements ShouldQueue
      */
     public function handle()
     {
-        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
+        $spread = '1KZXp18tUAQvlpHsI9n8QIH24osjQuECQ0hso7fjZ-Nw';
+        $currentEvent = 'Respuestas de formulario 1';
+
+        $sheets = Sheets::spreadsheet($spread)->sheet($currentEvent)->get();
         $forms = Sheets::collection($sheets->pull(0), $sheets);
 
         $emails = Email::where('sended', false)->get();
@@ -44,7 +45,7 @@ class CheckEmails implements ShouldQueue
            $date = Carbon::create($email->date);
            if ($date->isToday()) {
                if ($email->objective == 'all') {
-                   $visitors = Visitor::where('event_id', substr($this->currentEvent, strrpos($this->currentEvent, ' ') + 1))->where('approved', true)->get();
+                   $visitors = Visitor::where('event_id', substr($currentEvent, strrpos($currentEvent, ' ') + 1))->where('approved', true)->get();
 
                     $authorization = ['Authorization' => 'eyJpdiI6Ik9UUXdOVFkyT1RZek5qSTNNVGs0T0E9PSIsInZhbHVlIjoiMEwwVjFjeTVyZ3ZnWlE1U204REtkQk0vZCtSbW4rdGZ1WXg3Uzk2Z2dLST0iLCJtYWMiOiI0MzM2M2NlNDE3YjMyY2ZhNjNlZTIxNGFmMDQwOTQyNjVhMzA3ZGNlMDQzZGQ5NDNlZWY0OTIxNWNhZjI4MmUzIn0='];
 
@@ -57,6 +58,7 @@ class CheckEmails implements ShouldQueue
                     $list_id = json_decode($client->getBody(), true)['data']['id'];
 
                     foreach ($visitors as $visitor) {
+                        $contacts_ids = [];
                         $client = new Client();
                         $client = $client->request('POST', 'https://api.esmsv.com/v1/contacts/getall', [
                         'headers' => $authorization,
@@ -64,15 +66,15 @@ class CheckEmails implements ShouldQueue
                             'email' => $forms[$visitor->form_id]['Direccion de email'],
                         ]]);
                         $contacts_ids[] = json_decode($client->getBody(), true)['data']['data'][0]['id'];
-                    }
 
-                    $client = new Client();
-                    $client = $client->request('POST', 'https://api.esmsv.com/v1/contacts/suscribe', [
-                    'headers' => $authorization,
-                    'form_params' => [
-                        'listId' => $list_id,
-                        'contactsIds' => $contacts_ids
-                    ]]);
+                        $client = new Client();
+                        $client = $client->request('POST', 'https://api.esmsv.com/v1/contacts/suscribe', [
+                        'headers' => $authorization,
+                        'form_params' => [
+                            'listId' => $list_id,
+                            'contactsIds' => $contacts_ids
+                        ]]);
+                    }
 
                     $client = new Client();
                     $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/create', [
@@ -88,18 +90,18 @@ class CheckEmails implements ShouldQueue
                     ]]);
                     $id = json_decode($client->getBody(), true)['data']['id'];
 
-                    $client = new Client();
-                    $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/send', [
-                    'headers' => $authorization,
-                    'form_params' => [
-                        'id' => $id,
-                        'sendNow' => 1
-                    ]]);
+                    // $client = new Client();
+                    // $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/send', [
+                    // 'headers' => $authorization,
+                    // 'form_params' => [
+                    //     'id' => $id,
+                    //     'sendNow' => 1
+                    // ]]);
                }
-           }
 
-           $email->sended = true;
-           $email->update();
+                $email->sended = true;
+                $email->update();
+           }
         }
     }
 }

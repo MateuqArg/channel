@@ -11,7 +11,7 @@
               <div class="mb-3">
                 <label for="title" class="form-label">Titulo</label>
                 <br>
-                <input type="text" wire:model.defer="cregroup.title" id="title" class="form-control" aria-describedby="titleHelp">
+                <input type="text" wire:model.defer="title" id="title" class="form-control" aria-describedby="titleHelp">
               </div>
               <div class="mb-3" wire:ignore>
                 {{-- <label for="event" class="form-label">Selecciona el evento relacionado al grupo</label> --}}
