@@ -27,9 +27,9 @@
     <table class="table">
       <thead class="gradient">
         <tr>
-          {{-- @if(!\Auth::user()->hasRole('staff'))
+          @if(!\Auth::user()->hasRole('staff'))
           <th scope="col">Acciones</th>
-          @endif --}}
+          @endif
           <th scope="col">ID</th>
           <th scope="col">ID público</th>
           <th scope="col">Nombre</th>
@@ -46,14 +46,14 @@
       <tbody>
         @foreach($visitors as $visitor)
         <tr>
-          @include('livewire.groups.allactions', ['visitor' => $visitor])
-          {{-- @if(!\Auth::user()->hasRole('staff'))
+          {{-- @include('livewire.groups.allactions', ['visitor' => $visitor]) --}}
+          @if(!\Auth::user()->hasRole('staff'))
           <td>
             @if($visitor->event->id == substr($this->currentEvent, strrpos($this->currentEvent, ' ') + 1))
             @include('livewire.groups.allactions', ['visitor' => $visitor])
             @endif
           </td>
-          @endif --}}
+          @endif
           <td>{{ $visitor->id }}</td>
           <td>{{ $visitor->custid }}</td>
           <td>{{ $forms[$visitor->form_id]['Nombre completo'] }}</td>
@@ -77,9 +77,9 @@
 {{-- @include('livewire.groups.add') --}}
 
 <script>
-    // $(document).on("click", "#send-all-btn", function () {
-    //     // $('#receiver').val('Todos');
-    // });
+    $(document).on("click", "#send-all-btn", function () {
+        $('#receiver').val('todos');
+    });
 </script>
 <script>
     window.livewire.on('alert', event => {

@@ -13,7 +13,7 @@ class Groupall extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
-    public $email, $visitor, $search, $gid;
+    public $email, $visitor, $search, $gid, $receiver;
     public $readyToLoad = false;
     public $cant = '10';
     public $listeners = ['addVisitors'];
@@ -97,8 +97,9 @@ class Groupall extends Component
         // $event->save();
     }
 
-    public function sendEmail()
+    public function sendEmail($data)
     {
+        dd($data);
         $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
         $forms = Sheets::collection($sheets->pull(0), $sheets);
 
@@ -212,5 +213,10 @@ class Groupall extends Component
 
         $this->emit('alert', ['title' => '¡Descargado!', 'text' => 'El archivo ha sido descargado', 'type' => 'success']);
         return $export;
+    }
+
+    public function selected($data)
+    {
+        $this->receiver = $data;        
     }
 }

@@ -57,7 +57,7 @@ class Tracks extends Component
                     'talk_id' => Session::get('talk_id'),
                 ]);
                 $track->save();
-// dd(Session::get('talk'));
+
                 $group = Group::where('title', Session::get('talk'))->first();
                 // dd($group->id);
                 $visitor->groups()->attach($group->id);

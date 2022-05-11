@@ -1,4 +1,4 @@
-{{-- <a id="send-btn" data-receiver="{{ $forms[$visitor->form_id]['Nombre completo'] }}" data-bs-toggle="modal"data-bs-target="#send"><i class="bi bi-envelope btn btn-outline-success"></i></a> --}}
+<a id="send-btn" data-receiver="{{ $forms[$visitor->form_id]['Nombre completo'] }}" data-bs-toggle="modal"data-bs-target="#send"><i class="bi bi-envelope btn btn-outline-success"></i></a>
 {{-- <a id="delete-btn" data-id="{{ $visitor->id }}"><i class="bi bi-trash btn btn-outline-danger"></i></a> --}}
 <div class="modal fade" wire:ignore.self id="send" tabindex="-1" aria-labelledby="createLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -10,11 +10,11 @@
       <div class="modal-body">
           <div class="mb-3">
             <div class="mb-3">
-              <label for="title" class="form-label">Destinatario</label>
+              {{-- <label for="title" class="form-label">Destinatario</label>
               <input type="text" wire:model="email.receiver" id="receiver" class="form-control" aria-describedBy="receiverHelp">
               <div id="passwordHelpBlock" class="form-text">
                 En caso de enviar a todos los contactos escribe "todos" en el campo
-              </div>
+              </div> --}}
             </div>
             <div class="mb-3">
               <label for="title" class="form-label">Asunto</label>
@@ -36,7 +36,8 @@
 <script>
   $(document).on("click", "#send-btn", function () {
       // $('#receiver').val($(this).data('receiver'));
-      // @this.set('email.subject', 'asdfajsk');
+      // @this.set('receiver', 'asdfajsk');
+      // window.Livewire.emit('selected', 'sadasd')
   });
   
   $(document).on("click", "#delete-btn", function () {

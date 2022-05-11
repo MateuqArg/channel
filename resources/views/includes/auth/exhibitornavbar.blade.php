@@ -28,7 +28,11 @@
 
         <div class="dropdown text-end">
           <a href="" class="d-block link-dark text-decoration-none dropdown-toggle" id="user" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="{{ asset('/uploads/'.\Auth::user()->avatar) }}" width="32" height="32" class="rounded-circle">
+            @if(\Auth::user()->avatar <> null)
+              <img src="{{ asset('/uploads/'.\Auth::user()->avatar) }}" width="32" height="32" class="rounded-circle">
+            @else
+              <img src="{{ asset('/uploads/default.svg') }}" width="32" height="32" class="rounded-circle">
+            @endif
           </a>
           <ul class="dropdown-menu text-small" aria-labelledby="user">
             <li><a class="dropdown-item" href="{{ route('profile') }}">Perfil</a></li>

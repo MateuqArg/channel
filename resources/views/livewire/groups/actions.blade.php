@@ -1,4 +1,4 @@
-{{-- <a id="send-btn" data-receiver="{{ $forms[$visitor->form_id]['Nombre completo'] }}" data-bs-toggle="modal"data-bs-target="#send"><i class="bi bi-envelope btn btn-outline-success"></i></a> --}}
+<a id="send-btn" data-receiver="{{ $forms[$visitor->form_id]['Nombre completo'] }}" data-bs-toggle="modal"data-bs-target="#send"><i class="bi bi-envelope btn btn-outline-success"></i></a>
 <a id="delete-btn" data-id="{{ $visitor->id }}"><i class="bi bi-trash btn btn-outline-danger"></i></a>
 <div class="modal fade" wire:ignore.self id="send" tabindex="-1" aria-labelledby="createLabel" aria-hidden="true">
   <div class="modal-dialog">
