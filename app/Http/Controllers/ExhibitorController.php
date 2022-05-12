@@ -13,6 +13,7 @@ class ExhibitorController extends Controller
 {
     public function __construct()
     {
+        $this->middleware('auth');
         $this->spread = '1KZXp18tUAQvlpHsI9n8QIH24osjQuECQ0hso7fjZ-Nw';
         $this->currentEvent = 'Respuestas de formulario 1';
     }

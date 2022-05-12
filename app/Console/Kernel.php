@@ -18,7 +18,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->job(new CheckEmails)->daily();
-        $schedule->job(new CheckForms)->everyTenMinutes();
+        $schedule->job(new CheckForms)->everyMinute();
     }
 
     /**

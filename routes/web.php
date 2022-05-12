@@ -36,7 +36,7 @@ Route::get('/profile', [MainController::class, 'profile'])->name('profile');
 //     });
 // });
 
-Route::name('organizer.')->prefix('organizer')->middleware(['auth'], ['role:organizer'])->group(function () {
+Route::name('organizer.')->prefix('organizer')->middleware(['role:organizer'])->group(function () {
     Route::name('events.')->prefix('events')->group(function () {
         Route::get('/', [OrganizerController::class, 'eventsIndex'])->name('index');
         // Route::get('/{id}', [OrganizerController::class, 'eventsShow'])->name('show');
@@ -77,7 +77,7 @@ Route::name('organizer.')->prefix('organizer')->middleware(['auth'], ['role:orga
     });
 });
 
-Route::name('exhibitor.')->prefix('exhibitor')->middleware(['auth'], ['role:exhibitor'])->group(function () {
+Route::name('exhibitor.')->prefix('exhibitor')->middleware(['role:exhibitor'])->group(function () {
     Route::name('visitors.')->prefix('visitors')->group(function () {
         Route::get('/', [ExhibitorController::class, 'visitors'])->name('index');
     });
