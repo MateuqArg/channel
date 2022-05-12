@@ -7,13 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Session;
 use Spatie\Permission\Models\Role;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use App\Models\Event;
-use App\Models\Visitor;
-use App\Models\User;
-use App\Models\Talk;
-use App\Models\Track;
-use App\Models\Meeting;
-use App\Models\Email;
+use App\Models\{Event, Visitor, User, Talk, Track, Meeting, Email, Group};
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Sheets;
@@ -189,7 +183,7 @@ class OrganizerController extends Controller
                     $client = $client->request('POST', 'https://api.esmsv.com/v1/listscontacts/create', [
                     'headers' => $authorization,
                     'form_params' => [
-                        'name' => 'Reunión con '.$forms[$visitor->form_id]['Nombre completo'],
+                        'name' => 'Reunión con '.$forms[$visitor->form_id]['Nombre completo'].rand(),
                     ]]);
                     $list_id = json_decode($client->getBody(), true)['data']['id'];
 
@@ -256,7 +250,7 @@ class OrganizerController extends Controller
                     $client = $client->request('POST', 'https://api.esmsv.com/v1/listscontacts/create', [
                     'headers' => $authorization,
                     'form_params' => [
-                        'name' => 'Ingreso VIP: '.$forms[$visitor->form_id]['Nombre completo'],
+                        'name' => 'Ingreso VIP: '.$forms[$visitor->form_id]['Nombre completo'].rand(),
                     ]]);
                     $list_id = json_decode($client->getBody(), true)['data']['id'];
 
@@ -292,13 +286,13 @@ class OrganizerController extends Controller
                     ]]);
                     $id = json_decode($client->getBody(), true)['data']['id'];
 
-                    // $client = new Client();
-                    // $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/send', [
-                    // 'headers' => $authorization,
-                    // 'form_params' => [
-                    //     'id' => $id,
-                    //     'sendNow' => 1
-                    // ]]);
+                    $client = new Client();
+                    $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/send', [
+                    'headers' => $authorization,
+                    'form_params' => [
+                        'id' => $id,
+                        'sendNow' => 1
+                    ]]);
                 }
             }
         }
@@ -335,8 +329,10 @@ class OrganizerController extends Controller
         $font_height = 35;
 
         $text = ucwords(strtolower(explode(' ', $forms[$visitor->form_id]['Nombre completo'], 2)[0]));
-        $text = $text .' '. ucwords(strtolower(explode(' ', $forms[$visitor->form_id]['Nombre completo'], 2)[1]));
-
+        if (isset(explode(' ', $forms[$visitor->form_id]['Nombre completo'], 2)[1])) {
+            $text = $text .' '. ucwords(strtolower(explode(' ', $forms[$visitor->form_id]['Nombre completo'], 2)[1]));
+        }
+        
         $lines = explode("\n", wordwrap($text, $max_len));
         $y = 450 - ((count($lines) - 1) * $font_height);
         $img = Image::canvas($width, 800, '#fff');
@@ -418,6 +414,9 @@ class OrganizerController extends Controller
                     'talk_id' => Session::get('talk_id'),
                 ]);
                 $track->save();
+// dd(Session::get('talk'));
+                $group = Group::where('title', Session::get('talk'))->first();
+                $visitor->groups()->attach($group->id);
             }
         }
 
@@ -549,8 +548,10 @@ class OrganizerController extends Controller
 
     public function simulate(Request $request)
     {
+        $request->session()->flush();
         Session::put('simulate', Auth::user()->id);
         Auth::loginUsingId($request->userid, true);
+        // dd(Session::get('talk_id'));
         return redirect()->route('exhibitor.visitors');
     }
 

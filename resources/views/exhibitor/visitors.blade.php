@@ -13,8 +13,6 @@
   </div>
  @endif
 
-@livewire('exhvisitors')
-
 <div class="modal fade" id="meetings" tabindex="-1" aria-labelledby="meetingsLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -67,6 +65,8 @@
     </div>
   </div>
 </div>
+
+@livewire('exhvisitors')
 
 <script>
 	@if(Session::has('success'))

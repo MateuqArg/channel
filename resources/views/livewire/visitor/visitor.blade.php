@@ -40,7 +40,11 @@
       <tbody>
         @if(count($visitors))
         @foreach($visitors as $visitor)
+        @if($visitor->vip)
+        <tr class="table-danger">
+        @else
         <tr>
+        @endif
           @if(!\Auth::user()->hasRole('staff'))
           <td>
             @if($visitor->event->id == substr($this->currentEvent, strrpos($this->currentEvent, ' ') + 1))

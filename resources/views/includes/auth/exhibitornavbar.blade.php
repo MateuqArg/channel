@@ -45,6 +45,8 @@
             </li>
           </ul>
         </div>
+
+        @livewire('tracks')
       </div>
     </div>
   </header>

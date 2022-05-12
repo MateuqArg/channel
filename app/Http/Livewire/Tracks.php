@@ -18,7 +18,12 @@ class Tracks extends Component
 
     public function render()
     {
-        $talks = Talk::where('event_id', substr($this->currentEvent, strrpos($this->currentEvent, ' ') + 1))->get();
+        if (\Auth::user()->hasRole('organizer')) {
+            $talks = Talk::where('event_id', substr($this->currentEvent, strrpos($this->currentEvent, ' ') + 1))->get();
+        } else if (\Auth::user()->hasRole('exhibitor')) {
+            $talks = Talk::where('event_id', substr($this->currentEvent, strrpos($this->currentEvent, ' ') + 1))
+            ->where('exhibitor_id', \Auth::user()->id)->get();
+        }
 
         return view('livewire.qrnav', compact('talks'));
     }
@@ -26,7 +31,12 @@ class Tracks extends Component
     public function changeTrack()
     {
         if ($this->talk == null) {
-            $talk = Talk::first();
+            if (\Auth::user()->hasRole('organizer')) {
+                $talk = Talk::first();
+            } else if (\Auth::user()->hasRole('exhibitor')) {
+                $talk = Talk::where('exhibitor_id', \Auth::user()->id)->first();
+            }
+
             Session::put('talk', $talk->title);
             Session::put('talk_id', $talk->id);
         } else {
@@ -34,24 +44,16 @@ class Tracks extends Component
             Session::put('talk', $talk->title);
             Session::put('talk_id', $talk->id);
         }
-
-        // dd(substr($this->link, -6));
     }
-
-    // public function loadTrack()
-    // {
-    //     $this->talk = Session::get('talk_id');
-    //     // $this->talk->id = Session::get('talk_id');
-    //     dd($this->talk);
-    // }
 
     public function barScanner()
     {
         $visitor = Visitor::where('custid', substr($this->link, -6))->first();
-        if (!empty($visitor)) {
-            $check = Track::where('visitor_id', $visitor->id)->where('talk_id', Session::get('talk_id'))->first();
 
-            // if (empty($check)) {
+        if (!empty($visitor)) {
+            $check = Track::where('visitor_id', $visitor->id)->where('talk_id', Session::get('talk_id'))->where('extra', null)->first();
+
+            if (empty($check)) {
                 $track = new Track([
                     'visitor_id' => $visitor->id,
                     'talk_id' => Session::get('talk_id'),
@@ -59,9 +61,9 @@ class Tracks extends Component
                 $track->save();
 
                 $group = Group::where('title', Session::get('talk'))->first();
-                // dd($group->id);
+
                 $visitor->groups()->attach($group->id);
-            // }
+            }
             $this->link = null;
             $this->emit('alert', ['title' => '¡Aceptado!', 'text' => 'El ingreso ha sido registrado correctamente', 'type' => 'success']);
         } else {

@@ -82,6 +82,11 @@ Route::name('exhibitor.')->prefix('exhibitor')->middleware(['auth'], ['role:exhi
         Route::get('/', [ExhibitorController::class, 'visitors'])->name('index');
     });
 
+    Route::name('visitor.')->prefix('visitor')->group(function () {
+        Route::get('/track/{custid}', [ExhibitorController::class, 'visitorTrack'])->name('track');
+        Route::get('/store/{id}', [ExhibitorController::class, 'trackStore'])->name('store');
+    });
+
     Route::name('groups.')->prefix('groups')->group(function () {
         Route::get('/', [ExhibitorController::class, 'groups'])->name('index');
         Route::get('/show/{id}', [ExhibitorController::class, 'groupShow'])->name('show');

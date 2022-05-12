@@ -1,4 +1,4 @@
-<div>
+<div wire:init="changeTrack">
 <div class="col-12 col-lg-auto ms-3 mb-lg-0 me-lg-3">
     <a id="qr-btn" data-bs-toggle="modal" data-bs-target="#qr"><i class="bi bi-qr-code-scan btn btn-outline-success"></i></a>
 </div>

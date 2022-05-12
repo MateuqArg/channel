@@ -3,20 +3,20 @@
 @include('includes.auth.organizernavbar')
 <div class="container">
   <div class="row mt-4">
-    <div class="col"></div>
-    <div class="col align-self-center">
+    <div class="col-4"></div>
+    <div class="col-3 align-self-center">
       <p>La impresión de la credencial debería haber sido enviada automáticamente, en caso de no ser así podés reintentar el proceso con el siguiente botón <a href="{{ route('organizer.visitor.print', ['custid' => $visitor->custid]) }}">IMPRIMIR</a></p>
       <h4>Verificar datos personales</h4>
       <p>Nombre: {{ $forms[$visitor->form_id]['Nombre completo'] }} <br>
           Empresa: {{ $forms[$visitor->form_id]['Empresa'] }}<br>
           Cargo: {{ $forms[$visitor->form_id]['Cargo'] }}<br>
           @if($visitor->vip == true)
-            *Este usuario es VIP
+          <h3 class="alert alert-success"><i class="bi bi-award"></i> Este usuario es VIP</h3>
           @endif
       </p>
-      <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(300)->generate(route('organizer.visitor.track', ['custid' => $visitor->custid]))) !!} ">
+      <img class="w-100" src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(300)->generate(route('organizer.visitor.track', ['custid' => $visitor->custid]))) !!} ">
     </div>
-    <div class="col"></div>
+    <div class="col-4"></div>
   </div>
 </div>
 

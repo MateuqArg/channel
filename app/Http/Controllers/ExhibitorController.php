@@ -32,7 +32,7 @@ class ExhibitorController extends Controller
 
     public function visitors()
     {
-        $meetings = Meeting::where('approved', null)->where('exhibitor', \Auth::user()->name)->where('requested', 'visitor')->get();
+        $meetings = Meeting::where('approved', null)->where('exhibitor', \Auth::user()->id)->where('requested', 'visitor')->get();
         $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
         $forms = Sheets::collection($sheets->pull(0), $sheets);
 
@@ -178,20 +178,6 @@ class ExhibitorController extends Controller
         return redirect()->back()->with('success', 'El cliente ha sido invitado');
     }
 
-    // public function visitorsDownload(Request $request)
-    // {
-    //     // $visitors = 
-
-    //     $request->excel->storeAs('/', 'excels/'.$custid.'.'.$ext, 'public_uploads');
-    //     $collection = fastexcel()->import(public_path().'/excels/'.$custid.'.'.$ext);
-
-    //     unlink(public_path().'/excels/'.$custid.'.'.$ext);
-        
-    //     dd($collection);
-
-    //     // return redirect()->back()->with('successrequest', 'Reunión solicitada');
-    // }
-
     public function staffIndex()
     {
         return view('exhibitor.staff');
@@ -290,6 +276,29 @@ class ExhibitorController extends Controller
         }
 
         return redirect()->back()->with('success', 'Este expositor ya existe');
+    }
+
+    public function visitorTrack(Request $request, $custid)
+    {
+        $visitor = Visitor::where('custid', $custid)->first();
+        $entrys = Track::where('visitor_id', $visitor->id)->where('extra', 'enter')->first();
+
+        if (!empty($entrys)) {
+            $check = Track::where('visitor_id', $visitor->id)->where('talk_id', Session::get('talk_id'))->first();
+            // dd($check);
+            if (empty($check)) {
+                $track = new Track([
+                    'visitor_id' => $visitor->id,
+                    'talk_id' => Session::get('talk_id'),
+                ]);
+                $track->save();
+
+                $group = Group::where('title', Session::get('talk'))->first();
+                $visitor->groups()->attach($group->id);
+            }
+        }
+
+        return redirect()->back()->with('alert');
     }
 
     public function simulate(Request $request)
