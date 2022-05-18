@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Event;
-use App\Models\User;
-use App\Models\Visitor;
-use App\Models\Meeting;
+use Illuminate\Support\Facades\Artisan;
+use App\Models\{Event, User, Visitor, Meeting};
 use Auth;
 
 class MainController extends Controller
@@ -140,5 +138,11 @@ class MainController extends Controller
         $meeting->update();
 
         return view('main.meetaccept');
+    }
+
+    public function updateForms()
+    {
+        Artisan::call('schedule:run');
+        return response()->json(['data' => 'Actualizado'], 201);
     }
 }

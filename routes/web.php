@@ -25,6 +25,7 @@ Route::post('/invite/store', [MainController::class, 'inviteStore'])->name('staf
 Route::get('/invite/{token}', [MainController::class, 'exhibitorEnable'])->name('exhibitor.enable');
 // Route::post('/invite/store', [MainController::class, 'inviteStore'])->name('staff.store');
 Route::get('/meeting/accept/{id}', [MainController::class, 'meetingAccept'])->name('meeting.accept');
+Route::get('/updateforms', [MainController::class, 'updateForms'])->name('forms');
 
 Route::get('/profile', [MainController::class, 'profile'])->name('profile');
 

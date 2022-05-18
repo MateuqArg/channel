@@ -1,5 +1,5 @@
 <a id="edit-btn" data-bs-toggle="modal" data-bs-target="#edit{{ $visitor->id }}" data-visitor="{{ $visitor }}"><i class="bi bi-award btn btn-outline-primary"></i></a>
-<a href="{{ route('organizer.visitor.scan', ['custid' => $visitor->custid]) }}"><i class="bi bi-printer btn btn-outline-success"></i></a>
+<a href="{{ route('organizer.visitor.scan', ['custid' => $visitor->custid]) }}" target="_blank"><i class="bi bi-printer btn btn-outline-success"></i></a>
 {{-- <a id="delete-btn" data-id="{{ $visitor->id }}" ><i class="bi bi-trash btn btn-outline-danger"></i></a> --}}
 <div class="modal fade" wire:ignore.self id="edit{{ $visitor->id }}" tabindex="-1" aria-labelledby="createLabel" aria-hidden="true">
   <div class="modal-dialog">

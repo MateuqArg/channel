@@ -24,7 +24,7 @@ class Groups extends Component
 
     public function __construct()
     {
-        $this->spread = '1KZXp18tUAQvlpHsI9n8QIH24osjQuECQ0hso7fjZ-Nw';
+        $this->spread = '1qCqKCFDEskSdIHq0p7lWwZupleeRG5nBI7on7_uwqmE';
         $this->currentEvent = 'Respuestas de formulario 1';
     }
 
@@ -42,6 +42,18 @@ class Groups extends Component
     public function create()
     {
         // dd($this->title);
+        do {
+            $custid = createCustomid();
+        } while (Talk::where('custid', $custid)->first() <> null);
+
+        $talk = new Talk([
+            'custid' => $custid,
+            'event_id' => substr($this->currentEvent, strrpos($this->currentEvent, ' ')),
+            'exhibitor_id' => \Auth::user()->id,
+            'title' => $this->title
+        ]);
+        $talk->save();
+
         $group = new Group([
             'title' => $this->title,
             'exhibitor_id' => \Auth::user()->id

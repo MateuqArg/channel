@@ -14,7 +14,7 @@ class ExhibitorController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->spread = '1KZXp18tUAQvlpHsI9n8QIH24osjQuECQ0hso7fjZ-Nw';
+        $this->spread = '1qCqKCFDEskSdIHq0p7lWwZupleeRG5nBI7on7_uwqmE';
         $this->currentEvent = 'Respuestas de formulario 1';
     }
 
