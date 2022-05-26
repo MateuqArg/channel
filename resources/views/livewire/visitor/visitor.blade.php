@@ -13,6 +13,12 @@
         <input type="text" wire:model="search" class="form-control" placeholder="Buscar por id, nombre o empresa">
       </div>
       <div class="ms-auto">
+        <select wire:model="cant" class="mx-2 form-select">
+          <option value=10>236 presentes</option>
+          <option value=25>95 VIPs</option>
+        </select>
+      </div>
+      <div class="ms-auto">
         <button wire:click="download" class="btn btn-outline-primary download-btn"><i class="bi bi-download"></i> DESCARGAR</button>
       </div>
     </div>

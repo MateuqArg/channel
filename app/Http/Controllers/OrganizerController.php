@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Cache;
 use Spatie\Permission\Models\Role;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Models\{Event, Visitor, User, Talk, Track, Meeting, Email, Group};
+use App\Jobs\ScanEmail;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Sheets;
@@ -130,7 +131,7 @@ class OrganizerController extends Controller
         $visitor = Visitor::where('custid', $custid)->first();
 
         $entrys = Track::where('visitor_id', $visitor->id)->where('extra', 'enter')->first();
-
+// cachedForms('all');
         if (empty($entrys)) {
             $track = new Track([
                 'visitor_id' => $visitor->id,
@@ -141,7 +142,11 @@ class OrganizerController extends Controller
         }
 
         $forms = Cache::get('forms');
-
+// dd($forms);
+        if ($visitor->present <> 1) {
+            ScanEmail::dispatch($custid)->onConnection('database');
+        }
+// dd($email);
         // // Código para imprimir la etiqueta
 
         //  $printers = Printing::printers();
@@ -159,141 +164,6 @@ class OrganizerController extends Controller
         // //     ->send();
 
         // // Storage::disk('public_uploads')->delete($file_name);
-
-        // Código para mandar mail al expositor con el que tenga reunión
-
-        if ($visitor->present <> 1) {
-            $meetings = Meeting::where('visitor_id', $visitor->id)->where('approved', true)->where('event_id', Cache::get('currentEvent'))->get();
-
-            if ($meetings->isNotEmpty()) {
-                $authorization = ['Authorization' => 'eyJpdiI6Ik9UUXdOVFkyT1RZek5qSTNNVGs0T0E9PSIsInZhbHVlIjoiMEwwVjFjeTVyZ3ZnWlE1U204REtkQk0vZCtSbW4rdGZ1WXg3Uzk2Z2dLST0iLCJtYWMiOiI0MzM2M2NlNDE3YjMyY2ZhNjNlZTIxNGFmMDQwOTQyNjVhMzA3ZGNlMDQzZGQ5NDNlZWY0OTIxNWNhZjI4MmUzIn0='];
-
-                $client = new Client();
-                $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/getAll', [
-                'headers' => $authorization,
-                'form_params' => [
-                    'filter' => 'Reunión con '.$forms[$visitor->form_id]['Nombre completo'],
-                ]]);
-                $check = json_decode($client->getBody(), true)['data']['data'];
-
-                if (!isset($check[0])) {
-                    $client = new Client();
-                    $client = $client->request('POST', 'https://api.esmsv.com/v1/listscontacts/create', [
-                    'headers' => $authorization,
-                    'form_params' => [
-                        'name' => 'Reunión con '.$forms[$visitor->form_id]['Nombre completo'].rand(),
-                    ]]);
-                    $list_id = json_decode($client->getBody(), true)['data']['id'];
-
-                    foreach ($meetings as $meeting) {
-                        $exhibitor = User::where('name', $meeting->exhibitor)->first();
-                        $client = new Client();
-                        $client = $client->request('POST', 'https://api.esmsv.com/v1/contacts/getall', [
-                        'headers' => $authorization,
-                        'form_params' => [
-                            'email' => $exhibitor->email,
-                        ]]);
-                        $contacts_ids[] = json_decode($client->getBody(), true)['data']['data'][0]['id'];
-                    }
-
-                    $client = new Client();
-                    $client = $client->request('POST', 'https://api.esmsv.com/v1/contacts/suscribe', [
-                    'headers' => $authorization,
-                    'form_params' => [
-                        'listId' => $list_id,
-                        'contactsIds' => $contacts_ids
-                    ]]);
-
-                    $client = new Client();
-                    $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/create', [
-                    'headers' => $authorization,
-                    'form_params' => [
-                        'name' => 'Reunión con '.$forms[$visitor->form_id]['Nombre completo'],
-                        'subject' => 'El invitado '.$forms[$visitor->form_id]['Nombre completo'].' ha ingresado al evento',
-                        'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/header.png" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"><p style="max-width: 600px; font-size: 20px">El invitado '.$forms[$visitor->form_id]['Nombre completo'].' ha ingresado al evento, sugerimos contactarse para coordinar la reunión al email: '.$forms[$visitor->form_id]['Direccion de email'].'.</p></div></td></tr></tbody></table>',
-                        'fromAlias' => 'Channel Talks',
-                        'fromEmail' => 'channeltalks@mediaware.news',
-                        'replyEmail' => 'channeltalks@mediaware.news',
-                        'mailListsIds' => [$list_id],
-                    ]]);
-                    $id = json_decode($client->getBody(), true)['data']['id'];
-
-                    $client = new Client();
-                    $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/send', [
-                    'headers' => $authorization,
-                    'form_params' => [
-                        'id' => $id,
-                        'sendNow' => 1
-                    ]]);
-                }
-            }
-
-            $meetings = Meeting::where('visitor_id', $visitor->id)->where('approved', true)->where('event_id', Cache::get('currentEvent'))->get();
-
-            if ($visitor->vip == 1) {
-                $organizers = User::role('organizer')->get();
-                
-                $authorization = ['Authorization' => 'eyJpdiI6Ik9UUXdOVFkyT1RZek5qSTNNVGs0T0E9PSIsInZhbHVlIjoiMEwwVjFjeTVyZ3ZnWlE1U204REtkQk0vZCtSbW4rdGZ1WXg3Uzk2Z2dLST0iLCJtYWMiOiI0MzM2M2NlNDE3YjMyY2ZhNjNlZTIxNGFmMDQwOTQyNjVhMzA3ZGNlMDQzZGQ5NDNlZWY0OTIxNWNhZjI4MmUzIn0='];
-
-                $client = new Client();
-                $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/getAll', [
-                'headers' => $authorization,
-                'form_params' => [
-                    'filter' => 'Ingreso VIP: '.$forms[$visitor->form_id]['Nombre completo'],
-                ]]);
-                $check = json_decode($client->getBody(), true)['data']['data'];
-
-                if (!isset($check[0])) {
-                    $client = new Client();
-                    $client = $client->request('POST', 'https://api.esmsv.com/v1/listscontacts/create', [
-                    'headers' => $authorization,
-                    'form_params' => [
-                        'name' => 'Ingreso VIP: '.$forms[$visitor->form_id]['Nombre completo'].rand(),
-                    ]]);
-                    $list_id = json_decode($client->getBody(), true)['data']['id'];
-
-                    foreach ($organizers as $user) {
-                        $client = new Client();
-                        $client = $client->request('POST', 'https://api.esmsv.com/v1/contacts/getall', [
-                        'headers' => $authorization,
-                        'form_params' => [
-                            'email' => $user->email,
-                        ]]);
-                        $contacts_ids[] = json_decode($client->getBody(), true)['data']['data'][0]['id'];
-                    }
-
-                    $client = new Client();
-                    $client = $client->request('POST', 'https://api.esmsv.com/v1/contacts/suscribe', [
-                    'headers' => $authorization,
-                    'form_params' => [
-                        'listId' => $list_id,
-                        'contactsIds' => $contacts_ids
-                    ]]);
-
-                    $client = new Client();
-                    $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/create', [
-                    'headers' => $authorization,
-                    'form_params' => [
-                        'name' => 'Ingreso VIP: '.$forms[$visitor->form_id]['Nombre completo'],
-                        'subject' => 'El invitado '.$forms[$visitor->form_id]['Nombre completo'].' ha ingresado al evento',
-                        'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/header.png" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"><p style="max-width: 600px; font-size: 20px">El invitado VIP '.$forms[$visitor->form_id]['Nombre completo'].' ha ingresado al evento.</p></div></td></tr></tbody></table>',
-                        'fromAlias' => 'Channel Talks',
-                        'fromEmail' => 'channeltalks@mediaware.news',
-                        'replyEmail' => 'channeltalks@mediaware.news',
-                        'mailListsIds' => [$list_id],
-                    ]]);
-                    $id = json_decode($client->getBody(), true)['data']['id'];
-
-                    $client = new Client();
-                    $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/send', [
-                    'headers' => $authorization,
-                    'form_params' => [
-                        'id' => $id,
-                        'sendNow' => 1
-                    ]]);
-                }
-            }
-        }
 
         $visitor->present = true;
         $visitor->update();
@@ -321,7 +191,7 @@ class OrganizerController extends Controller
         $height = 850;
         $center_x = $width / 2;
         // $center_y = $height / 2;
-        $max_len = 14;
+        $max_len = 13;
         $font_size = 76;
         $font_height = 35;
 
@@ -370,7 +240,7 @@ class OrganizerController extends Controller
 
         $y = $y + 20;
 
-        $max_len = 18;
+        $max_len = 16;
         $font_size = 60;
         $font_height = 30;
 
@@ -552,103 +422,103 @@ class OrganizerController extends Controller
         return redirect()->route('exhibitor.visitors');
     }
 
-    // public function staffSend(Request $request)
-    // {
-    //     $check =  User::where('email', $request->email)->first();
+    public function staffSend(Request $request)
+    {
+        $check =  User::where('email', $request->email)->first();
 
-    //     if (empty($check)) {
-    //         $event = Event::find(Cache::get('currentEvent'));
+        if (empty($check)) {
+            $event = Event::find(Cache::get('currentEvent'));
 
-    //         $authorization = ['Authorization' => 'eyJpdiI6Ik9UUXdOVFkyT1RZek5qSTNNVGs0T0E9PSIsInZhbHVlIjoiMEwwVjFjeTVyZ3ZnWlE1U204REtkQk0vZCtSbW4rdGZ1WXg3Uzk2Z2dLST0iLCJtYWMiOiI0MzM2M2NlNDE3YjMyY2ZhNjNlZTIxNGFmMDQwOTQyNjVhMzA3ZGNlMDQzZGQ5NDNlZWY0OTIxNWNhZjI4MmUzIn0='];
+            $authorization = ['Authorization' => 'eyJpdiI6Ik9UUXdOVFkyT1RZek5qSTNNVGs0T0E9PSIsInZhbHVlIjoiMEwwVjFjeTVyZ3ZnWlE1U204REtkQk0vZCtSbW4rdGZ1WXg3Uzk2Z2dLST0iLCJtYWMiOiI0MzM2M2NlNDE3YjMyY2ZhNjNlZTIxNGFmMDQwOTQyNjVhMzA3ZGNlMDQzZGQ5NDNlZWY0OTIxNWNhZjI4MmUzIn0='];
 
-    //         $client = new Client();
-    //         $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/getAll', [
-    //         'headers' => $authorization,
-    //         'form_params' => [
-    //             'filter' => $request->type.' nuevo: '.$request->name,
-    //         ]]);
-    //         $check = json_decode($client->getBody(), true)['data']['data'];
+            $client = new Client();
+            $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/getAll', [
+            'headers' => $authorization,
+            'form_params' => [
+                'filter' => $request->type.' nuevo: '.$request->name,
+            ]]);
+            $check = json_decode($client->getBody(), true)['data']['data'];
 
-    //         if (!isset($check[0])) {
-    //             $client = new Client();
-    //             $client = $client->request('POST', 'https://api.esmsv.com/v1/listscontacts/create', [
-    //             'headers' => $authorization,
-    //             'form_params' => [
-    //                 'name' => $request->type.' nuevo: '.$request->name,
-    //             ]]);
-    //             $list_id = json_decode($client->getBody(), true)['data']['id'];
+            if (!isset($check[0])) {
+                $client = new Client();
+                $client = $client->request('POST', 'https://api.esmsv.com/v1/listscontacts/create', [
+                'headers' => $authorization,
+                'form_params' => [
+                    'name' => $request->type.' nuevo: '.$request->name,
+                ]]);
+                $list_id = json_decode($client->getBody(), true)['data']['id'];
 
-    //             $client = new Client();
-    //             $client = $client->request('POST', 'https://api.esmsv.com/v1/contacts/getall', [
-    //             'headers' => $authorization,
-    //             'form_params' => [
-    //                 'email' => $request->email,
-    //             ]]);
+                $client = new Client();
+                $client = $client->request('POST', 'https://api.esmsv.com/v1/contacts/getall', [
+                'headers' => $authorization,
+                'form_params' => [
+                    'email' => $request->email,
+                ]]);
 
-    //             if (isset(json_decode($client->getBody(), true)['data']['data'][0]['id'])) {
-    //                 $contacts_ids[] = json_decode($client->getBody(), true)['data']['data'][0]['id'];
-    //             } else {
-    //                 $client = new Client();
-    //                 $client = $client->request('POST', 'https://api.esmsv.com/v1/contacts/create', [
-    //                 'headers' => $authorization,
-    //                 'form_params' => [
-    //                     'email' => $request->email,
-    //                 ]]);
-    //                 $contacts_ids[] = json_decode($client->getBody(), true)['data']['id'];
-    //             }
+                if (isset(json_decode($client->getBody(), true)['data']['data'][0]['id'])) {
+                    $contacts_ids[] = json_decode($client->getBody(), true)['data']['data'][0]['id'];
+                } else {
+                    $client = new Client();
+                    $client = $client->request('POST', 'https://api.esmsv.com/v1/contacts/create', [
+                    'headers' => $authorization,
+                    'form_params' => [
+                        'email' => $request->email,
+                    ]]);
+                    $contacts_ids[] = json_decode($client->getBody(), true)['data']['id'];
+                }
 
-    //             $client = new Client();
-    //             $client = $client->request('POST', 'https://api.esmsv.com/v1/contacts/suscribe', [
-    //             'headers' => $authorization,
-    //             'form_params' => [
-    //                 'listId' => $list_id,
-    //                 'contactsIds' => $contacts_ids
-    //             ]]);
+                $client = new Client();
+                $client = $client->request('POST', 'https://api.esmsv.com/v1/contacts/suscribe', [
+                'headers' => $authorization,
+                'form_params' => [
+                    'listId' => $list_id,
+                    'contactsIds' => $contacts_ids
+                ]]);
 
-    //             $token = sha1(rand());
+                $token = sha1(rand());
 
-    //             $client = new Client();
-    //             $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/create', [
-    //             'headers' => $authorization,
-    //             'form_params' => [
-    //                 'name' => $request->type.' nuevo: '.$request->name,
-    //                 'subject' => 'Has sido invitado a ser '.$request->type.' del evento '.$event->title,
-    //                 'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/header.png" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"><p style="max-width: 600px; font-size: 20px">Hola '.$request->name.' has sido invitado a ser .'$request->type'. del evento '.$event->title.' para confirmar su cuenta ingresa al siguiente link <a href="'.route('staff.enable', ['token' => $token, 'type' => $request->type]).'">AQUI</a>.</p></div></td></tr></tbody></table>',
-    //                 'fromAlias' => 'Channel Talks',
-    //                 'fromEmail' => 'channeltalks@mediaware.news',
-    //                 'replyEmail' => 'channeltalks@mediaware.news',
-    //                 'mailListsIds' => [$list_id],
-    //             ]]);
-    //             $id = json_decode($client->getBody(), true)['data']['id'];
+                $client = new Client();
+                $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/create', [
+                'headers' => $authorization,
+                'form_params' => [
+                    'name' => $request->type.' nuevo: '.$request->name,
+                    'subject' => 'Has sido invitado a ser '.$request->type.' del evento '.$event->title,
+                    'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/header.png" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"><p style="max-width: 600px; font-size: 20px">Hola '.$request->name.' has sido invitado a ser '.$request->type.' del evento '.$event->title.' para confirmar su cuenta ingresa al siguiente link <a href="'.route('staff.enable', ['token' => $token, 'type' => $request->type]).'">AQUI</a>.</p></div></td></tr></tbody></table>',
+                    'fromAlias' => 'Channel Talks',
+                    'fromEmail' => 'channeltalks@mediaware.news',
+                    'replyEmail' => 'channeltalks@mediaware.news',
+                    'mailListsIds' => [$list_id],
+                ]]);
+                $id = json_decode($client->getBody(), true)['data']['id'];
 
-    //             $client = new Client();
-    //             $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/send', [
-    //             'headers' => $authorization,
-    //             'form_params' => [
-    //                 'id' => $id,
-    //                 'sendNow' => 1
-    //             ]]);
+                // $client = new Client();
+                // $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/send', [
+                // 'headers' => $authorization,
+                // 'form_params' => [
+                //     'id' => $id,
+                //     'sendNow' => 1
+                // ]]);
 
-    //             do {
-    //                 $custid = createCustomid();
-    //             } while (User::where('custid', $custid)->first() <> null);
+                do {
+                    $custid = createCustomid();
+                } while (User::where('custid', $custid)->first() <> null);
 
-    //             $user = new User([
-    //                 'custid' => $custid,
-    //                 'name' => $request->name,
-    //                 'email' => $request->email,
-    //                 'password' => $token
-    //             ]);
-    //             $user->save();
+                $user = new User([
+                    'custid' => $custid,
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'password' => $token
+                ]);
+                $user->save();
 
-    //             if ($request->staff) {
-    //                 $user->assignRole('staff');
-    //             }
-    //         }
+                if ($request->staff) {
+                    $user->assignRole('staff');
+                }
+            }
 
-    //         return redirect()->back()->with('success', 'Organizador invitado correctamente');
-    //     }
+            return redirect()->back()->with('success', 'Organizador invitado correctamente');
+        }
 
-    //     return redirect()->back()->with('success', 'Este organizador ya existe');
-    // }
+        return redirect()->back()->with('success', 'Este organizador ya existe');
+    }
 }

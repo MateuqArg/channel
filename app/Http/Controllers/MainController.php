@@ -127,7 +127,12 @@ class MainController extends Controller
             $user->assignRole('exhibitor');
         }
 
-        return redirect()->back()->with('success', 'Usuario confirmado correctamente');
+        Auth::loginUsingId($user->id, true);
+        if ($type = 'organizer') {
+            return redirect()->route('organizer.events.index');
+        } else {
+            return redirect()->route('exhibitor.visitors.index');
+        }
     }
 
     public function meetingAccept(Request $request, $id)

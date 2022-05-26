@@ -41,21 +41,5 @@
         </div>
     </div>
 </div>
-
-@if(Session::has('success'))
-<script>
-    $(document).ready( function() {
-        Swal.fire({
-            title: '¡Bienvenido!',
-            html: 'Usuario confirmado correctamente',
-            icon: 'success',
-            showConfirmButton: false,
-            allowOutsideClick: false,
-            allowEnterKey: false,
-            allowEscapeKey: false,
-        })
-    })
-</script>
-@endif
 @include('includes.footer')
 @endsection

@@ -1,7 +1,7 @@
 <?php
     function cachedForms($query) {
         if ($query == 'all') {
-            $events = App\Models\Event::all();
+            $events = App\Models\Event::orderBy('id', 'DESC')->get();
             $forms = collect();
             foreach ($events as $event) {
                 $sheets = Sheets::spreadsheet($event->spread)->sheet('Respuestas de formulario 1')->get();
