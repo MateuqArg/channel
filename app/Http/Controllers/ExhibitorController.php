@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 use App\Models\{Event, Meeting, Visitor, User, Group, Talk};
 use Rap2hpoutre\FastExcel\FastExcel;
 use GuzzleHttp\Client;
@@ -14,8 +15,7 @@ class ExhibitorController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->spread = '1qCqKCFDEskSdIHq0p7lWwZupleeRG5nBI7on7_uwqmE';
-        $this->currentEvent = 'Respuestas de formulario 1';
+        $this->spread = Cache::get('spread');
     }
 
     // public function eventsIndex()
@@ -25,8 +25,7 @@ class ExhibitorController extends Controller
     //     $visitors = Visitor::where('approved', true)->whereDoesntHave('meetings', function ($meetingQuery) {
     //         $meetingQuery->where('exhibitor', \Auth::user()->name);
     //     })->get();
-    //     $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
-    //     $forms = Sheets::collection($sheets->pull(0), $sheets);
+    //     $forms = Cache::get('forms');
 
     //     return view('exhibitor.events.index', compact('events', 'meetings', 'visitors', 'forms'));
     // }
@@ -34,16 +33,14 @@ class ExhibitorController extends Controller
     public function visitors()
     {
         $meetings = Meeting::where('approved', null)->where('exhibitor', \Auth::user()->id)->where('requested', 'visitor')->get();
-        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
-        $forms = Sheets::collection($sheets->pull(0), $sheets);
+        $forms = Cache::get('forms');
 
         return view('exhibitor.visitors', compact('meetings', 'forms'));
     }
 
     public function groups()
     {
-        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
-        $forms = Sheets::collection($sheets->pull(0), $sheets);
+        $forms = Cache::get('forms');
 
         $talks = Talk::where('exhibitor_id', \Auth::user()->id)->get();
         $ids = [];
@@ -103,7 +100,7 @@ class ExhibitorController extends Controller
         //     unlink(public_path().'/excels/'.$custid.'.'.$ext);
         // }
         // dd($request);
-        $event = Event::find(substr($this->currentEvent, strrpos($this->currentEvent, ' ') + 1));
+        $event = Event::find(Cache::get('currentEvent'));
 
         $authorization = ['Authorization' => 'eyJpdiI6Ik9UUXdOVFkyT1RZek5qSTNNVGs0T0E9PSIsInZhbHVlIjoiMEwwVjFjeTVyZ3ZnWlE1U204REtkQk0vZCtSbW4rdGZ1WXg3Uzk2Z2dLST0iLCJtYWMiOiI0MzM2M2NlNDE3YjMyY2ZhNjNlZTIxNGFmMDQwOTQyNjVhMzA3ZGNlMDQzZGQ5NDNlZWY0OTIxNWNhZjI4MmUzIn0='];
 
@@ -189,7 +186,7 @@ class ExhibitorController extends Controller
         $check =  User::where('email', $request->email)->first();
 
         if (!$check) {
-            $event = Event::find(substr($this->currentEvent, strrpos($this->currentEvent, ' ') + 1));
+            $event = Event::find(Cache::get('currentEvent'));
             $authorization = ['Authorization' => 'eyJpdiI6Ik9UUXdOVFkyT1RZek5qSTNNVGs0T0E9PSIsInZhbHVlIjoiMEwwVjFjeTVyZ3ZnWlE1U204REtkQk0vZCtSbW4rdGZ1WXg3Uzk2Z2dLST0iLCJtYWMiOiI0MzM2M2NlNDE3YjMyY2ZhNjNlZTIxNGFmMDQwOTQyNjVhMzA3ZGNlMDQzZGQ5NDNlZWY0OTIxNWNhZjI4MmUzIn0='];
 
             $client = new Client();

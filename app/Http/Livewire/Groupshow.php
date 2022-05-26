@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use Livewire\{Component, WithPagination};
+use Illuminate\Support\Facades\Cache;
 use App\Models\{Group, Visitor, Email, Talk};
 use Rap2hpoutre\FastExcel\FastExcel;
 use GuzzleHttp\Client;
@@ -32,8 +33,7 @@ class Groupshow extends Component
 
     public function __construct()
     {
-        $this->spread = '1qCqKCFDEskSdIHq0p7lWwZupleeRG5nBI7on7_uwqmE';
-        $this->currentEvent = 'Respuestas de formulario 1';
+        $this->spread = Cache::get('spread');
     }
 
     public function updatingSearch()
@@ -53,8 +53,7 @@ class Groupshow extends Component
             $q->whereIn('talk_id', $ids);
         })->get();
 
-        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
-        $forms = Sheets::collection($sheets->pull(0), $sheets);
+        $forms = Cache::get('forms');
 
         foreach ($forms as $form) {
             $names[$form['id']] = $form['Nombre completo'];
@@ -104,8 +103,7 @@ class Groupshow extends Component
 
     public function sendEmail($group)
     {
-        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
-        $forms = Sheets::collection($sheets->pull(0), $sheets);
+        $forms = Cache::get('forms');
 
         // $visitors = Visitor::where('custid',)->get();
         if (strtolower($this->email->receiver) == 'todos') {
@@ -172,9 +170,7 @@ class Groupshow extends Component
         $group = Group::find($this->gid);
         $title = $group->title;
 
-        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
-        $header = $sheets->pull(0);
-        $forms = Sheets::collection($header, $sheets);
+        $forms = Cache::get('forms');
 
         foreach ($group->visitors as $single) {
             $data[] = array(

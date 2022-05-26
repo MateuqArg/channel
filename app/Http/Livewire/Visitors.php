@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use Livewire\{Component, WithPagination};
+use Illuminate\Support\Facades\Cache;
 use Rap2hpoutre\FastExcel\FastExcel;
 use App\Models\Visitor;
 use App\Models\Meeting;
@@ -21,8 +22,7 @@ class Visitors extends Component
 
     public function __construct()
     {
-        $this->spread = '1qCqKCFDEskSdIHq0p7lWwZupleeRG5nBI7on7_uwqmE';
-        $this->currentEvent = 'Respuestas de formulario 1';
+        $this->spread = Cache::get('spread');
     }
 
     public function updatingSearch()
@@ -32,9 +32,7 @@ class Visitors extends Component
 
     public function render()
     {
-        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
-        $header = $sheets->pull(0);
-        $this->forms = Sheets::collection($header, $sheets);
+        $this->forms = Cache::get('forms');
 
         foreach ($this->forms as $form) {
             $names[$form['id']] = strtolower($form['Nombre completo']);
@@ -65,6 +63,7 @@ class Visitors extends Component
             where('custid', 'like', '%'.$this->search.'%')
             ->orWhereIn('id', $ids)
             ->orderBy('event_id')->paginate($this->cant);
+            // dd($visitors);
         } else {
             $visitors = [];
         }
@@ -99,9 +98,7 @@ class Visitors extends Component
 
     public function download()
     {
-        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
-        $header = $sheets->pull(0);
-        $forms = Sheets::collection($header, $sheets);
+        $forms = Cache::get('forms');
         $all = Visitor::all();
 
         foreach ($all as $single) {

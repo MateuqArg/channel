@@ -11,12 +11,16 @@
           <div class="mb-3">
             <label for="title" class="form-label">Titulo</label>
             <input type="text" wire:model="title" id="title" class="form-control" aria-describedby="titleHelp">
-            <div id="titleHelp" class="form-text">We'll never share your email with anyone else.</div>
           </div>
           <div class="mb-3">
             <label for="date" class="form-label">Fecha</label>
             <input type="date" wire:model="date" id="date" class="form-control" aria-describedby="dateHelp">
             <div id="dateHelp" class="form-text">Día del evento o en su defecto del inicio de tal</div>
+          </div>
+          <div class="mb-3">
+            <label for="spread" class="form-label">Hoja de cálculo</label>
+            <input type="text" wire:model="spread" id="spread" class="form-control" aria-describedby="spreadHelp">
+            <div id="titleHelp" class="form-text">Ejemplo: 1qCqKCFDEskSdIHq0p7lWwZupleeRG5nBI7on7_uwqmE</div>
           </div>
           {{-- <h4 class="mb-0">Formulario de inscripción</h4>
           <div class="form-text mt-0 mb-2">Selecciona los datos que se pedirán en el formulario</div>

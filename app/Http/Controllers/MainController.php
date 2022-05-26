@@ -11,7 +11,6 @@ class MainController extends Controller
 {
     public function __construct()
     {
-        $this->currentEvent = 1;
     }
 
     public function events()

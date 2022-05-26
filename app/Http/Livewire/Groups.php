@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use Livewire\Component;
+use Illuminate\Support\Facades\Cache;
 use App\Models\{Group, Visitor, Talk};
 use Sheets;
 
@@ -24,8 +25,7 @@ class Groups extends Component
 
     public function __construct()
     {
-        $this->spread = '1qCqKCFDEskSdIHq0p7lWwZupleeRG5nBI7on7_uwqmE';
-        $this->currentEvent = 'Respuestas de formulario 1';
+        $this->spread = Cache::get('spread');
     }
 
     public function render()
@@ -33,8 +33,7 @@ class Groups extends Component
 
         $groups = Group::where('exhibitor_id', \Auth::user()->id)->get();
 
-        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
-        $forms = Sheets::collection($sheets->pull(0), $sheets);
+        $forms = Cache::get('forms');
 
         return view('livewire.groups.group', compact('groups', 'forms'));
     }
@@ -48,7 +47,7 @@ class Groups extends Component
 
         $talk = new Talk([
             'custid' => $custid,
-            'event_id' => substr($this->currentEvent, strrpos($this->currentEvent, ' ')),
+            'event_id' => Cache::get('currentEvent'),
             'exhibitor_id' => \Auth::user()->id,
             'title' => $this->title
         ]);

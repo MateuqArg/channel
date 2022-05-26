@@ -40,11 +40,8 @@ class CheckForms implements ShouldQueue
      */
     public function handle()
     {
-        $spread = '1qCqKCFDEskSdIHq0p7lWwZupleeRG5nBI7on7_uwqmE';
-        $currentEvent = 'Respuestas de formulario 1';
-        $sheets = Sheets::spreadsheet($spread)->sheet($currentEvent)->get();
-        $header = $sheets->pull(0);
-        $forms = Sheets::collection($header, $sheets);
+        $spread = Cache::get('spread');
+        $forms = getForms('all');
         $passed = [];
 
         foreach ($forms as $form) {
@@ -54,7 +51,7 @@ class CheckForms implements ShouldQueue
                     $custid = createCustomid();
                 } while (Visitor::where('custid', $custid)->first() <> null);
 
-                $event = Event::find(substr($currentEvent, strrpos($currentEvent, ' ') + 1));
+                $event = Event::find(Cache::get('currentEvent'));
 
                 $approved = false;
                 if ($event->approve == 0) {
@@ -63,7 +60,7 @@ class CheckForms implements ShouldQueue
 
                 $visitor = new Visitor([
                     'custid' => $custid,
-                    'event_id' => substr($currentEvent, strrpos($currentEvent, ' ') + 1),
+                    'event_id' => Cache::get('currentEvent'),
                     'form_id' => $form['id'],
                     'approved' => $approved,
                     'present' => null,
@@ -171,7 +168,7 @@ class CheckForms implements ShouldQueue
                             if (!empty($exhibitor)) {
                                 $meeting = new Meeting([
                                     'custid' => $custid,
-                                    'event_id' => substr($currentEvent, strrpos($currentEvent, ' ') + 1),
+                                    'event_id' => Cache::get('currentEvent'),
                                     'visitor_id' => $visitor->id,
                                     'exhibitor' => $exhibitor->id,
                                     'approved' => null,
@@ -186,5 +183,7 @@ class CheckForms implements ShouldQueue
                 }
             }
         }
+
+        cachedForms('all');
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use Livewire\{Component, WithPagination};
+use Illuminate\Support\Facades\Cache;
 use App\Models\{Visitor, Meeting, User, Talk};
 use Rap2hpoutre\FastExcel\FastExcel;
 use GuzzleHttp\Client;
@@ -22,8 +23,7 @@ class Exhvisitors extends Component
 
     public function __construct()
     {
-        $this->spread = '1qCqKCFDEskSdIHq0p7lWwZupleeRG5nBI7on7_uwqmE';
-        $this->currentEvent = 'Respuestas de formulario 1';
+        $this->spread = Cache::get('spread');
     }
 
     public function updatingSearch()
@@ -33,9 +33,7 @@ class Exhvisitors extends Component
 
     public function render()
     {
-        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
-        $header = $sheets->pull(0);
-        $this->forms = Sheets::collection($header, $sheets);
+        $this->forms = Cache::get('forms');
 
         foreach ($this->forms as $form) {
             $names[$form['id']] = $form['Nombre completo'];
@@ -86,14 +84,14 @@ class Exhvisitors extends Component
             $custid = createCustomid();
         } while (Meeting::where('custid', $custid)->first() <> null);
 
-        $check = Meeting::where('event_id', $this->currentEvent)->where('visitor_id', $id)->where('exhibitor', Auth::user()->name)->first();
+        $check = Meeting::where('event_id', Cache::get('currentEvent'))->where('visitor_id', $id)->where('exhibitor', Auth::user()->name)->first();
 
         if(empty($check)) {
             $visitor = Visitor::find($id);
 
             $meeting = new Meeting([
                 'custid' => $custid,
-                'event_id' => $this->currentEvent,
+                'event_id' => Cache::get('currentEvent'),
                 'visitor_id' => $visitor->id,
                 'exhibitor' => Auth::user()->name,
                 'approved' => null,
@@ -164,9 +162,7 @@ class Exhvisitors extends Component
 
     public function download()
     {
-        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
-        $header = $sheets->pull(0);
-        $forms = Sheets::collection($header, $sheets);
+        $forms = Cache::get('forms');
         $all = Visitor::all();
 
         foreach ($all as $single) {

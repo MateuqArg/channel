@@ -49,7 +49,7 @@
           {{-- @include('livewire.groups.allactions', ['visitor' => $visitor]) --}}
           @if(!\Auth::user()->hasRole('staff'))
           <td>
-            @if($visitor->event->id == substr($this->currentEvent, strrpos($this->currentEvent, ' ') + 1))
+            @if($visitor->event->id == Cache::get('currentEvent'))
             @include('livewire.groups.allactions', ['visitor' => $visitor])
             @endif
           </td>

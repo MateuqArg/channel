@@ -4,11 +4,12 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Cache;
 use App\Models\{Talk, Track, Visitor, Group};
 
 class Tracks extends Component
 {
-    public $talk, $link, $currentEvent = 'Respuestas de formulario 1';
+    public $talk, $link;
     public $listeners = ['barScanner', 'changeTrack', 'loadTrack'];
 
     protected $rules = [
@@ -19,9 +20,9 @@ class Tracks extends Component
     public function render()
     {
         if (\Auth::user()->hasRole('organizer')) {
-            $talks = Talk::where('event_id', substr($this->currentEvent, strrpos($this->currentEvent, ' ') + 1))->get();
+            $talks = Talk::where('event_id', Cache::get('currentEvent'))->get();
         } else if (\Auth::user()->hasRole('exhibitor')) {
-            $talks = Talk::where('event_id', substr($this->currentEvent, strrpos($this->currentEvent, ' ') + 1))
+            $talks = Talk::where('event_id', Cache::get('currentEvent'))
             ->where('exhibitor_id', \Auth::user()->id)->get();
         }
 

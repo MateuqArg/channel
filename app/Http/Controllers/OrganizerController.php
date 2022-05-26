@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Permission\Models\Role;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Models\{Event, Visitor, User, Talk, Track, Meeting, Email, Group};
@@ -21,16 +22,14 @@ class OrganizerController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->spread = '1qCqKCFDEskSdIHq0p7lWwZupleeRG5nBI7on7_uwqmE';
-        $this->currentEvent = 'Respuestas de formulario 1';
+        $this->spread = Cache::get('spread');
     }
 
     public function eventsIndex(Request $request)
     {
         $visitors = Visitor::where('approved', null)->get();
 
-        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
-        $forms = Sheets::collection($sheets->pull(0), $sheets);
+        $forms = Cache::get('forms');
 
         return view('organizer.events.index', compact('visitors', 'forms'));
     }
@@ -41,8 +40,7 @@ class OrganizerController extends Controller
         // $visitor->approved = true;
         // $visitor->update();
 
-        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
-        $forms = Sheets::collection($sheets->pull(0), $sheets);
+        $forms = Cache::get('forms');
 
         $file = QrCode::format('png')->size(305)->generate(route('organizer.visitor.track', ['custid' => $visitor->custid]));
         $qr_file = $file_name = time().'.'.'png';
@@ -142,8 +140,7 @@ class OrganizerController extends Controller
             $track->save();
         }
 
-        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
-        $forms = Sheets::collection($sheets->pull(0), $sheets);
+        $forms = Cache::get('forms');
 
         // // Código para imprimir la etiqueta
 
@@ -166,7 +163,7 @@ class OrganizerController extends Controller
         // Código para mandar mail al expositor con el que tenga reunión
 
         if ($visitor->present <> 1) {
-            $meetings = Meeting::where('visitor_id', $visitor->id)->where('approved', true)->where('event_id', $this->currentEvent)->get();
+            $meetings = Meeting::where('visitor_id', $visitor->id)->where('approved', true)->where('event_id', Cache::get('currentEvent'))->get();
 
             if ($meetings->isNotEmpty()) {
                 $authorization = ['Authorization' => 'eyJpdiI6Ik9UUXdOVFkyT1RZek5qSTNNVGs0T0E9PSIsInZhbHVlIjoiMEwwVjFjeTVyZ3ZnWlE1U204REtkQk0vZCtSbW4rdGZ1WXg3Uzk2Z2dLST0iLCJtYWMiOiI0MzM2M2NlNDE3YjMyY2ZhNjNlZTIxNGFmMDQwOTQyNjVhMzA3ZGNlMDQzZGQ5NDNlZWY0OTIxNWNhZjI4MmUzIn0='];
@@ -231,7 +228,7 @@ class OrganizerController extends Controller
                 }
             }
 
-            $meetings = Meeting::where('visitor_id', $visitor->id)->where('approved', true)->where('event_id', $this->currentEvent)->get();
+            $meetings = Meeting::where('visitor_id', $visitor->id)->where('approved', true)->where('event_id', Cache::get('currentEvent'))->get();
 
             if ($visitor->vip == 1) {
                 $organizers = User::role('organizer')->get();
@@ -309,8 +306,7 @@ class OrganizerController extends Controller
     {
         $visitor = Visitor::where('custid', $custid)->first();
 
-        $sheets = Sheets::spreadsheet($this->spread)->sheet($this->currentEvent)->get();
-        $forms = Sheets::collection($sheets->pull(0), $sheets);
+        $forms = Cache::get('forms');
 
         // Código para generar la etiqueta
 
@@ -434,7 +430,7 @@ class OrganizerController extends Controller
         $check =  User::where('email', $request->email)->first();
 
         if (empty($check)) {
-            $event = Event::find(substr($this->currentEvent, strrpos($this->currentEvent, ' ') + 1));
+            $event = Event::find(Cache::get('currentEvent'));
 
             $authorization = ['Authorization' => 'eyJpdiI6Ik9UUXdOVFkyT1RZek5qSTNNVGs0T0E9PSIsInZhbHVlIjoiMEwwVjFjeTVyZ3ZnWlE1U204REtkQk0vZCtSbW4rdGZ1WXg3Uzk2Z2dLST0iLCJtYWMiOiI0MzM2M2NlNDE3YjMyY2ZhNjNlZTIxNGFmMDQwOTQyNjVhMzA3ZGNlMDQzZGQ5NDNlZWY0OTIxNWNhZjI4MmUzIn0='];
 
@@ -561,7 +557,7 @@ class OrganizerController extends Controller
     //     $check =  User::where('email', $request->email)->first();
 
     //     if (empty($check)) {
-    //         $event = Event::find(substr($this->currentEvent, strrpos($this->currentEvent, ' ') + 1));
+    //         $event = Event::find(Cache::get('currentEvent'));
 
     //         $authorization = ['Authorization' => 'eyJpdiI6Ik9UUXdOVFkyT1RZek5qSTNNVGs0T0E9PSIsInZhbHVlIjoiMEwwVjFjeTVyZ3ZnWlE1U204REtkQk0vZCtSbW4rdGZ1WXg3Uzk2Z2dLST0iLCJtYWMiOiI0MzM2M2NlNDE3YjMyY2ZhNjNlZTIxNGFmMDQwOTQyNjVhMzA3ZGNlMDQzZGQ5NDNlZWY0OTIxNWNhZjI4MmUzIn0='];
 

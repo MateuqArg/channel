@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('custid');
             $table->string('title');
             $table->date('date');
+            $table->string('spread');
             $table->boolean('approve');
             $table->timestamps();
         });

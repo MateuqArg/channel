@@ -18,6 +18,7 @@ class Events extends Component
     protected $rules = [
         'event.title' => 'required',
         'event.date' => 'required',
+        'event.spread' => 'required',
         'event.approve' => '',
     ];
 
@@ -40,6 +41,7 @@ class Events extends Component
         $this->validate([
             'title' => 'required',
             'date' => 'required',
+            'spread' => 'required'
         ]);
 
         if ($this->approve) {
@@ -60,7 +62,8 @@ class Events extends Component
             'custid' => $custid,
             'title' => $this->title,
             'date' => $this->date,
-            'inscription' => implode("*", $this->inscription),
+            'spread' => $this->spread,
+            // 'inscription' => implode("*", $this->inscription),
             'approve' => $approve
         ]);
         $event->save();
@@ -120,13 +123,16 @@ class Events extends Component
         if (null !== $this->event->date) {
             $event->date = $this->event->date;
         }
+        if (null !== $this->event->spread) {
+            $event->spread = $this->event->spread;
+        }
         if (null !== $this->event->approve) {
             $event->approve = $this->event->approve;
         }
-        if (null !== $this->event->inscription) {
-            $event->inscription = implode('*', $this->event->inscription);
-            $this->event->inscription = [];
-        }
+        // if (null !== $this->event->inscription) {
+        //     $event->inscription = implode('*', $this->event->inscription);
+        //     $this->event->inscription = [];
+        // }
         $event->update();
 
         $this->emit('alert', ['title' => '¡Arreglado!', 'text' => 'El evento ha sido modificado correctamente', 'type' => 'success']);
@@ -176,11 +182,11 @@ class Events extends Component
         $this->event->date = $event->date;
         $this->event->title = $event->title;
 
-        $this->event->inscription = [];
-        foreach(explode('*', $event->inscription) as $key => $data)
-        {
-            $this->event->inscription = array_merge($this->event->inscription, [$data]);
-        }
+        // $this->event->inscription = [];
+        // foreach(explode('*', $event->inscription) as $key => $data)
+        // {
+        //     $this->event->inscription = array_merge($this->event->inscription, [$data]);
+        // }
         $this->event->approve = $event->approve;
     }
 }
