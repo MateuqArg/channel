@@ -1,14 +1,12 @@
-<x-guest-layout>
-    <x-auth-card>
-        <x-slot name="logo">
-            <a href="/">
-                <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-            </a>
-        </x-slot>
+@extends('includes.auth.app')
+@section('content')
+    <main class="form-signin mt-0 pt-0">
+      <form method="POST" action="{{ route('password.email') }}">
+        @csrf
 
-        <div class="mb-4 text-sm text-gray-600">
-            {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
-        </div>
+        <img class="mb-4" src="{{ asset('images/logow.png') }}" height="57">
+        <img class="mb-2" src="{{ asset('images/persona.png') }}" height="150">
+        {{-- <h1 class="h3 mb-3 fw-normal">Please sign in</h1> --}}
 
         <!-- Session Status -->
         <x-auth-session-status class="mb-4" :status="session('status')" />
@@ -16,21 +14,15 @@
         <!-- Validation Errors -->
         <x-auth-validation-errors class="mb-4" :errors="$errors" />
 
-        <form method="POST" action="{{ route('password.email') }}">
-            @csrf
+        <h4 class="text-light mb-4">Recuperar contraseña</h4>
 
-            <!-- Email Address -->
-            <div>
-                <x-label for="email" :value="__('Email')" />
+        <div class="form-floating mb-4">
+          <input type="email" class="form-control" name="email" id="email" :value="old('email')" required autofocus style="border-radius: 15px">
+          <label for="email">Email</label>
+        </div>
 
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <x-button>
-                    {{ __('Email Password Reset Link') }}
-                </x-button>
-            </div>
-        </form>
-    </x-auth-card>
-</x-guest-layout>
+        <button class="px-auto py-3 btn btn-login text-light w-100" style="box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 20%) !important;" type="submit"><h4 class="m-0">Enviar</h4></button>
+        {{-- <button class="w-100 btn btn-lg btn-primary" type="submit">Iniciar sesión</button> --}}
+      </form>
+    </main>
+@endsection

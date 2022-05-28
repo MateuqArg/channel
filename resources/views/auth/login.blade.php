@@ -1,10 +1,11 @@
 @extends('includes.auth.app')
 @section('content')
-    <main class="form-signin">
+    <main class="form-signin mt-0 pt-0">
       <form method="POST" action="{{ route('login') }}">
         @csrf
 
-        <img class="mb-4" src="{{ asset('images/logo.png') }}" alt="" width="72" height="57">
+        <img class="mb-4" src="{{ asset('images/logow.png') }}" height="57">
+        <img class="mb-2" src="{{ asset('images/persona.png') }}" height="150">
         {{-- <h1 class="h3 mb-3 fw-normal">Please sign in</h1> --}}
 
         <!-- Session Status -->
@@ -13,23 +14,20 @@
         <!-- Validation Errors -->
         <x-auth-validation-errors class="mb-4" :errors="$errors" />
 
-        <div class="form-floating">
-          <input type="email" class="form-control" name="email" id="email" :value="old('email')" required autofocus>
+        <h4 class="text-light mb-4">Iniciar sesión</h4>
+
+        <div class="form-floating mb-4">
+          <input type="email" class="form-control" name="email" id="email" :value="old('email')" required autofocus style="border-radius: 15px">
           <label for="email">Email</label>
         </div>
         
-        <div class="form-floating">
-          <input type="password" class="form-control" name="password" id="password" required autocomplete="current-password">
+        <div class="form-floating mb-4">
+          <input type="password" class="form-control" name="password" id="password" required autocomplete="current-password" style="border-radius: 15px">
           <label for="password">Contraseña</label>
         </div>
 
-        <div class="checkbox mb-3">
-          <label>
-            <input type="checkbox" id="remember_me" name="remember" value="remember"> Recordarme
-          </label>
-        </div>
-        <button class="w-100 btn btn-lg btn-primary" type="submit">Iniciar sesión</button>
-        <p class="mt-5 mb-3 text-muted">&copy; 2022 ChannelTalks</p>
+        <button class="px-auto py-3 btn btn-login text-light w-100" style="box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 20%) !important;" type="submit"><h4 class="m-0">Entrar</h4></button>
+        {{-- <button class="w-100 btn btn-lg btn-primary" type="submit">Iniciar sesión</button> --}}
       </form>
     </main>
 @endsection

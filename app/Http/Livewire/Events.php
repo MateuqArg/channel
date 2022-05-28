@@ -8,12 +8,13 @@ use Rap2hpoutre\FastExcel\FastExcel;
 use App\Models\Event;
 use App\Models\Visitor;
 use App\Models\Email;
+use App\Jobs\SendEmail;
 use Carbon\Carbon;
 
 class Events extends Component
 {
-    public $event, $events, $search, $inscription = [], $title, $date, $approve;
-    public $listeners = ['destroy', 'selected', 'refresh' => '$refresh'];
+    public $event, $show = false, $detail, $events, $search, $inscription = [], $title, $date, $approve;
+    public $listeners = ['destroy', 'show', 'getBack', 'selected', 'refresh' => '$refresh'];
 
     protected $rules = [
         'event.title' => 'required',
@@ -29,6 +30,7 @@ class Events extends Component
 
     public function render()
     {
+        // SendEmail::dispatch()->onConnection('database')->delay(Carbon::parse('2022-07-25'));
         $this->events = Event::where('id', 'like', '%'.$this->search.'%')
         ->orWhere('title', 'like', '%'.$this->search.'%')->get();
         $visitors = Visitor::where('approved', null)->get();
@@ -80,6 +82,7 @@ class Events extends Component
             'objective' => 'all'
         ]);
         $email->save();
+        SendEmail::dispatch($email->id)->onConnection('database')->delay(Carbon::parse('2022-07-25'));
 
         $email = new Email([
             'name' => 'Recordatorio 1 día',
@@ -89,6 +92,7 @@ class Events extends Component
             'objective' => 'all'
         ]);
         $email->save();
+        SendEmail::dispatch($email->id)->onConnection('database')->delay(Carbon::parse('2022-07-25'));
 
         $email = new Email([
             'name' => 'Recordatorio hoy',
@@ -98,6 +102,7 @@ class Events extends Component
             'objective' => 'all'
         ]);
         $email->save();
+        SendEmail::dispatch($email->id)->onConnection('database')->delay(Carbon::parse('2022-07-25'));
 
         $email = new Email([
             'name' => 'Gracias',
@@ -107,7 +112,7 @@ class Events extends Component
             'objective' => 'all'
         ]);
         $email->save();
-
+        SendEmail::dispatch($email->id)->onConnection('database')->delay(Carbon::parse('2022-07-25'));
 
         $this->emit('alert', ['title' => '¡Uno más!', 'text' => 'El evento ha sido dado de alta', 'type' => 'success']);
         $this->emit('refresh');
@@ -172,6 +177,18 @@ class Events extends Component
 
         $this->emit('alert', ['title' => '¡Descargado!', 'text' => 'El archivo ha sido descargado', 'type' => 'success']);
         return $export;
+    }
+
+    public function show($id)
+    {
+        $this->show = true;
+        $this->detail = Event::find($id);
+    }
+
+    public function getBack()
+    {
+        $this->show = false;
+        $this->detail = null;
     }
 
     public function selected($id)

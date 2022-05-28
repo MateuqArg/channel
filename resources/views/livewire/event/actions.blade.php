@@ -1,4 +1,5 @@
-<a id="edit-btn" data-bs-toggle="modal" data-id="{{ $event->id }}" data-bs-target="#edit{{ $event->id }}"><i class="bi bi-pencil btn btn-outline-primary"></i></a>
+<a id="show-btn" data-id="{{ $event->id }}"><i class="bi bi-envelope btn btn-outline-primary"></i></a>
+<a id="edit-btn" data-bs-toggle="modal" data-id="{{ $event->id }}" data-bs-target="#edit{{ $event->id }}"><i class="bi bi-pencil btn btn-outline-warning"></i></a>
 <a id="delete-btn" data-id="{{ $event->id }}"><i class="bi bi-trash btn btn-outline-danger"></i></a>
 <div class="modal fade" wire:ignore.self id="edit{{ $event->id }}" tabindex="-1" aria-labelledby="createLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -61,6 +62,10 @@
 <script>
   $(document).on("click", "#edit-btn", function () {
       window.Livewire.emit('selected', $(this).data('id'))
+  });
+
+  $(document).on("click", "#show-btn", function () {
+      window.Livewire.emit('show', $(this).data('id'))
   });
   
   $(document).on("click", "#delete-btn", function () {

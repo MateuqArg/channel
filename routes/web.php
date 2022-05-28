@@ -16,9 +16,9 @@ use App\Http\Controllers\MainController;
 |
 */
 
-// Route::get('/', function () {
-//     return view('main.home');
-// })->name('home');
+Route::get('/', function () {
+    return view('main.home');
+})->name('home');
 
 Route::get('/invite/{token}/{type}', [MainController::class, 'inviteEnable'])->name('staff.enable');
 Route::post('/invite/store', [MainController::class, 'inviteStore'])->name('staff.store');

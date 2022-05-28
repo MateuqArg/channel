@@ -1,5 +1,6 @@
 <div class="container-fluid">
   <div class="row">
+    @if($this->show == false)
     <div class="col d-flex gradient top-table">
       <div>
         <input type="text" wire:model="search" class="form-control" placeholder="Buscar por id o eventos">
@@ -40,15 +41,32 @@
         @endforeach
       </tbody>
     </table>
+    @else
+      <div class="col d-flex gradient top-table pb-2">
+      <div>
+        <a id="back-btn"><i class="bi bi-arrow-left btn btn-outline-light"></i></a>
+        <span class="ms-2">Viendo: {{ $this->detail->title }}</span>
+      </div>
+      <div class="ms-auto">
+        <a href="" class="btn btn-outline-light"><i class="bi bi-plus-lg"></i></a>
+      </div>
+    </div>
+    @endif
   </div>
 
+  @if($this->show == false)
   @if(!\Auth::user()->hasRole('staff'))
   @include('livewire.event.create')
+  @endif
   @endif
   
   {{-- @livewire('chats') --}}
 
   <script>
+    $(document).on("click", "#back-btn", function () {
+      window.Livewire.emit('getBack')
+    });
+
     window.livewire.on('alert', event => {
       $('#edit{{ $event->id }}').modal('hide');
       $('#create').modal('hide');
