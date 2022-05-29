@@ -9,5 +9,10 @@ class Email extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'subject', 'content', 'date', 'objective'];
+    protected $fillable = ['name', 'subject', 'content', 'date', 'event_id', 'objective'];
+
+    public function event()
+    {
+        return $this->belongsTo(Event::class);
+    }
 }

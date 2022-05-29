@@ -62,7 +62,7 @@ class Visitors extends Component
             $visitors = Visitor::
             where('custid', 'like', '%'.$this->search.'%')
             ->orWhereIn('id', $ids)
-            ->orderBy('event_id')->paginate($this->cant);
+            ->orderBy('event_id', 'DESC')->paginate($this->cant);
             // dd($visitors);
         } else {
             $visitors = [];

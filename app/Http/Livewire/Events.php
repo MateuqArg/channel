@@ -13,7 +13,7 @@ use Carbon\Carbon;
 
 class Events extends Component
 {
-    public $event, $show = false, $detail, $events, $search, $inscription = [], $title, $date, $approve;
+    public $event, $show = false, $detail, $emails, $events, $search, $inscription = [], $title, $date, $approve;
     public $listeners = ['destroy', 'show', 'getBack', 'selected', 'refresh' => '$refresh'];
 
     protected $rules = [
@@ -183,6 +183,19 @@ class Events extends Component
     {
         $this->show = true;
         $this->detail = Event::find($id);
+
+
+        // $this->event->title = $event->title;
+        // $this->event->date = $event->date;
+        // $this->event->title = $event->title;
+
+        // // $this->event->inscription = [];
+        // // foreach(explode('*', $event->inscription) as $key => $data)
+        // // {
+        // //     $this->event->inscription = array_merge($this->event->inscription, [$data]);
+        // // }
+        // $this->event->approve = $event->approve;
+        // $this->emails = Email::where('id', '1')->get();
     }
 
     public function getBack()

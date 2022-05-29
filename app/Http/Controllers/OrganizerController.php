@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Cache;
 use Spatie\Permission\Models\Role;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Models\{Event, Visitor, User, Talk, Track, Meeting, Email, Group};
-use App\Jobs\ScanEmail;
+use App\Jobs\{ScanEmail, SendEmail};
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Sheets;
@@ -33,6 +33,13 @@ class OrganizerController extends Controller
         $forms = Cache::get('forms');
 
         return view('organizer.events.index', compact('visitors', 'forms'));
+    }
+
+    public function eventsEmails(Request $request, $id)
+    {
+        $event = Event::where('id', $id)->first();
+
+        return view('organizer.email.show', compact('event'));
     }
 
     public function visitorAccept(Request $request, $id)

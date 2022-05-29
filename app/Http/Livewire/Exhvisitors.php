@@ -50,7 +50,7 @@ class Exhvisitors extends Component
             $visitors = Visitor::
             where('custid', 'like', '%'.$this->search.'%')
             ->orWhere('id', $ids)
-            ->orderBy('event_id')->paginate($this->cant);
+            ->orderBy('event_id', 'DESC')->paginate($this->cant);
         } else {
             $visitors = [];
         }

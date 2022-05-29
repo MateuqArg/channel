@@ -40,6 +40,7 @@ Route::get('/profile', [MainController::class, 'profile'])->name('profile');
 Route::name('organizer.')->prefix('organizer')->middleware(['role:organizer'])->group(function () {
     Route::name('events.')->prefix('events')->group(function () {
         Route::get('/', [OrganizerController::class, 'eventsIndex'])->name('index');
+        Route::get('/emails/{id}', [OrganizerController::class, 'eventsEmails'])->name('emails');
         // Route::get('/{id}', [OrganizerController::class, 'eventsShow'])->name('show');
         // Route::post('/create', [OrganizerController::class, 'eventsCreate'])->name('create');
     });
