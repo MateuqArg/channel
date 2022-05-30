@@ -138,7 +138,7 @@ class OrganizerController extends Controller
         $visitor = Visitor::where('custid', $custid)->first();
 
         $entrys = Track::where('visitor_id', $visitor->id)->where('extra', 'enter')->first();
-// cachedForms('all');
+
         if (empty($entrys)) {
             $track = new Track([
                 'visitor_id' => $visitor->id,
@@ -149,11 +149,11 @@ class OrganizerController extends Controller
         }
 
         $forms = Cache::get('forms');
-// dd($forms);
+
         if ($visitor->present <> 1) {
             ScanEmail::dispatch($custid)->onConnection('database');
         }
-// dd($email);
+
         // // Código para imprimir la etiqueta
 
         //  $printers = Printing::printers();
@@ -184,8 +184,6 @@ class OrganizerController extends Controller
         $visitor = Visitor::where('custid', $custid)->first();
 
         $forms = Cache::get('forms');
-
-        // Código para generar la etiqueta
 
         $file = QrCode::format('png')->size(300)->generate(route('organizer.visitor.track', ['custid' => $visitor->custid]));
         $qr_file = 'qr.png';

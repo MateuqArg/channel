@@ -4,6 +4,8 @@ namespace App\Http\Livewire;
 
 use Livewire\{Component, WithFileUploads};
 use App\Models\Email;
+use App\Jobs\SendEmail;
+use Carbon\Carbon;
 use Storage;
 
 class Emails extends Component
@@ -51,17 +53,8 @@ class Emails extends Component
         ]);
         $email->save();
 
-        // $date = Carbon::create($this->date);
-
-        // $email = new Email([
-        //     'name' => 'Recordatorio 3 días',
-        //     'subject' => 'Solo faltan 3 días para el evento',
-        //     'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/3dias.jpg" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"></div></td></tr></tbody></table>',
-        //     'date' => $date->subDays(3),
-        //     'objective' => 'all'
-        // ]);
-        // $email->save();
-        // SendEmail::dispatch($email->id)->onConnection('database')->delay(Carbon::parse('2022-07-25'));
+        $date = Carbon::create($this->date);
+        SendEmail::dispatch($email->id)->onConnection('database')->delay($date);
 
         $this->emit('alert', ['title' => '¡Uno más!', 'text' => 'El correo ha sido dado de alta', 'type' => 'success']);
         $this->emit('refresh');

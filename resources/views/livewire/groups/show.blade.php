@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col"><h3 class="m-2">Contactos del {{ $group->title }}</h3></div>
         <div class="col">
-            <a class="btn btn-outline-success" style="float: right;" id="send-all-btn" data-bs-toggle="modal" data-bs-target="#send"><i class="bi bi-envelope-plus"></i> Enviar correo</a>
+            <a class="btn btn-outline-success" style="float: right;" id="send-all-btn" data-bs-toggle="modal" data-bs-target="#sendAll"><i class="bi bi-envelope-plus"></i> Enviar correo</a>
         </div>
     </div>
   <div class="row">
@@ -49,9 +49,7 @@
         <tr>
           @if(!\Auth::user()->hasRole('staff'))
           <td>
-            @if($visitor->event->id == Cache::get('currentEvent'))
             @include('livewire.groups.actions', ['visitor' => $visitor])
-            @endif
           </td>
           @endif
           <td>{{ $visitor->id }}</td>

@@ -169,5 +169,15 @@ class ScanEmail implements ShouldQueue
                 // ]]);
             }
         }
+
+        $talk = Talk::find(1);
+
+        $track = new Track([
+            'visitor_id' => $visitor->id,
+            'talk_id' => $talk->id,
+        ]);
+        $track->save();
+        $group = Group::where('title', $talk->)->first();
+        $visitor->groups()->attach($group->id);
     }
 }

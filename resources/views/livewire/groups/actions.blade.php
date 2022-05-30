@@ -1,6 +1,61 @@
 <a id="send-btn" data-receiver="{{ $forms[$visitor->form_id]['Nombre completo'] }}" data-bs-toggle="modal"data-bs-target="#send"><i class="bi bi-envelope btn btn-outline-success"></i></a>
 <a id="delete-btn" data-id="{{ $visitor->id }}"><i class="bi bi-trash btn btn-outline-danger"></i></a>
-<div class="modal fade" wire:ignore.self id="send" tabindex="-1" aria-labelledby="createLabel" aria-hidden="true">
+<div class="text-dark modal fade" wire:ignore.self id="send" tabindex="-1" aria-labelledby="createLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createLabel">Enviar correo</h5>
+      </div>
+      <div class="modal-body">
+          <div class="mb-3">
+            <label for="subject" class="form-label">Asunto</label>
+            <input type="text" wire:model="subject" id="subject" class="form-control" aria-describedby="subjectHelp">
+          </div>
+          <div class="mb-3">
+            <label for="content" class="form-label">Contenido</label>
+            <input type="file" wire:model="content" id="content" class="form-control" aria-describedby="contentHelp">
+          </div>
+          <div class="mb-3">
+            <label for="date" class="form-label">Fecha</label>
+            <input type="date" wire:model="date" id="date" class="form-control" aria-describedby="dateHelp">
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-arrow-left"></i></button>
+        <button wire:click="sendEmail('{{ $group->title }}', {{ $visitor->id }})" class="btn btn-success"><i class="bi bi-send"></i> ENVIAR</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="text-dark modal fade" wire:ignore.self id="sendAll" tabindex="-1" aria-labelledby="createLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createLabel">Enviar correo a todos</h5>
+      </div>
+      <div class="modal-body">
+          <div class="mb-3">
+            <label for="subject" class="form-label">Asunto</label>
+            <input type="text" wire:model="subject" id="subject" class="form-control" aria-describedby="subjectHelp">
+          </div>
+          <div class="mb-3">
+            <label for="content" class="form-label">Contenido</label>
+            <input type="file" wire:model="content" id="content" class="form-control" aria-describedby="contentHelp">
+          </div>
+          <div class="mb-3">
+            <label for="date" class="form-label">Fecha</label>
+            <input type="date" wire:model="date" id="date" class="form-control" aria-describedby="dateHelp">
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-arrow-left"></i></button>
+        <button wire:click="sendEmail('{{ $group->title }}', 'all')" class="btn btn-success"><i class="bi bi-send"></i> ENVIAR</button>
+      </div>
+    </div>
+  </div>
+</div>
+{{-- <div class="modal fade" wire:ignore.self id="send" tabindex="-1" aria-labelledby="createLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -32,13 +87,8 @@
       </div>
     </div>
   </div>
-</div>
+</div> --}}
 <script>
-  $(document).on("click", "#send-btn", function () {
-      // $('#receiver').val($(this).data('receiver'));
-      // @this.set('email.subject', 'asdfajsk');
-  });
-  
   $(document).on("click", "#delete-btn", function () {
     Swal.fire({
       title: '¿Estás seguro?',
