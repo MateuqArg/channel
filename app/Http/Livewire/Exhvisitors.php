@@ -15,11 +15,11 @@ class Exhvisitors extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
-    public $search, $company, $charge, $country, $state, $city, $vip;
+    public $search, $company, $charge, $country, $state, $city, $vip, $drawprices, $drawcant;
     public $readyToLoad = false;
     public $cant = '10';
 
-    public $listeners = ['meet'];
+    public $listeners = ['meet', 'draw'];
 
     public function __construct()
     {
@@ -188,6 +188,25 @@ class Exhvisitors extends Component
 
         $this->emit('alert', ['title' => '¡Descargado!', 'text' => 'El archivo ha sido descargado', 'type' => 'success']);
         return $export;
+    }
+
+    public function draw()
+    {
+        $forms = Cache::get('forms');
+        $count = Visitor::all()->count();
+        $visitors = Visitor::all();
+
+        $nums = [];
+        for ($i=0; $i < $this->drawcant; $i++) { 
+           do {
+            $price = random_int(1, $count);
+            } while (in_array($price, $nums));
+
+            $nums[] = $price;
+            $prices[] = $forms[$visitors[$price-1]->form_id]['Nombre completo'];
+        }
+
+        $this->drawprices = $prices;
     }
 
     public function cleanData()

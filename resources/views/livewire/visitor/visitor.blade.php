@@ -12,6 +12,9 @@
       <div>
         <input type="text" wire:model="search" class="form-control" placeholder="Buscar por id, nombre o empresa">
       </div>
+      <div>
+        <button id="draw-btn" data-bs-toggle="modal" data-bs-target="#draw" class="btn btn-outline-primary download-btn"><i class="bi bi-dice-5"></i> SORTEAR</button>
+      </div>
       <div class="ms-auto">
         <button wire:click="download" class="btn btn-outline-primary download-btn"><i class="bi bi-download"></i> DESCARGAR</button>
       </div>
@@ -79,4 +82,34 @@
     @endif
     @endif
   </div>
+
+  <div class="modal fade" wire:ignore.self id="draw" tabindex="-1" aria-labelledby="drawLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="drawLabel">Hacer sorteo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="mb-3">
+              <div class="mb-3">
+                <label for="drawcant" class="form-label">Cantidad de ganadores</label>
+                <input type="number" wire:model="drawcant" id="drawcant" class="form-control">
+              </div>
+              @if($this->drawprices)
+              @foreach($this->drawprices as $key => $price)
+              Ganador n°{{ $key+1 }} = {{ $price }} <br>
+              @endforeach
+              @endif
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<script>
+  $('#drawcant').on('change', function (e) {
+      window.Livewire.emit('draw')
+  });
+</script>

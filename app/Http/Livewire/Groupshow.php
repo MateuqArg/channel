@@ -17,10 +17,10 @@ class Groupshow extends Component
     use WithPagination, WithFileUploads;
     protected $paginationTheme = 'bootstrap';
 
-    public $email, $visitor, $search, $gid, $visitor_id, $name, $subject, $content, $date;
+    public $email, $visitor, $search, $gid, $visitor_id, $name, $subject, $content, $date, $drawprices, $drawcant;
     public $readyToLoad = false;
     public $cant = '10';
-    public $listeners = ['addVisitors'];
+    public $listeners = ['addVisitors', 'draw'];
 
     protected $rules = [
         'email.receiver' => 'required',
@@ -175,5 +175,29 @@ class Groupshow extends Component
 
         $this->emit('alert', ['title' => '¡Descargado!', 'text' => 'El archivo ha sido descargado', 'type' => 'success']);
         return $export;
+    }
+
+    public function draw()
+    {
+        $group = Group::find($this->gid);
+        $forms = Cache::get('forms');
+        $count = $visitors = Visitor::whereHas('groups', function($q) use($group){
+                $q->where('title', $group->title);
+            })->get()->count();
+        $visitors = $visitors = Visitor::whereHas('groups', function($q) use($group){
+                $q->where('title', $group->title);
+            })->get();
+
+        $nums = [];
+        for ($i=0; $i < $this->drawcant; $i++) { 
+           do {
+            $price = random_int(1, $count);
+            } while (in_array($price, $nums));
+
+            $nums[] = $price;
+            $prices[] = $forms[$visitors[$price-1]->form_id]['Nombre completo'];
+        }
+
+        $this->drawprices = $prices;
     }
 }

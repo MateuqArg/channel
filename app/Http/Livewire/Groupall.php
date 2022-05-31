@@ -14,10 +14,10 @@ class Groupall extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
-    public $email, $visitor, $search, $gid, $receiver;
+    public $email, $visitor, $search, $gid, $receiver, $drawprices, $drawcant;
     public $readyToLoad = false;
     public $cant = '10';
-    public $listeners = ['addVisitors'];
+    public $listeners = ['addVisitors', 'draw'];
 
     protected $rules = [
         'email.receiver' => 'required',
@@ -44,9 +44,9 @@ class Groupall extends Component
     public function render()
     {
         $talks = Talk::where('exhibitor_id', \Auth::user()->id)->get();
-        $ids = [];
+        $tids = [];
         foreach ($talks as $talk) {
-            $ids[] = $talk->id;
+            $tids[] = $talk->id;
         }
 
         $forms = Cache::get('forms');
@@ -58,13 +58,19 @@ class Groupall extends Component
         $input = preg_quote($this->search, '~');
 
         $ids = [];
-        foreach (preg_grep('~' . $input . '~', $names) as $key => $result) {
-            $ids[] = $key;
-        }
+        if ($input <> null) {
+            foreach (preg_grep('~' . $input . '~', $names) as $key => $result) {
+                $ids[] = $key;
+            }
 
-        $visitors = Visitor::whereHas('tracks', function($q) use($ids){
-            $q->whereIn('talk_id', $ids);
-        })->orWhere('id', $ids)->paginate($this->cant);
+            $visitors = Visitor::whereHas('tracks', function($q) use($tids){
+                $q->whereIn('talk_id', $tids);
+            })->orWhere('id', $ids)->paginate($this->cant);
+        } else {
+            $visitors = Visitor::whereHas('tracks', function($q) use($tids){
+                $q->whereIn('talk_id', $tids);
+            })->paginate($this->cant);
+        }
 
         return view('livewire.groups.all', compact('forms', 'visitors'));
     }
@@ -208,6 +214,34 @@ class Groupall extends Component
 
         $this->emit('alert', ['title' => '¡Descargado!', 'text' => 'El archivo ha sido descargado', 'type' => 'success']);
         return $export;
+    }
+
+    public function draw()
+    {
+        $talks = Talk::where('exhibitor_id', \Auth::user()->id)->get();
+        $ids = [];
+        foreach ($talks as $talk) {
+            $ids[] = $talk->id;
+        }
+        $forms = Cache::get('forms');
+        $count = Visitor::whereHas('tracks', function($q) use($ids){
+            $q->whereIn('talk_id', $ids);
+        })->get()->count();
+        $visitors = Visitor::whereHas('tracks', function($q) use($ids){
+            $q->whereIn('talk_id', $ids);
+        })->get();
+
+        $nums = [];
+        for ($i=0; $i < $this->drawcant; $i++) { 
+           do {
+            $price = random_int(1, $count);
+            } while (in_array($price, $nums));
+
+            $nums[] = $price;
+            $prices[] = $forms[$visitors[$price-1]->form_id]['Nombre completo'];
+        }
+
+        $this->drawprices = $prices;
     }
 
     public function selected($data)
