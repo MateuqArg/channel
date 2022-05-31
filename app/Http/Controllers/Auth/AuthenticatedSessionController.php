@@ -42,6 +42,10 @@ class AuthenticatedSessionController extends Controller
             $default = route('exhibitor.visitors');
         }
 
+        if (Auth::user()->hasRole('inactive')) {
+            Auth::logout();
+        }
+
         $talk = Talk::first();
         Session::put('talk', $talk->title);
         Session::put('talk_id', $talk->id);

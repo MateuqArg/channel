@@ -408,6 +408,11 @@ class OrganizerController extends Controller
         return view('organizer.events.visitors');
     }
 
+    public function usersIndex()
+    {
+        return view('organizer.users.index');
+    }
+
     public function staffIndex()
     {
         return view('organizer.staff');

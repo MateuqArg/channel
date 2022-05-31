@@ -5,8 +5,7 @@ namespace App\Http\Livewire;
 use Livewire\{Component, WithPagination};
 use Illuminate\Support\Facades\Cache;
 use Rap2hpoutre\FastExcel\FastExcel;
-use App\Models\Visitor;
-use App\Models\Meeting;
+use App\Models\{Visitor, Meeting};
 use Sheets;
 
 class Visitors extends Component
@@ -16,7 +15,7 @@ class Visitors extends Component
 
     public $search, $company, $charge, $country, $state, $city, $vip;
     public $readyToLoad = false;
-    public $cant = '10';
+    public $cant = '10', $downtype = 'all';
 
     public $listeners = ['destroy'];
 
@@ -64,11 +63,16 @@ class Visitors extends Component
             ->orWhereIn('id', $ids)
             ->orderBy('event_id', 'DESC')->paginate($this->cant);
             // dd($visitors);
+
+            $presents = $visitors->where('present', 1)->count();
+            $vips = $visitors->where('vip', 1)->count();
         } else {
             $visitors = [];
+            $presents = '0';
+            $vips = '0';
         }
 
-        return view('livewire.visitor.visitor', compact('visitors'));
+        return view('livewire.visitor.visitor', compact('visitors', 'presents', 'vips'));
     }
 
     public function loadVisitors()
@@ -99,7 +103,13 @@ class Visitors extends Component
     public function download()
     {
         $forms = Cache::get('forms');
-        $all = Visitor::all();
+        if ($this->downtype == 'all') {
+            $all = Visitor::all();
+        } else if ($this->downtype == 'presents') {
+            $all = Visitor::where('present', 1)->get();
+        } else if ($this->downtype == 'vips') {
+            $all = Visitor::where('vip', 1)->get();
+        }
 
         foreach ($all as $single) {
             $data[] = array(

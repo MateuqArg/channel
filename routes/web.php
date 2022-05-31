@@ -45,6 +45,13 @@ Route::name('organizer.')->prefix('organizer')->middleware(['role:organizer'])->
         // Route::post('/create', [OrganizerController::class, 'eventsCreate'])->name('create');
     });
 
+    Route::name('users.')->prefix('users')->group(function () {
+        Route::get('/', [OrganizerController::class, 'usersIndex'])->name('index');
+        // Route::get('/emails/{id}', [OrganizerController::class, 'eventsEmails'])->name('emails');
+        // Route::get('/{id}', [OrganizerController::class, 'eventsShow'])->name('show');
+        // Route::post('/create', [OrganizerController::class, 'eventsCreate'])->name('create');
+    });
+
     Route::name('visitor.')->prefix('visitor')->group(function () {
         Route::get('/{custid}', [OrganizerController::class, 'visitorScan'])->name('scan');
         Route::get('/print/{custid}', [OrganizerController::class, 'visitorPrint'])->name('print');

@@ -14,6 +14,8 @@
             {{ Request::is('organizer/talk') ? "active" : "" }}">Grupos</a></li>
           <li><a href="{{ route('organizer.visitors.index') }}" class="nav-link px-2 link-dark
             {{ Request::is('organizer/visitors') ? "active" : "" }}">Asistentes</a></li>
+          <li><a href="{{ route('organizer.users.index') }}" class="nav-link px-2 link-dark
+            {{ Request::is('organizer/users') ? "active" : "" }}">Usuarios</a></li>
           <li><a href="{{ route('organizer.staff.index') }}" class="nav-link px-2 link-dark
             {{ Request::is('organizer/staff') ? "active" : "" }}">Staff</a></li>
         </ul>
