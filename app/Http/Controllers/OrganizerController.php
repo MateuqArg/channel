@@ -17,6 +17,7 @@ use Image;
 use Storage;
 use Printing;
 use Auth;
+use App\Jobs\CheckForms;
 
 class OrganizerController extends Controller
 {
@@ -28,6 +29,8 @@ class OrganizerController extends Controller
 
     public function eventsIndex(Request $request)
     {
+        // Cache::put('currentEvent', 39);
+        // CheckForms::dispatch()->onConnection('database');
         $visitors = Visitor::where('approved', null)->get();
 
         $forms = Cache::get('forms');
@@ -152,6 +155,14 @@ class OrganizerController extends Controller
 
         if ($visitor->present <> 1) {
             ScanEmail::dispatch($custid)->onConnection('database');
+
+            $track = new Track([
+                'visitor_id' => $visitor->id,
+                'talk_id' => 1,
+            ]);
+            $track->save();
+
+            $visitor->groups()->attach(1);
         }
 
         // // Código para imprimir la etiqueta
