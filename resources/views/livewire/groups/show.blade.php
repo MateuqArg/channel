@@ -30,9 +30,7 @@
     <table class="table">
       <thead class="gradient">
         <tr>
-          @if(!\Auth::user()->hasRole('staff'))
           <th scope="col">Acciones</th>
-          @endif
           <th scope="col">ID</th>
           <th scope="col">ID público</th>
           <th scope="col">Evento</th>
@@ -50,11 +48,9 @@
       <tbody>
         @foreach($visitors as $visitor)
         <tr>
-          @if(!\Auth::user()->hasRole('staff'))
           <td>
             @include('livewire.groups.actions', ['visitor' => $visitor])
           </td>
-          @endif
           <td>{{ $visitor->id }}</td>
           <td>{{ $visitor->custid }}</td>
           <td>{{ $visitor->event->title }}</td>

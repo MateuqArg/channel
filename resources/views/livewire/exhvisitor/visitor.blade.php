@@ -18,6 +18,14 @@
       <div class="ms-auto">
         <button wire:click="download" class="btn btn-outline-primary download-btn"><i class="bi bi-download"></i> DESCARGAR</button>
       </div>
+      <div class="ms-1">
+        <select wire:model="event" id="event" class="mx-2 form-select">
+          @foreach($events as $event)
+            <option value="{{ $event->id }}">{{ $event->title }}</option>
+          @endforeach
+        </select>
+        {{-- {{ $this->event }} --}}
+      </div>
     </div>
   </div>
   <div class="row g-3">

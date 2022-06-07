@@ -4,7 +4,7 @@ namespace App\Http\Livewire;
 
 use Livewire\{Component, WithPagination};
 use Illuminate\Support\Facades\Cache;
-use App\Models\{Visitor, Meeting, User, Talk};
+use App\Models\{Visitor, Meeting, User, Talk, Event};
 use Rap2hpoutre\FastExcel\FastExcel;
 use GuzzleHttp\Client;
 use Sheets;
@@ -15,15 +15,21 @@ class Exhvisitors extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
-    public $search, $company, $charge, $country, $state, $city, $vip, $drawprices, $drawcant;
+    public $event, $search, $company, $charge, $country, $state, $city, $vip, $drawprices, $drawcant;
     public $readyToLoad = false;
     public $cant = '10';
+
+     protected $rules = [
+        'event' => 'required',
+        'drawprices' => 'array',
+    ];
 
     public $listeners = ['meet', 'draw'];
 
     public function __construct()
     {
         $this->spread = Cache::get('spread');
+        $this->event = Event::orderBy('id', 'DESC')->first()->id;
     }
 
     public function updatingSearch()
@@ -47,15 +53,24 @@ class Exhvisitors extends Component
         }
 
         if ($this->readyToLoad) {
-            $visitors = Visitor::
-            where('custid', 'like', '%'.$this->search.'%')
-            ->orWhere('id', $ids)
-            ->orderBy('event_id', 'DESC')->paginate($this->cant);
+            if ($input <> null) {
+                $visitors = Visitor::
+                where('event_id', $this->event)
+                ->orWhere('custid', 'like', '%'.$this->search.'%')
+                ->orWhereIn('id', $ids)
+                ->orderBy('event_id', 'DESC')->paginate($this->cant);
+            } else {
+                $visitors = Visitor::
+                where('event_id', $this->event)
+                ->orderBy('event_id', 'DESC')->paginate($this->cant);
+            }
         } else {
             $visitors = [];
         }
 
-        return view('livewire.exhvisitor.visitor', compact('visitors'));
+        $events = Event::orderBy('id', 'DESC')->get();
+
+        return view('livewire.exhvisitor.visitor', compact('visitors', 'events'));
     }
 
     public function loadVisitors()
@@ -163,7 +178,7 @@ class Exhvisitors extends Component
     public function download()
     {
         $forms = Cache::get('forms');
-        $all = Visitor::all();
+        $all = Visitor::where('event_id', $this->event)->get();
 
         foreach ($all as $single) {
             $data[] = array(

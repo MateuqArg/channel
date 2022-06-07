@@ -1,6 +1,9 @@
 @extends('includes.auth.app')
 @section('content')
     <main class="form-signin mt-0 pt-0">
+      <img src="{{ asset('images/trama1.png') }}" style="position: absolute; height: 95%;">
+      <img src="{{ asset('images/trama1.png') }}" style="position: absolute; left: 10px; height: 45%;">
+
       <form method="POST" action="{{ route('login') }}">
         @csrf
 
@@ -14,7 +17,8 @@
         <!-- Validation Errors -->
         <x-auth-validation-errors class="mb-4" :errors="$errors" />
 
-        <h4 class="text-light mb-4">Iniciar sesión</h4>
+        <h4 class="text-light mb-4">Ingresar en tu cuenta</h4>
+        <p class="text-light">¿Olvidaste tu contraseña? <a class="text-light" href="{{ url('forgot-password') }}">Recuperala aqui</a></p>
 
         <div class="form-floating mb-4">
           <input type="email" class="form-control" name="email" id="email" :value="old('email')" required autofocus style="border-radius: 15px">

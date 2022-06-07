@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use Livewire\Component;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Permission\Models\Role;
 use Rap2hpoutre\FastExcel\FastExcel;
 use App\Models\Event;
@@ -33,7 +34,7 @@ class Events extends Component
         // SendEmail::dispatch()->onConnection('database')->delay(Carbon::parse('2022-07-25'));
         $this->events = Event::where('id', 'like', '%'.$this->search.'%')
         ->orWhere('title', 'like', '%'.$this->search.'%')->get();
-        $visitors = Visitor::where('approved', null)->get();
+        $visitors = Visitor::where('approved', null)->where('event_id', Cache::get('currentEvent'))->get();
 
         return view('livewire.event.event');
     }

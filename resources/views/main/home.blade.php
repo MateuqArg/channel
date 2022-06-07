@@ -1,6 +1,7 @@
 @extends('includes.appindex')
 @section('content')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-borderless/borderless.css">
+<img src="{{ asset('images/tramainicio.png') }}" style="position: absolute; bottom: 0px; height: 70%;">
 <div class="container d-block d-sm-none">
   <div class="row">
     <div class="col d-flex">
@@ -35,7 +36,7 @@
       </div>
       <div class="row m-auto mt-4">
         <div class="col d-flex">
-          <a class="shadow-lg mx-auto btn btn-gallery text-light" style="box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 20%) !important;">
+          <a href="https://www.enfasys.net/channeltalks/galeria-de-fotos-2022" class="shadow-lg mx-auto btn btn-gallery text-light" style="box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 20%) !important;">
             Galeria de fotos <img src="{{ asset('images/camara.png') }}" class="ms-2" style="width: 40px">
           </a>
         </div>
@@ -77,7 +78,7 @@
       </div>
       <div class="row m-auto mt-4">
         <div class="col d-flex">
-          <a class="shadow-lg mx-auto btn btn-gallery text-light" style="box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 20%) !important;">
+          <a href="https://www.enfasys.net/channeltalks/galeria-de-fotos-2022" class="shadow-lg mx-auto btn btn-gallery text-light" style="box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 20%) !important;">
             Galeria de fotos <img src="{{ asset('images/camara.png') }}" class="ms-2" style="width: 40px">
           </a>
         </div>

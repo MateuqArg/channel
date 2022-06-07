@@ -5,7 +5,7 @@ namespace App\Http\Livewire;
 use Livewire\{Component, WithPagination};
 use Illuminate\Support\Facades\Cache;
 use Rap2hpoutre\FastExcel\FastExcel;
-use App\Models\{Visitor, Meeting};
+use App\Models\{Visitor, Meeting, Event};
 use Sheets;
 
 class Visitors extends Component
@@ -13,24 +13,21 @@ class Visitors extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
-    public $search, $company, $charge, $country, $state, $city, $vip, $drawprices, $drawcant;
+    public $event, $search, $company, $charge, $country, $state, $city, $vip, $drawprices, $drawcant;
     public $readyToLoad = false;
     public $cant = '10', $downtype = 'all';
 
     protected $rules = [
+        'event' => 'required',
         'drawprices' => 'array',
     ];
 
-    public $listeners = ['destroy', 'draw'];
+    public $listeners = ['destroy', 'draw', 'updatingSearch'];
 
     public function __construct()
     {
         $this->spread = Cache::get('spread');
-    }
-
-    public function updatingSearch()
-    {
-        $this->resetPage();
+        $this->event = Event::orderBy('id', 'DESC')->first()->id;
     }
 
     public function render()
@@ -62,11 +59,17 @@ class Visitors extends Component
         }
 
         if ($this->readyToLoad) {
-            $visitors = Visitor::
-            where('custid', 'like', '%'.$this->search.'%')
-            ->orWhereIn('id', $ids)
-            ->orderBy('event_id', 'DESC')->paginate($this->cant);
-            // dd($visitors);
+            if ($input <> null) {
+                $visitors = Visitor::
+                where('event_id', $this->event)
+                ->orWhere('custid', 'like', '%'.$this->search.'%')
+                ->orWhereIn('id', $ids)
+                ->orderBy('event_id', 'DESC')->paginate($this->cant);
+            } else {
+                $visitors = Visitor::
+                where('event_id', $this->event)
+                ->orderBy('event_id', 'DESC')->paginate($this->cant);
+            }
 
             $presents = $visitors->where('present', 1)->count();
             $vips = $visitors->where('vip', 1)->count();
@@ -76,7 +79,10 @@ class Visitors extends Component
             $vips = '0';
         }
 
-        return view('livewire.visitor.visitor', compact('visitors', 'presents', 'vips'));
+        $events = Event::orderBy('id', 'DESC')->get();
+        $approve = Visitor::where('approved', null)->where('event_id', $this->event)->get();
+
+        return view('livewire.visitor.visitor', compact('visitors', 'presents', 'vips', 'events', 'approve'));
     }
 
     public function loadVisitors()
@@ -108,11 +114,11 @@ class Visitors extends Component
     {
         $forms = Cache::get('forms');
         if ($this->downtype == 'all') {
-            $all = Visitor::all();
+            $all = Visitor::where('event_id', $this->event)->get();
         } else if ($this->downtype == 'presents') {
-            $all = Visitor::where('present', 1)->get();
+            $all = Visitor::where('event_id', $this->event)->where('present', 1)->get();
         } else if ($this->downtype == 'vips') {
-            $all = Visitor::where('vip', 1)->get();
+            $all = Visitor::where('event_id', $this->event)->where('vip', 1)->get();
         }
 
         foreach ($all as $single) {

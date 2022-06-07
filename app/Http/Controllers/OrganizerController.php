@@ -31,7 +31,7 @@ class OrganizerController extends Controller
     {
         // Cache::put('currentEvent', 39);
         // CheckForms::dispatch()->onConnection('database');
-        $visitors = Visitor::where('approved', null)->get();
+        $visitors = Visitor::where('approved', null)->where('event_id', Cache::get('currentEvent'))->get();
 
         $forms = Cache::get('forms');
 
@@ -416,7 +416,10 @@ class OrganizerController extends Controller
 
     public function visitors()
     {
-        return view('organizer.events.visitors');
+
+        $forms = Cache::get('forms');
+
+        return view('organizer.events.visitors', compact('forms'));
     }
 
     public function usersIndex()

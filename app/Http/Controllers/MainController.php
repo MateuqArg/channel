@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use App\Models\{Event, User, Visitor, Meeting};
+use App\Jobs\{CheckForms};
 use Auth;
 
 class MainController extends Controller
@@ -146,7 +147,8 @@ class MainController extends Controller
 
     public function updateForms()
     {
-        Artisan::call('schedule:run');
+        CheckForms::dispatch()->onConnection('database');
+        Artisan::call('queue:work database --queue=default');
         return response()->json(['data' => 'Actualizado'], 201);
     }
 }
