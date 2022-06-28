@@ -1,4 +1,4 @@
-<div wire:init="changeTrack">
+<div>
 <div class="col-12 col-lg-auto ms-3 mb-lg-0 me-lg-3">
     <a id="qr-btn" data-bs-toggle="modal" data-bs-target="#qr"><i class="bi bi-qr-code-scan btn btn-outline-success"></i></a>
 </div>
@@ -14,7 +14,7 @@
             <p>Ahora se está escaneando en el grupo: {{ session('talk') }}</p>
           <div class="mb-3" wire:ignore>
               <label for="talks" class="form-label">Seleccionar entre la lista de grupos</label>
-              <select class="form-control" wire:model="talk" id="talk">
+              <select class="form-control" wire:model.defer="talk" id="talk">
                 @foreach($talks as $talk)
                 <option value="{{ $talk->id }}">{{ $talk->title }}</option>
                 @endforeach
@@ -41,7 +41,7 @@
   $('#talk').on('change', function (e) {
       var data = $('#talk').select2("val");
       @this.set('talk', data);
-      window.Livewire.emit('changeTrack')
+      // window.Livewire.emit('changeTrack')
   });
 
   function delay(callback, ms) {

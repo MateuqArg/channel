@@ -62,17 +62,31 @@ class Visitors extends Component
             if ($input <> null) {
                 $visitors = Visitor::
                 where('event_id', $this->event)
-                ->orWhere('custid', 'like', '%'.$this->search.'%')
+                ->where('custid', 'like', '%'.$this->search.'%')
+                ->orWhereIn('id', $ids)
+                ->orderBy('event_id', 'DESC');
+
+                $presents = $visitors->where('present', 1)->count();
+                $vips = $visitors->where('vip', 1)->count();
+
+                $visitors = Visitor::
+                where('event_id', $this->event)
+                ->where('custid', 'like', '%'.$this->search.'%')
                 ->orWhereIn('id', $ids)
                 ->orderBy('event_id', 'DESC')->paginate($this->cant);
             } else {
                 $visitors = Visitor::
                 where('event_id', $this->event)
+                ->orderBy('event_id', 'DESC');
+
+                $presents = $visitors->where('present', 1)->count();
+                $vips = $visitors->where('vip', 1)->count();
+
+                $visitors = Visitor::
+                where('event_id', $this->event)
                 ->orderBy('event_id', 'DESC')->paginate($this->cant);
             }
 
-            $presents = $visitors->where('present', 1)->count();
-            $vips = $visitors->where('vip', 1)->count();
         } else {
             $visitors = [];
             $presents = '0';

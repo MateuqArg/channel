@@ -42,6 +42,7 @@ class CheckForms implements ShouldQueue
     public function handle()
     {
         $spread = Cache::get('spread');
+        cachedForms('all');
         $forms = Cache::get('forms');
         $passed = [];
 
@@ -81,7 +82,7 @@ class CheckForms implements ShouldQueue
                         $img = Image::make($bg);
 
                         $img->text($form['Nombre completo'], 350, 200, function($font) {
-                            $font->file(../public_html/Montserrat.ttf);
+                            $font->file('../public_html/Montserrat.ttf');
                             $font->align('center');
                             $font->color('#000');
                             $font->size(36);
@@ -147,13 +148,13 @@ class CheckForms implements ShouldQueue
                         ]]);
                         $id = json_decode($client->getBody(), true)['data']['id'];
 
-                        // $client = new Client();
-                        // $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/send', [
-                        // 'headers' => $authorization,
-                        // 'form_params' => [
-                        //     'id' => $id,
-                        //     'sendNow' => 1
-                        // ]]);
+                        $client = new Client();
+                        $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/send', [
+                        'headers' => $authorization,
+                        'form_params' => [
+                            'id' => $id,
+                            'sendNow' => 1
+                        ]]);
                     }
 
                     if (!empty($form['Pido reunirme con...'])) {

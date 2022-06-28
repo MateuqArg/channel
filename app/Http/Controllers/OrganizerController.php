@@ -507,7 +507,7 @@ class OrganizerController extends Controller
                 'form_params' => [
                     'name' => $request->type.' nuevo: '.$request->name,
                     'subject' => 'Has sido invitado a ser '.$request->type.' del evento '.$event->title,
-                    'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/header.png" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"><p style="max-width: 600px; font-size: 20px">Hola '.$request->name.' has sido invitado a ser '.$request->type.' del evento '.$event->title.' para confirmar su cuenta ingresa al siguiente link <a href="'.route('staff.enable', ['token' => $token, 'type' => $request->type]).'">AQUI</a>.</p></div></td></tr></tbody></table>',
+                    'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://channeltalks.net/images/theader.png" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"><p style="max-width: 600px; font-size: 20px">Hola '.$request->name.' has sido invitado a ser '.$request->type.' del evento '.$event->title.' para confirmar su cuenta ingresa al siguiente link <a href="'.route('staff.enable', ['token' => $token, 'type' => $request->type]).'">AQUI</a>.</p></div></td></tr></tbody></table>',
                     'fromAlias' => 'Channel Talks',
                     'fromEmail' => 'channeltalks@mediaware.news',
                     'replyEmail' => 'channeltalks@mediaware.news',
@@ -515,13 +515,13 @@ class OrganizerController extends Controller
                 ]]);
                 $id = json_decode($client->getBody(), true)['data']['id'];
 
-                // $client = new Client();
-                // $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/send', [
-                // 'headers' => $authorization,
-                // 'form_params' => [
-                //     'id' => $id,
-                //     'sendNow' => 1
-                // ]]);
+                $client = new Client();
+                $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/send', [
+                'headers' => $authorization,
+                'form_params' => [
+                    'id' => $id,
+                    'sendNow' => 1
+                ]]);
 
                 do {
                     $custid = createCustomid();

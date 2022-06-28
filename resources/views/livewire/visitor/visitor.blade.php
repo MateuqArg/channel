@@ -81,7 +81,7 @@
         </select>
       </div>
       <div>
-        <input type="text" wire:model="search" class="form-control" placeholder="Buscar por id, nombre o empresa">
+        <input type="text" id="search" wire:model="search" class="form-control" placeholder="Buscar por id, nombre o empresa">
       </div>
       <div>
         <button id="draw-btn" data-bs-toggle="modal" data-bs-target="#draw" class="btn btn-outline-primary download-btn"><i class="bi bi-dice-5"></i> SORTEAR</button>
@@ -190,5 +190,9 @@
 <script>
   $('#drawcant').on('change', function (e) {
       window.Livewire.emit('draw')
+  });
+
+  $('#search').on('change', function (e) {
+      window.Livewire.emit('refresh')
   });
 </script>

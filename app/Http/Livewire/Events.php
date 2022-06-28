@@ -14,7 +14,7 @@ use Carbon\Carbon;
 
 class Events extends Component
 {
-    public $event, $show = false, $detail, $emails, $events, $search, $inscription = [], $title, $date, $approve;
+    public $event, $show = false, $detail, $emails, $events, $search, $inscription = [], $spread, $title, $date, $approve;
     public $listeners = ['destroy', 'show', 'getBack', 'selected', 'refresh' => '$refresh'];
 
     protected $rules = [
@@ -66,7 +66,6 @@ class Events extends Component
             'title' => $this->title,
             'date' => $this->date,
             'spread' => $this->spread,
-            // 'inscription' => implode("*", $this->inscription),
             'approve' => $approve
         ]);
         $event->save();
@@ -76,6 +75,7 @@ class Events extends Component
         $date = Carbon::create($this->date);
 
         $email = new Email([
+            'event_id' => $event->id,
             'name' => 'Recordatorio 3 días',
             'subject' => 'Solo faltan 3 días para el evento',
             'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/3dias.jpg" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"></div></td></tr></tbody></table>',
@@ -86,6 +86,7 @@ class Events extends Component
         SendEmail::dispatch($email->id)->onConnection('database')->delay(Carbon::parse('2022-07-25'));
 
         $email = new Email([
+            'event_id' => $event->id,
             'name' => 'Recordatorio 1 día',
             'subject' => 'Solo falta 1 día para el evento',
             'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/1dia.jpg" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"></div></td></tr></tbody></table>',
@@ -96,6 +97,7 @@ class Events extends Component
         SendEmail::dispatch($email->id)->onConnection('database')->delay(Carbon::parse('2022-07-25'));
 
         $email = new Email([
+            'event_id' => $event->id,
             'name' => 'Recordatorio hoy',
             'subject' => 'El evento está por comenzar',
             'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/hoy.jpg" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"></div></td></tr></tbody></table>',
@@ -106,6 +108,7 @@ class Events extends Component
         SendEmail::dispatch($email->id)->onConnection('database')->delay(Carbon::parse('2022-07-25'));
 
         $email = new Email([
+            'event_id' => $event->id,
             'name' => 'Gracias',
             'subject' => '¡Gracias por asistir al evento!',
             'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/gracias.jpg" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"></div></td></tr></tbody></table>',

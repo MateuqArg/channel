@@ -20,7 +20,7 @@
           </h4>
         </div>
       </div>
-      <div class="row p-2">
+      <div class="row p-2" style="position: relative;">
         <a href="{{ route('login') }}" class="col rounded-3 shadow-sm btn-shadow btn-gradient text-decoration-none text-center p-2 m-1">
             <img src="{{ asset('images/candado.png') }}" style="width: 80%;">
             <p class="text-light mb-0">Login</p>
@@ -34,7 +34,7 @@
           <p class="text-dark mb-0">Charlas</p>
         </a>
       </div>
-      <div class="row m-auto mt-4">
+      <div class="row m-auto mt-4" style="position: relative;">
         <div class="col d-flex">
           <a href="https://www.enfasys.net/channeltalks/galeria-de-fotos-2022" class="shadow-lg mx-auto btn btn-gallery text-light" style="box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 20%) !important;">
             Galeria de fotos <img src="{{ asset('images/camara.png') }}" class="ms-2" style="width: 40px">

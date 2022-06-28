@@ -135,7 +135,7 @@ class Groupshow extends Component
         $email->save();
 
         $date = Carbon::create($this->date);
-        SendEmail::dispatch($email->id)->onConnection('database')->delay($date);
+        // SendEmail::dispatch($email->id)->onConnection('database')->delay($date);
 
         $this->emit('alert', ['title' => '¡Uno más!', 'text' => 'El correo ha sido enviado correctamente', 'type' => 'success']);
         $this->emit('refresh');
