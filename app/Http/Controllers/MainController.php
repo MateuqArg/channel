@@ -149,6 +149,5 @@ class MainController extends Controller
     {
         CheckForms::dispatch()->onConnection('database');
         Artisan::call('queue:work database --queue=default');
-        return response()->json(['data' => 'Actualizado'], 201);
     }
 }

@@ -173,7 +173,7 @@
             <div class="mb-3">
               <div class="mb-3">
                 <label for="drawcant" class="form-label">Cantidad de ganadores</label>
-                <input type="number" wire:model="drawcant" id="drawcant" class="form-control">
+                <input type="number" id="drawcant" class="form-control">
               </div>
               @if($this->drawprices)
               @foreach($this->drawprices as $key => $price)
@@ -188,8 +188,9 @@
 </div>
 
 <script>
-  $('#drawcant').on('change', function (e) {
-      window.Livewire.emit('draw')
+  $('#drawcant').on('keyup', function (e) {
+      var code = e.key
+      window.Livewire.emit('draw', code)
   });
 
   $('#search').on('change', function (e) {

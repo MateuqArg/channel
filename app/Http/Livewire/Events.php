@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire;
 
-use Livewire\Component;
+use Livewire\{Component, WithFileUploads};
 use Illuminate\Support\Facades\Cache;
 use Spatie\Permission\Models\Role;
 use Rap2hpoutre\FastExcel\FastExcel;
@@ -11,10 +11,12 @@ use App\Models\Visitor;
 use App\Models\Email;
 use App\Jobs\SendEmail;
 use Carbon\Carbon;
+use Storage;
 
 class Events extends Component
 {
-    public $event, $show = false, $detail, $emails, $events, $search, $inscription = [], $spread, $title, $date, $approve;
+    use WithFileUploads;
+    public $event, $show = false, $detail, $emails, $events, $search, $spread, $title, $date, $approve, $tresdias, $registro, $undia, $hoy, $gracias;
     public $listeners = ['destroy', 'show', 'getBack', 'selected', 'refresh' => '$refresh'];
 
     protected $rules = [
@@ -61,11 +63,14 @@ class Events extends Component
             $approve = true;
         }
 
+        $qrfile = Storage::disk('public_uploads')->put('/', $this->registro);
+
         $event = new Event([
             'custid' => $custid,
             'title' => $this->title,
             'date' => $this->date,
             'spread' => $this->spread,
+            'qrfile' => basename($qrfile),
             'approve' => $approve
         ]);
         $event->save();
@@ -74,49 +79,59 @@ class Events extends Component
 
         $date = Carbon::create($this->date);
 
+        $tresdias = Storage::disk('public_uploads')->put('/', $this->tresdias);
+
         $email = new Email([
             'event_id' => $event->id,
             'name' => 'Recordatorio 3 días',
             'subject' => 'Solo faltan 3 días para el evento',
-            'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/3dias.jpg" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"></div></td></tr></tbody></table>',
+            'content' => basename($tresdias),
             'date' => $date->subDays(3),
             'objective' => 'all'
         ]);
         $email->save();
         SendEmail::dispatch($email->id)->onConnection('database')->delay(Carbon::parse('2022-07-25'));
 
+        $undia = Storage::disk('public_uploads')->put('/', $this->undia);
+
         $email = new Email([
             'event_id' => $event->id,
             'name' => 'Recordatorio 1 día',
             'subject' => 'Solo falta 1 día para el evento',
-            'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/1dia.jpg" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"></div></td></tr></tbody></table>',
+            'content' => basename($undia),
             'date' => $date->subDays(1),
             'objective' => 'all'
         ]);
         $email->save();
         SendEmail::dispatch($email->id)->onConnection('database')->delay(Carbon::parse('2022-07-25'));
 
+        $hoy = Storage::disk('public_uploads')->put('/', $this->hoy);
+
         $email = new Email([
             'event_id' => $event->id,
             'name' => 'Recordatorio hoy',
             'subject' => 'El evento está por comenzar',
-            'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/hoy.jpg" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"></div></td></tr></tbody></table>',
+            'content' => basename($hoy),
             'date' => $this->date,
             'objective' => 'all'
         ]);
         $email->save();
         SendEmail::dispatch($email->id)->onConnection('database')->delay(Carbon::parse('2022-07-25'));
 
+        $gracias = Storage::disk('public_uploads')->put('/', $this->gracias);
+
         $email = new Email([
             'event_id' => $event->id,
             'name' => 'Gracias',
             'subject' => '¡Gracias por asistir al evento!',
-            'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/gracias.jpg" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"></div></td></tr></tbody></table>',
+            'content' => basename($hoy),
             'date' => $date->addDay(),
             'objective' => 'all'
         ]);
         $email->save();
         SendEmail::dispatch($email->id)->onConnection('database')->delay(Carbon::parse('2022-07-25'));
+
+        Cache::put('currentEvent', $event->id);
 
         $this->emit('alert', ['title' => '¡Uno más!', 'text' => 'El evento ha sido dado de alta', 'type' => 'success']);
         $this->emit('refresh');

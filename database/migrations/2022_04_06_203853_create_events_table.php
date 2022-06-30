@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('title');
             $table->date('date');
             $table->string('spread');
+            $table->string('qrfile');
             $table->boolean('approve');
             $table->timestamps();
         });

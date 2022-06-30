@@ -9,7 +9,7 @@ use Auth;
 class Profiles extends Component
 {
     use WithFileUploads;
-    public $name, $email, $phone, $avatar;
+    public $name, $email, $phone, $avatar, $password;
     public $listeners = ['autoload'];
     
     public function render()
@@ -22,6 +22,9 @@ class Profiles extends Component
     public function update()
     {
         $user = $this->user;
+        if($this->password) {
+         $user->password = bcrypt($this->password);   
+        }
         if($this->name) {
          $user->name = $this->name;   
         }

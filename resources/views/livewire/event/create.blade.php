@@ -22,6 +22,26 @@
             <input type="text" wire:model="spread" id="spread" class="form-control" aria-describedby="spreadHelp">
             <div id="titleHelp" class="form-text">Ejemplo: 1qCqKCFDEskSdIHq0p7lWwZupleeRG5nBI7on7_uwqmE</div>
           </div>
+          <div class="mb-3">
+            <label for="date" class="form-label">Recordatorio "Solo faltan 3 días"</label>
+            <input type="file" wire:model="tresdias" id="tresdias" class="form-control" aria-describedby="dateHelp">
+          </div>
+          <div class="mb-3">
+            <label for="date" class="form-label">Recordatorio "Solo falta 1 día"</label>
+            <input type="file" wire:model="undia" id="undia" class="form-control" aria-describedby="dateHelp">
+          </div>
+          <div class="mb-3">
+            <label for="date" class="form-label">Recordatorio "El evento está por comenzar"</label>
+            <input type="file" wire:model="hoy" id="hoy" class="form-control" aria-describedby="dateHelp">
+          </div>
+          <div class="mb-3">
+            <label for="date" class="form-label">Recordatorio "Gracias por asistir"</label>
+            <input type="file" wire:model="gracias" id="gracias" class="form-control" aria-describedby="dateHelp">
+          </div>
+          <div class="mb-3">
+            <label for="date" class="form-label">Molde QR de ingreso</label>
+            <input type="file" wire:model="registro" id="registro" class="form-control" aria-describedby="dateHelp">
+          </div>
           {{-- <h4 class="mb-0">Formulario de inscripción</h4>
           <div class="form-text mt-0 mb-2">Selecciona los datos que se pedirán en el formulario</div>
           <div class="form-check form-check-inline">
@@ -51,7 +71,7 @@
           <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" wire:model.defer="approve" role="switch" id="approve">
             <label class="form-check-label" for="approve">¿Hace falta aprobar las asistencias?</label>
-           </div>
+          </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-arrow-left"></i></button>

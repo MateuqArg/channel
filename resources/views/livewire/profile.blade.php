@@ -20,6 +20,10 @@
                 <input type="email" class="form-control" id="email" wire:model="email">
             </div>
             <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="password" wire:model="password">
+            </div>
+            <div class="mb-3">
                 <label for="phone" class="form-label">Teléfono</label>
                 <input type="number" class="form-control" id="phone" wire:model="phone">
             </div>

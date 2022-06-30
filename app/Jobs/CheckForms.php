@@ -77,7 +77,7 @@ class CheckForms implements ShouldQueue
                         $qr_file = Storage::disk('public_uploads')->put($file_name, $file);
                         $file = Storage::disk('public_uploads')->get($file_name);
 
-                        $bg = 'https://www.channeltalks.net/images/registro.jpg';
+                        $bg = '../public_html/uploads/'.$event->qrfile;
 
                         $img = Image::make($bg);
 

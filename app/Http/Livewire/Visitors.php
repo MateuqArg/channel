@@ -13,7 +13,7 @@ class Visitors extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
-    public $event, $search, $company, $charge, $country, $state, $city, $vip, $drawprices, $drawcant;
+    public $event, $search, $company, $charge, $country, $state, $city, $vip, $drawprices;
     public $readyToLoad = false;
     public $cant = '10', $downtype = 'all';
 
@@ -167,14 +167,15 @@ class Visitors extends Component
         return $export;
     }
 
-    public function draw()
+    public function draw($cant)
     {
         $forms = Cache::get('forms');
         $count = Visitor::all()->count();
         $visitors = Visitor::all();
 
         $nums = [];
-        for ($i=0; $i < $this->drawcant; $i++) { 
+        $prices = [];
+        for ($i=0; $i < $cant; $i++) { 
            do {
             $price = random_int(1, $count);
             } while (in_array($price, $nums));
@@ -184,6 +185,7 @@ class Visitors extends Component
         }
 
         $this->drawprices = $prices;
+        
     }
 
     public function cleanData()
