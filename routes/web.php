@@ -20,6 +20,11 @@ Route::get('/', function () {
     return view('main.home');
 })->name('home');
 
+Route::name('events.')->prefix('events')->group(function () {
+    Route::get('/{id}', [MainController::class, 'eventsForm'])->name('form');
+    // Route::get('/emails/{id}', [OrganizerController::class, 'eventsEmails'])->name('emails');
+});
+
 Route::get('/invite/{token}/{type}', [MainController::class, 'inviteEnable'])->name('staff.enable');
 Route::post('/invite/store', [MainController::class, 'inviteStore'])->name('staff.store');
 Route::get('/invite/{token}', [MainController::class, 'exhibitorEnable'])->name('exhibitor.enable');

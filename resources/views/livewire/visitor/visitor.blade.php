@@ -136,7 +136,7 @@
         @endif
           @if(!\Auth::user()->hasRole('staff'))
           <td>
-            @if($visitor->event->id == Cache::get('currentEvent'))
+            @if($visitor || $visitor->event->id == Cache::get('currentEvent'))
             @include('livewire.visitor.actions', ['visitor' => $visitor])
             @endif
           </td>

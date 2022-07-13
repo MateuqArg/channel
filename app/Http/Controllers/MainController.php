@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use App\Models\{Event, User, Visitor, Meeting};
 use App\Jobs\{CheckForms};
+use Carbon\Carbon;
 use Auth;
 
 class MainController extends Controller
@@ -21,6 +22,22 @@ class MainController extends Controller
         return view('main.index', compact('events'));
     }
 
+    public function eventsForm($custid)
+    {
+        $event = Event::where('custid', $custid)->first();
+        
+        $date = Carbon::create($event->date);
+        if ($date->lessThan(Carbon::now())) {
+            $event = 'Este evento ya ha cerrado sus inscripciones';
+        }
+
+        $exhibitors = User::role('exhibitor')->role($custid)->get();
+
+        $user = Auth::user();
+
+        return view('main.form', compact('event', 'user', 'exhibitors'));
+    }
+
     public function eventsVisitor(Request $request, $custid)
     {
         $event = Event::where('custid', $custid)->first();
@@ -28,7 +45,7 @@ class MainController extends Controller
 
         $exhibitors = User::role('exhibitor')->role($custid)->get();
 
-        $user = \Auth::user();
+        $user = Auth::user();
 
         return view('main.inscription', compact('event', 'data', 'exhibitors', 'user'));
     }
