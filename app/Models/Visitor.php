@@ -4,16 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Event;
-use App\Models\Meeting;
-use App\Models\Track;
-use App\Models\Group;
+use App\Models\{Evento, Meeting, Track, Group, Response};
 
 class Visitor extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['custid', 'event_id', 'form_id', 'approved', 'vip'];
+    protected $fillable = ['custid', 'event_id', 'approved', 'vip', 'name', 'email', 'phone', 'company', 'charge', 'state', 'city'];
 
     public function event()
     {
@@ -38,5 +35,10 @@ class Visitor extends Model
     public function groups()
     {
         return $this->belongsToMany(Group::class, 'group_visitor');
+    }
+
+    public function responses()
+    {
+        return $this->hasMany(Response::class);
     }
 }

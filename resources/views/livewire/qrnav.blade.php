@@ -33,13 +33,8 @@
   </div>
 </div>
 <script>
-  $(document).ready(function() {
-      $('#talk').select2({theme: 'bootstrap-5'});
-      // window.Livewire.emit('selected')
-  });
-
   $('#talk').on('change', function (e) {
-      var data = $('#talk').select2("val");
+      var data = $('#talk').value;
       @this.set('talk', data);
       // window.Livewire.emit('changeTrack')
   });

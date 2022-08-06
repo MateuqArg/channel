@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use Livewire\Component;
 use App\Models\Chat;
 use App\Models\Message;
+use Auth;
 
 class Chats extends Component
 {
@@ -19,7 +20,7 @@ class Chats extends Component
 
     public function mount()
     {
-        $this->selectedChat = Chat::query()->where('sender_id', \Auth::user()->id)->orWhere('receiver_id', \Auth::user()->id)->first();
+        $this->selectedChat = Chat::query()->where('sender_id', Auth::user()->id)->orWhere('receiver_id', Auth::user()->id)->first();
     }
 
     public function render()
@@ -31,7 +32,7 @@ class Chats extends Component
 
     public function getChat($id)
     {
-        if ($this->selectedChat->sender->id == \Auth::user()->id) {
+        if ($this->selectedChat->sender->id == Auth::user()->id) {
             $header = $this->selectedChat->receiver->name;
         } else {
             $header = $this->selectedChat->sender->name;
@@ -45,7 +46,7 @@ class Chats extends Component
     {
         $message = new Message([
             'chat_id' => $id,
-            'sender_id' => \Auth::user()->id,
+            'sender_id' => Auth::user()->id,
             'message' => $this->message,
         ]);
         $message->save();

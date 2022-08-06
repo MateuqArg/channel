@@ -79,9 +79,4 @@
       </div>
     </div>
   </div>
-<script>
-  $(document).ready(function() {
-    $('#userid').select2({theme: 'bootstrap-5'});
-  });
-</script>
 </header>

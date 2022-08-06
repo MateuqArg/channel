@@ -36,7 +36,7 @@ class Events extends Component
         // SendEmail::dispatch()->onConnection('database')->delay(Carbon::parse('2022-07-25'));
         $this->events = Event::where('id', 'like', '%'.$this->search.'%')
         ->orWhere('title', 'like', '%'.$this->search.'%')->get();
-        $visitors = Visitor::where('approved', null)->where('event_id', Cache::get('currentEvent'))->get();
+        $visitors = Visitor::where('approved', null)->get();
 
         return view('livewire.event.event');
     }
@@ -46,7 +46,8 @@ class Events extends Component
         $this->validate([
             'title' => 'required',
             'date' => 'required',
-            'spread' => 'required'
+            'qrfile' => 'required',
+            'approve' => 'required'
         ]);
 
         if ($this->approve) {
@@ -69,11 +70,12 @@ class Events extends Component
             'custid' => $custid,
             'title' => $this->title,
             'date' => $this->date,
-            'spread' => $this->spread,
             'qrfile' => basename($qrfile),
             'approve' => $approve
         ]);
         $event->save();
+
+        $event->inputs()->attach([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
 
         Role::create(['name' => $custid]);
 
@@ -130,8 +132,6 @@ class Events extends Component
         ]);
         $email->save();
         SendEmail::dispatch($email->id)->onConnection('database')->delay(Carbon::parse('2022-07-25'));
-
-        Cache::put('currentEvent', $event->id);
 
         $this->emit('alert', ['title' => '¡Uno más!', 'text' => 'El evento ha sido dado de alta', 'type' => 'success']);
         $this->emit('refresh');

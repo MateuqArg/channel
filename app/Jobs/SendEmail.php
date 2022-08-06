@@ -35,10 +35,6 @@ class SendEmail implements ShouldQueue
      */
     public function handle()
     {
-        $spread = Cache::get('spread');
-
-        $forms = cachedForms('all');
-
         $email = Email::find($id);
         $date = Carbon::create($email->date);
         
@@ -65,7 +61,7 @@ class SendEmail implements ShouldQueue
                     $client = $client->request('POST', 'https://api.esmsv.com/v1/contacts/getall', [
                     'headers' => $authorization,
                     'form_params' => [
-                        'email' => $forms[$visitor->form_id]['Direccion de email'],
+                        'email' => $visitor->email,
                     ]]);
                     $contacts_ids[] = json_decode($client->getBody(), true)['data']['data'][0]['id'];
 

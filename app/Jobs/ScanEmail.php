@@ -36,10 +36,10 @@ class ScanEmail implements ShouldQueue
     public function handle()
     {
         $visitor = Visitor::where('custid', $this->custid)->first();
-        $forms = Cache::get('forms');
+
         // Código para mandar mail al expositor con el que tenga reunión
 
-        $meetings = Meeting::where('visitor_id', $visitor->id)->where('approved', true)->where('event_id', Cache::get('currentEvent'))->get();
+        $meetings = Meeting::where('visitor_id', $visitor->id)->where('approved', true)->get();
 
         if ($meetings->isNotEmpty()) {
             $authorization = ['Authorization' => 'eyJpdiI6Ik9UUXdOVFkyT1RZek5qSTNNVGs0T0E9PSIsInZhbHVlIjoiMEwwVjFjeTVyZ3ZnWlE1U204REtkQk0vZCtSbW4rdGZ1WXg3Uzk2Z2dLST0iLCJtYWMiOiI0MzM2M2NlNDE3YjMyY2ZhNjNlZTIxNGFmMDQwOTQyNjVhMzA3ZGNlMDQzZGQ5NDNlZWY0OTIxNWNhZjI4MmUzIn0='];
@@ -57,7 +57,7 @@ class ScanEmail implements ShouldQueue
                 $client = $client->request('POST', 'https://api.esmsv.com/v1/listscontacts/create', [
                 'headers' => $authorization,
                 'form_params' => [
-                    'name' => 'Reunión con '.$forms[$visitor->form_id]['Nombre completo'].rand(),
+                    'name' => 'Reunión con '.$visitor->name.rand(),
                 ]]);
                 $list_id = json_decode($client->getBody(), true)['data']['id'];
 
@@ -84,9 +84,9 @@ class ScanEmail implements ShouldQueue
                 $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/create', [
                 'headers' => $authorization,
                 'form_params' => [
-                    'name' => 'Reunión con '.$forms[$visitor->form_id]['Nombre completo'],
-                    'subject' => 'El invitado '.$forms[$visitor->form_id]['Nombre completo'].' ha ingresado al evento',
-                    'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/header.png" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"><p style="max-width: 600px; font-size: 20px">El invitado '.$forms[$visitor->form_id]['Nombre completo'].' ha ingresado al evento, sugerimos contactarse para coordinar la reunión al email: '.$forms[$visitor->form_id]['Direccion de email'].'.</p></div></td></tr></tbody></table>',
+                    'name' => 'Reunión con '.$visitor->name,
+                    'subject' => 'El invitado '.$visitor->name.' ha ingresado al evento',
+                    'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://www.channeltalks.net/images/header.png" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"><p style="max-width: 600px; font-size: 20px">El invitado '.$visitor->name.' ha ingresado al evento, sugerimos contactarse para coordinar la reunión al email: '.$visitor->email.'.</p></div></td></tr></tbody></table>',
                     'fromAlias' => 'Channel Talks',
                     'fromEmail' => 'channeltalks@mediaware.news',
                     'replyEmail' => 'channeltalks@mediaware.news',
@@ -104,7 +104,7 @@ class ScanEmail implements ShouldQueue
             }
         }
 
-        $meetings = Meeting::where('visitor_id', $visitor->id)->where('approved', true)->where('event_id', Cache::get('currentEvent'))->get();
+        $meetings = Meeting::where('visitor_id', $visitor->id)->where('approved', true)->get();
 
         if ($visitor->vip == 1) {
             $organizers = User::role('organizer')->get();
@@ -115,7 +115,7 @@ class ScanEmail implements ShouldQueue
             $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/getAll', [
             'headers' => $authorization,
             'form_params' => [
-                'filter' => 'Ingreso VIP: '.$forms[$visitor->form_id]['Nombre completo'],
+                'filter' => 'Ingreso VIP: '.$visitor->name,
             ]]);
             $check = json_decode($client->getBody(), true)['data']['data'];
 
@@ -124,7 +124,7 @@ class ScanEmail implements ShouldQueue
                 $client = $client->request('POST', 'https://api.esmsv.com/v1/listscontacts/create', [
                 'headers' => $authorization,
                 'form_params' => [
-                    'name' => 'Ingreso VIP: '.$forms[$visitor->form_id]['Nombre completo'].rand(),
+                    'name' => 'Ingreso VIP: '.$visitor->name.rand(),
                 ]]);
                 $list_id = json_decode($client->getBody(), true)['data']['id'];
 
@@ -150,9 +150,9 @@ class ScanEmail implements ShouldQueue
                 $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/create', [
                 'headers' => $authorization,
                 'form_params' => [
-                    'name' => 'Ingreso VIP: '.$forms[$visitor->form_id]['Nombre completo'],
-                    'subject' => 'El invitado '.$forms[$visitor->form_id]['Nombre completo'].' ha ingresado al evento',
-                    'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/header.png" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"><p style="max-width: 600px; font-size: 20px">El invitado VIP '.$forms[$visitor->form_id]['Nombre completo'].' ha ingresado al evento.</p></div></td></tr></tbody></table>',
+                    'name' => 'Ingreso VIP: '.$visitor->name,
+                    'subject' => 'El invitado '.$visitor->name.' ha ingresado al evento',
+                    'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/header.png" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"><p style="max-width: 600px; font-size: 20px">El invitado VIP '.$visitor->name.' ha ingresado al evento.</p></div></td></tr></tbody></table>',
                     'fromAlias' => 'Channel Talks',
                     'fromEmail' => 'channeltalks@mediaware.news',
                     'replyEmail' => 'channeltalks@mediaware.news',

@@ -28,7 +28,6 @@ class Exhvisitors extends Component
 
     public function __construct()
     {
-        $this->spread = Cache::get('spread');
         $this->event = Event::orderBy('id', 'DESC')->first()->id;
     }
 
@@ -39,31 +38,17 @@ class Exhvisitors extends Component
 
     public function render()
     {
-        $this->forms = Cache::get('forms');
 
-        foreach ($this->forms as $form) {
-            $names[$form['id']] = $form['Nombre completo'];
-        }
-
-        $input = preg_quote($this->search, '~');
-
-        $ids = [];
-        foreach (preg_grep('~' . $input . '~', $names) as $key => $result) {
-            $ids[] = $key;
-        }
+        $input = preg_quote(strtolower($this->search), '~');
 
         if ($this->readyToLoad) {
-            if ($input <> null) {
                 $visitors = Visitor::
                 where('event_id', $this->event)
-                ->orWhere('custid', 'like', '%'.$this->search.'%')
-                ->orWhereIn('id', $ids)
+                ->where('custid', 'like', '%'.$input.'%')
+                ->orWhere('name', 'like', '%'.$input.'%')
+                ->orWhere('company', 'like', '%'.$input.'%')
                 ->orderBy('event_id', 'DESC')->paginate($this->cant);
-            } else {
-                $visitors = Visitor::
-                where('event_id', $this->event)
-                ->orderBy('event_id', 'DESC')->paginate($this->cant);
-            }
+
         } else {
             $visitors = [];
         }
@@ -99,14 +84,14 @@ class Exhvisitors extends Component
             $custid = createCustomid();
         } while (Meeting::where('custid', $custid)->first() <> null);
 
-        $check = Meeting::where('event_id', Cache::get('currentEvent'))->where('visitor_id', $id)->where('exhibitor', Auth::user()->name)->first();
+        $check = Meeting::where('visitor_id', $id)->where('exhibitor', Auth::user()->name)->first();
 
         if(empty($check)) {
             $visitor = Visitor::find($id);
 
             $meeting = new Meeting([
                 'custid' => $custid,
-                'event_id' => Cache::get('currentEvent'),
+                'event_id' => $visitor->event->id,
                 'visitor_id' => $visitor->id,
                 'exhibitor' => Auth::user()->name,
                 'approved' => null,
@@ -177,16 +162,15 @@ class Exhvisitors extends Component
 
     public function download()
     {
-        $forms = Cache::get('forms');
         $all = Visitor::where('event_id', $this->event)->get();
 
         foreach ($all as $single) {
             $data[] = array(
                 'ID' => $single->id,
                 'ID público' => $single->custid,
-                'Nombre' => $forms[$single->form_id]['Nombre completo'],
-                'Empresa' => $forms[$single->form_id]['Empresa'],
-                'Cargo' => $forms[$single->form_id]['Cargo'],
+                'Nombre' => $single->name,
+                'Empresa' => $single->company,
+                'Cargo' => $single->charge,
             );
         }
 
@@ -207,7 +191,6 @@ class Exhvisitors extends Component
 
     public function draw()
     {
-        $forms = Cache::get('forms');
         $count = Visitor::all()->count();
         $visitors = Visitor::all();
 
@@ -218,7 +201,7 @@ class Exhvisitors extends Component
             } while (in_array($price, $nums));
 
             $nums[] = $price;
-            $prices[] = $forms[$visitors[$price-1]->form_id]['Nombre completo'];
+            $prices[] = $visitors[$price-1]->name;
         }
 
         $this->drawprices = $prices;

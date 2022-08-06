@@ -48,16 +48,16 @@
         <tr>
           @if(!\Auth::user()->hasRole('staff'))
           <td>
-            @if($visitor->event->id == Cache::get('currentEvent'))
+            @if($visitor->event->date > \Carbon\Carbon::now())
             @include('livewire.exhvisitor.actions', ['visitor' => $visitor])
             @endif
           </td>
           @endif
           <td>{{ $visitor->id }}</td>
           <td>{{ $visitor->custid }}</td>
-          <td>{{ $forms[$visitor->form_id]['Nombre completo'] }}</td>
-          <td>{{ $forms[$visitor->form_id]['Empresa'] }}</td>
-          <td>{{ $forms[$visitor->form_id]['Cargo'] }}</td>
+          <td>{{ $visitor->name }}</td>
+          <td>{{ $visitor->company }}</td>
+          <td>{{ $visitor->charge }}</td>
         </tr>
         @endforeach
       </tbody>

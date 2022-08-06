@@ -21,7 +21,12 @@ Route::get('/', function () {
 })->name('home');
 
 Route::name('events.')->prefix('events')->group(function () {
-    Route::get('/{id}', [MainController::class, 'eventsForm'])->name('form');
+    Route::get('/{custid}', [MainController::class, 'eventForm'])->name('form.get');
+    Route::get('/{custid}/store', [MainController::class, 'eventFormStore'])->name('form.store');
+    Route::get('/survey/{custid}', [MainController::class, 'eventSurveyForm'])->name('survey.get');
+    Route::get('/survey/{custid}/store', [MainController::class, 'eventSurveyFormStore'])->name('survey.store');
+    Route::get('/meeting/{custid}', [MainController::class, 'eventMeetingForm'])->name('meeting.get');
+    Route::get('/meeting/{custid}/store', [MainController::class, 'eventMeetingFormStore'])->name('meeting.store');
     // Route::get('/emails/{id}', [OrganizerController::class, 'eventsEmails'])->name('emails');
 });
 
@@ -34,27 +39,15 @@ Route::get('/updateforms', [MainController::class, 'updateForms'])->name('forms'
 
 Route::get('/profile', [MainController::class, 'profile'])->name('profile');
 
-// Route::name('visitor.')->prefix('visitor')->group(function () {
-//     Route::prefix('events')->group(function () {
-//         Route::get('/', [MainController::class, 'events'])->name('index');
-//         Route::get('/{custid}', [MainController::class, 'eventsVisitor'])->name('inscription');
-//         Route::get('/{custid}/store', [MainController::class, 'visitorStore'])->name('inscription.store');
-//     });
-// });
-
 Route::name('organizer.')->prefix('organizer')->middleware(['role:organizer'])->group(function () {
     Route::name('events.')->prefix('events')->group(function () {
         Route::get('/', [OrganizerController::class, 'eventsIndex'])->name('index');
         Route::get('/emails/{id}', [OrganizerController::class, 'eventsEmails'])->name('emails');
-        // Route::get('/{id}', [OrganizerController::class, 'eventsShow'])->name('show');
-        // Route::post('/create', [OrganizerController::class, 'eventsCreate'])->name('create');
+        Route::get('/forms/{id}', [OrganizerController::class, 'eventsForms'])->name('forms');
     });
 
     Route::name('users.')->prefix('users')->group(function () {
         Route::get('/', [OrganizerController::class, 'usersIndex'])->name('index');
-        // Route::get('/emails/{id}', [OrganizerController::class, 'eventsEmails'])->name('emails');
-        // Route::get('/{id}', [OrganizerController::class, 'eventsShow'])->name('show');
-        // Route::post('/create', [OrganizerController::class, 'eventsCreate'])->name('create');
     });
 
     Route::name('visitor.')->prefix('visitor')->group(function () {
@@ -73,7 +66,6 @@ Route::name('organizer.')->prefix('organizer')->middleware(['role:organizer'])->
 
     Route::name('talk.')->prefix('talk')->group(function () {
         Route::get('/', [OrganizerController::class, 'talks'])->name('index');
-        // Route::get('/create', [OrganizerController::class, 'talksCreate'])->name('create');
     });
 
     Route::name('staff.')->prefix('staff')->group(function () {

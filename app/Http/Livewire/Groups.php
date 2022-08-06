@@ -4,8 +4,9 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Cache;
-use App\Models\{Group, Visitor, Talk};
+use App\Models\{Group, Visitor, Talk, Event};
 use Sheets;
+use Auth;
 
 class Groups extends Component
 {
@@ -25,37 +26,36 @@ class Groups extends Component
 
     public function __construct()
     {
-        $this->spread = Cache::get('spread');
     }
 
     public function render()
     {
 
-        $groups = Group::where('exhibitor_id', \Auth::user()->id)->get();
+        $groups = Group::where('exhibitor_id', Auth::user()->id)->get();
 
-        $forms = Cache::get('forms');
 
-        return view('livewire.groups.group', compact('groups', 'forms'));
+        return view('livewire.groups.group', compact('groups'));
     }
 
     public function create()
     {
-        // dd($this->title);
+        $event = Event::latest()->first();
+
         do {
             $custid = createCustomid();
         } while (Talk::where('custid', $custid)->first() <> null);
 
         $talk = new Talk([
             'custid' => $custid,
-            'event_id' => Cache::get('currentEvent'),
-            'exhibitor_id' => \Auth::user()->id,
+            'event_id' => $event,
+            'exhibitor_id' => Auth::user()->id,
             'title' => $this->title
         ]);
         $talk->save();
 
         $group = new Group([
             'title' => $this->title,
-            'exhibitor_id' => \Auth::user()->id
+            'exhibitor_id' => Auth::user()->id
         ]);
         $group->save();
 

@@ -8,6 +8,7 @@ use App\Models\{Group, Visitor, Email, Talk};
 use Rap2hpoutre\FastExcel\FastExcel;
 use GuzzleHttp\Client;
 use Sheets;
+use Auth;
 
 class Groupall extends Component
 {
@@ -33,7 +34,6 @@ class Groupall extends Component
 
     public function __construct()
     {
-        $this->spread = Cache::get('spread');
     }
 
     public function updatingSearch()
@@ -43,36 +43,23 @@ class Groupall extends Component
 
     public function render()
     {
-        $talks = Talk::where('exhibitor_id', \Auth::user()->id)->get();
+        $talks = Talk::where('exhibitor_id', Auth::user()->id)->get();
         $tids = [];
         foreach ($talks as $talk) {
             $tids[] = $talk->id;
         }
 
-        $forms = Cache::get('forms');
-
-        foreach ($forms as $form) {
-            $names[$form['id']] = $form['Nombre completo'];
-        }
-
         $input = preg_quote($this->search, '~');
 
-        $ids = [];
-        if ($input <> null) {
-            foreach (preg_grep('~' . $input . '~', $names) as $key => $result) {
-                $ids[] = $key;
-            }
+        $visitors = Visitor::whereHas('tracks', function($q) use($tids){
+            $q->whereIn('talk_id', $tids);
+        })
+            ->where('custid', 'like', '%'.$input.'%')
+            ->orWhere('name', 'like', '%'.$input.'%')
+            ->orWhere('company', 'like', '%'.$input.'%')
+            ->paginate($this->cant);
 
-            $visitors = Visitor::whereHas('tracks', function($q) use($tids){
-                $q->whereIn('talk_id', $tids);
-            })->orWhere('id', $ids)->paginate($this->cant);
-        } else {
-            $visitors = Visitor::whereHas('tracks', function($q) use($tids){
-                $q->whereIn('talk_id', $tids);
-            })->paginate($this->cant);
-        }
-
-        return view('livewire.groups.all', compact('forms', 'visitors'));
+        return view('livewire.groups.all', compact('visitors'));
     }
 
     public function loadVisitors()
@@ -104,11 +91,9 @@ class Groupall extends Component
 
     public function sendEmail($data)
     {
-        $forms = Cache::get('forms');
-
         // $visitors = Visitor::where('custid',)->get();
         if (strtolower($this->email->receiver) == 'todos') {
-            $talks = Talk::where('exhibitor_id', \Auth::user()->id)->get();
+            $talks = Talk::where('exhibitor_id', Auth::user()->id)->get();
             $ids = [];
             foreach ($talks as $talk) {
                 $ids[] = $talk->id;
@@ -125,7 +110,7 @@ class Groupall extends Component
         $client = $client->request('POST', 'https://api.esmsv.com/v1/listscontacts/create', [
         'headers' => $authorization,
         'form_params' => [
-            'name' => 'Email de: '.\Auth::user()->name.' - '. $this->email->subject,
+            'name' => 'Email de: '.Auth::user()->name.' - '. $this->email->subject,
         ]]);
         $list_id = json_decode($client->getBody(), true)['data']['id'];
 
@@ -151,10 +136,10 @@ class Groupall extends Component
         $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/create', [
         'headers' => $authorization,
         'form_params' => [
-            'name' => 'Email de: '.\Auth::user()->name.' - '. $this->email->subject,
+            'name' => 'Email de: '.Auth::user()->name.' - '. $this->email->subject,
             'subject' => $this->email->subject,
             'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://mediaware.org/channeltalks/imagenes/header.png" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"><p style="max-width: 600px; font-size: 20px">'.$this->email->content.'</p></div></td></tr></tbody></table>',
-            'fromAlias' => \Auth::user()->name,
+            'fromAlias' => Auth::user()->name,
             'fromEmail' => 'channeltalks@mediaware.news',
             'replyEmail' => 'channeltalks@mediaware.news',
             'mailListsIds' => [$list_id],
@@ -174,7 +159,7 @@ class Groupall extends Component
 
     public function download()
     {
-        $talks = Talk::where('exhibitor_id', \Auth::user()->id)->get();
+        $talks = Talk::where('exhibitor_id', Auth::user()->id)->get();
 
         $ids = [];
         foreach ($talks as $talk) {
@@ -185,21 +170,27 @@ class Groupall extends Component
             $q->whereIn('talk_id', $ids);
         })->get();
 
-        $forms = Cache::get('forms');
-
         foreach ($all as $single) {
-            $data[] = array(
+            foreach($single->responses as $response) {
+                $input = $response->input;
+                $responses[$input->label] = $response->value;
+            }
+
+            $info = array(
                 'ID' => $single->id,
                 'ID público' => $single->custid,
-                'Nombre' => $forms[$single->form_id]['Nombre completo'],
-                'Correo' => $forms[$single->form_id]['Direccion de email'],
-                'Teléfono' => $forms[$single->form_id]['Telefono'],
-                'Empresa' => $forms[$single->form_id]['Empresa'],
-                'Cargo' => $forms[$single->form_id]['Cargo'],
-                'Provincia' => $forms[$single->form_id]['Provincia'],
-                'Ciudad' => $forms[$single->form_id]['Localidad'],
                 '¿Presente?' => $single->present,
+                'Evento' => $single->event->title,
+                'Nombre' => $single->name,
+                'Correo' => $single->email,
+                'Teléfono' => $single->phone,
+                'Empresa' => $single->company,
+                'Cargo' => $single->charge,
+                'Provincia' => $single->state,
+                'Ciudad' => $single->city,
             );
+
+            $data[] = array_merge($info, $responses);
         }
         $export = (new FastExcel($data))->download('asistentes.xlsx');
 
@@ -218,12 +209,12 @@ class Groupall extends Component
 
     public function draw()
     {
-        $talks = Talk::where('exhibitor_id', \Auth::user()->id)->get();
+        $talks = Talk::where('exhibitor_id', Auth::user()->id)->get();
         $ids = [];
         foreach ($talks as $talk) {
             $ids[] = $talk->id;
         }
-        $forms = Cache::get('forms');
+
         $count = Visitor::whereHas('tracks', function($q) use($ids){
             $q->whereIn('talk_id', $ids);
         })->get()->count();

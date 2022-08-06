@@ -1,7 +1,7 @@
 @extends('includes.auth.app')
 @section('content')
     <main class="form-signin mt-0 pt-0">
-      <img src="{{ asset('images/trama1.png') }}" style="position: absolute; height: 95%;">
+      <img src="{{ asset('images/trama1.png') }}" style="position: absolute; height: 95%; z-index: -1;">
       <img src="{{ asset('images/trama1.png') }}" style="position: absolute; left: 10px; height: 45%;">
 
       <form method="POST" action="{{ route('login') }}">

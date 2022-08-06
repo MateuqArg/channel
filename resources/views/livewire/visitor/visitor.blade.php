@@ -30,7 +30,7 @@
               <div class="row">
                 <div class="col-9">
                   <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $visitor->custid }}" aria-expanded="true" aria-controls="{{ $visitor->custid }}">
-                    {{ $forms[$visitor->form_id]['Nombre completo'] }} - {{ $visitor->event->title }}
+                    {{ $visitor->name }} - {{ $visitor->event->title }}
                   </button>
                 </div>
                 <div class="col-1">
@@ -44,13 +44,13 @@
             <div id="{{ $visitor->custid }}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
               <div class="accordion-body">
                 <p class="mb-0">
-                  <strong>Nombre:</strong> {{ $forms[$visitor->form_id]['Nombre completo'] }}<br>
-                  <strong>Email:</strong> {{ $forms[$visitor->form_id]['Direccion de email'] }}<br>
-                  <strong>Teléfono:</strong> {{ $forms[$visitor->form_id]['Telefono'] }}<br>
-                  <strong>Empresa:</strong> {{ $forms[$visitor->form_id]['Empresa'] }}<br>
-                  <strong>Cargo:</strong> {{ $forms[$visitor->form_id]['Cargo'] }}<br>
-                  <strong>Provincia:</strong> {{ $forms[$visitor->form_id]['Provincia'] }}<br>
-                  <strong>Ciudad:</strong> {{ $forms[$visitor->form_id]['Localidad'] }}
+                  <strong>Nombre:</strong> {{ $visitor->name }}<br>
+                  <strong>Email:</strong> {{ $visitor->email }}<br>
+                  <strong>Teléfono:</strong> {{ $visitor->phone }}<br>
+                  <strong>Empresa:</strong> {{ $visitor->company }}<br>
+                  <strong>Cargo:</strong> {{ $visitor->charge }}<br>
+                  <strong>Provincia:</strong> {{ $visitor->state }}<br>
+                  <strong>Ciudad:</strong> {{ $visitor->city }}
                 </p>
               </div>
             </div>
@@ -136,7 +136,7 @@
         @endif
           @if(!\Auth::user()->hasRole('staff'))
           <td>
-            @if($visitor || $visitor->event->id == Cache::get('currentEvent'))
+            @if($visitor->event->date > \Carbon\Carbon::now())
             @include('livewire.visitor.actions', ['visitor' => $visitor])
             @endif
           </td>
@@ -144,14 +144,14 @@
           <td>{{ $visitor->id }}</td>
           <td>{{ $visitor->custid }}</td>
           <td>{{ $visitor->event->title }}</td>
-          <td>{{ $forms[$visitor->form_id]['Nombre completo'] }}</td>
+          <td>{{ $visitor->name }}</td>
           <td>{{ $visitor->present ? "Si" : "No" }}</td>
-          <td>{{ $forms[$visitor->form_id]['Direccion de email'] }}</td>
-          <td>{{ $forms[$visitor->form_id]['Telefono'] }}</td>
-          <td>{{ $forms[$visitor->form_id]['Empresa'] }}</td>
-          <td>{{ $forms[$visitor->form_id]['Cargo'] }}</td>
-          <td>{{ $forms[$visitor->form_id]['Provincia'] }}</td>
-          <td>{{ $forms[$visitor->form_id]['Localidad'] }}</td>
+          <td>{{ $visitor->email }}</td>
+          <td>{{ $visitor->phone }}</td>
+          <td>{{ $visitor->company }}</td>
+          <td>{{ $visitor->charge }}</td>
+          <td>{{ $visitor->state }}</td>
+          <td>{{ $visitor->city }}</td>
         </tr>
         @endforeach
       </tbody>

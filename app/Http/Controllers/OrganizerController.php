@@ -24,18 +24,11 @@ class OrganizerController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->spread = Cache::get('spread');
     }
 
     public function eventsIndex(Request $request)
     {
-        // Cache::put('currentEvent', 39);
-        // CheckForms::dispatch()->onConnection('database');
-        $visitors = Visitor::where('approved', null)->where('event_id', Cache::get('currentEvent'))->get();
-
-        $forms = Cache::get('forms');
-
-        return view('organizer.events.index', compact('visitors', 'forms'));
+        return view('organizer.events.index');
     }
 
     public function eventsEmails(Request $request, $id)
@@ -45,13 +38,19 @@ class OrganizerController extends Controller
         return view('organizer.email.show', compact('event'));
     }
 
+    public function eventsForms(Request $request, $id)
+    {
+        $event = Event::where('id', $id)->first();
+
+        return view('organizer.input.show', compact('event'));
+    }
+
     public function visitorAccept(Request $request, $id)
     {
         $visitor = Visitor::find($id);
-        // $visitor->approved = true;
-        // $visitor->update();
+        $visitor->approved = true;
+        $visitor->update();
 
-        $forms = Cache::get('forms');
 
         $file = QrCode::format('png')->size(305)->generate(route('organizer.visitor.track', ['custid' => $visitor->custid]));
         $qr_file = $file_name = time().'.'.'png';
@@ -64,7 +63,7 @@ class OrganizerController extends Controller
 
         $img = Image::make($bg);
 
-        $img->text($forms[$visitor->form_id]['Nombre completo'], 350, 200, function($font) {
+        $img->text($visitor->name, 350, 200, function($font) {
             $font->file(public_path("Montserrat.ttf"));
             $font->align('center');
             $font->color('#000');
@@ -82,7 +81,7 @@ class OrganizerController extends Controller
         $client = $client->request('POST', 'https://api.esmsv.com/v1/listscontacts/create', [
         'headers' => $authorization,
         'form_params' => [
-            'name' => 'Asistencia aprobada: '.$forms[$visitor->form_id]['Nombre completo'],
+            'name' => 'Asistencia aprobada: '.$visitor->name,
         ]]);
         $list_id = json_decode($client->getBody(), true)['data']['id'];
 
@@ -90,7 +89,7 @@ class OrganizerController extends Controller
         $client = $client->request('POST', 'https://api.esmsv.com/v1/contacts/getall', [
         'headers' => $authorization,
         'form_params' => [
-            'email' => $forms[$visitor->form_id]['Direccion de email'],
+            'email' => $visitor->email,
         ]]);
         $contacts_ids[] = json_decode($client->getBody(), true)['data']['data'][0]['id'];
 
@@ -106,7 +105,7 @@ class OrganizerController extends Controller
         $client = $client->request('POST', 'https://api.esmsv.com/v1/campaign/create', [
         'headers' => $authorization,
         'form_params' => [
-            'name' => 'Registro aprobado: '.$forms[$visitor->form_id]['Nombre completo'],
+            'name' => 'Registro aprobado: '.$visitor->name,
             'subject' => '¡Has sido registrado exitosamente!',
             'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="'.public_path('uploads/'.$file_name).'" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"></div></td></tr></tbody></table>',
             'fromAlias' => 'Channel Talks',
@@ -151,8 +150,6 @@ class OrganizerController extends Controller
             $track->save();
         }
 
-        $forms = Cache::get('forms');
-
         if ($visitor->present <> 1) {
             ScanEmail::dispatch($custid)->onConnection('database');
 
@@ -186,15 +183,13 @@ class OrganizerController extends Controller
         $visitor->present = true;
         $visitor->update();
 
-        // return \Response::download(public_path('/images/1.png'));
-        return view('organizer.visitor.scan', compact('visitor', 'forms'));
+        // return Response::download(public_path('/images/1.png'));
+        return view('organizer.visitor.scan', compact('visitor'));
     }
 
     public function visitorPrint(Request $request, $custid)
     {
         $visitor = Visitor::where('custid', $custid)->first();
-
-        $forms = Cache::get('forms');
 
         $file = QrCode::format('png')->size(300)->generate(route('organizer.visitor.track', ['custid' => $visitor->custid]));
         $qr_file = 'qr.png';
@@ -211,9 +206,9 @@ class OrganizerController extends Controller
         $font_size = 76;
         $font_height = 35;
 
-        $text = ucwords(strtolower(explode(' ', $forms[$visitor->form_id]['Nombre completo'], 2)[0]));
-        if (isset(explode(' ', $forms[$visitor->form_id]['Nombre completo'], 2)[1])) {
-            $text = $text .' '. ucwords(strtolower(explode(' ', $forms[$visitor->form_id]['Nombre completo'], 2)[1]));
+        $text = ucwords(strtolower(explode(' ', $visitor->name, 2)[0]));
+        if (isset(explode(' ', $visitor->name, 2)[1])) {
+            $text = $text .' '. ucwords(strtolower(explode(' ', $visitor->name, 2)[1]));
         }
         
         $lines = explode("\n", wordwrap($text, $max_len));
@@ -237,7 +232,7 @@ class OrganizerController extends Controller
         $font_size = 45;
         $font_height = 30;
 
-        $text = ucwords(strtolower($forms[$visitor->form_id]['Cargo']));
+        $text = ucwords(strtolower($visitor->charge));
 
         $lines = explode("\n", wordwrap($text, $max_len));
         $y2 = $y - ((count($lines) - 1) * $font_height);
@@ -260,7 +255,7 @@ class OrganizerController extends Controller
         $font_size = 60;
         $font_height = 30;
 
-        $text = ucwords(strtolower($forms[$visitor->form_id]['Empresa']));
+        $text = ucwords(strtolower($visitor->company));
 
         $lines = explode("\n", wordwrap($text, $max_len));
         $y2 = $y - ((count($lines) - 1) * $font_height);
@@ -316,7 +311,7 @@ class OrganizerController extends Controller
         $check =  User::where('email', $request->email)->first();
 
         if (empty($check)) {
-            $event = Event::find(Cache::get('currentEvent'));
+            $event = Event::latest()->first();
 
             $authorization = ['Authorization' => 'eyJpdiI6Ik9UUXdOVFkyT1RZek5qSTNNVGs0T0E9PSIsInZhbHVlIjoiMEwwVjFjeTVyZ3ZnWlE1U204REtkQk0vZCtSbW4rdGZ1WXg3Uzk2Z2dLST0iLCJtYWMiOiI0MzM2M2NlNDE3YjMyY2ZhNjNlZTIxNGFmMDQwOTQyNjVhMzA3ZGNlMDQzZGQ5NDNlZWY0OTIxNWNhZjI4MmUzIn0='];
 
@@ -417,9 +412,7 @@ class OrganizerController extends Controller
     public function visitors()
     {
 
-        $forms = Cache::get('forms');
-
-        return view('organizer.events.visitors', compact('forms'));
+        return view('organizer.events.visitors');
     }
 
     public function usersIndex()
@@ -451,7 +444,7 @@ class OrganizerController extends Controller
         $check =  User::where('email', $request->email)->first();
 
         if (empty($check)) {
-            $event = Event::find(Cache::get('currentEvent'));
+            $event = Event::lastest()->first();
 
             $authorization = ['Authorization' => 'eyJpdiI6Ik9UUXdOVFkyT1RZek5qSTNNVGs0T0E9PSIsInZhbHVlIjoiMEwwVjFjeTVyZ3ZnWlE1U204REtkQk0vZCtSbW4rdGZ1WXg3Uzk2Z2dLST0iLCJtYWMiOiI0MzM2M2NlNDE3YjMyY2ZhNjNlZTIxNGFmMDQwOTQyNjVhMzA3ZGNlMDQzZGQ5NDNlZWY0OTIxNWNhZjI4MmUzIn0='];
 

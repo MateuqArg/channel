@@ -17,10 +17,16 @@ return new class extends Migration
             $table->id();
             $table->string('custid');
             $table->integer('event_id');
-            $table->integer('form_id')->nullable();
             $table->boolean('approved')->nullable()->default(null);
             $table->boolean('present')->nullable()->default(null);
             $table->boolean('vip')->default(0);
+            $table->string('name');
+            $table->string('email');
+            $table->biginteger('phone');
+            $table->string('company');
+            $table->string('charge');
+            $table->string('state');
+            $table->string('city');
             $table->timestamps();
         });
     }

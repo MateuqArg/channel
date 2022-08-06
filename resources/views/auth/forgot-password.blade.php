@@ -6,7 +6,6 @@
 
         <img class="mb-4" src="{{ asset('images/logow.png') }}" height="57">
         <img class="mb-2" src="{{ asset('images/persona.png') }}" height="150">
-        {{-- <h1 class="h3 mb-3 fw-normal">Please sign in</h1> --}}
 
         <!-- Session Status -->
         <x-auth-session-status class="mb-4" :status="session('status')" />
@@ -22,7 +21,6 @@
         </div>
 
         <button class="px-auto py-3 btn btn-login text-light w-100" style="box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 20%) !important;" type="submit"><h4 class="m-0">Enviar</h4></button>
-        {{-- <button class="w-100 btn btn-lg btn-primary" type="submit">Iniciar sesión</button> --}}
       </form>
     </main>
 @endsection

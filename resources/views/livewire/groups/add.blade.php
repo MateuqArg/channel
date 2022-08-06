@@ -12,7 +12,7 @@
                 <label for="event" class="form-label">Selecciona el evento relacionado al grupo</label>
                 <select class="form-control" id="visitors" multiple="multiple">
                   @foreach($allvisitors as $visitor)
-                  <option value="{{ $visitor->id }}">{{ $forms[$visitor->form_id]['Nombre completo'] }}</option>
+                  <option value="{{ $visitor->id }}">{{ $visitor->name }}</option>
                   @endforeach
                 </select>
               </div>

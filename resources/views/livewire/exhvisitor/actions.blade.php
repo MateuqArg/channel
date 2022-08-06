@@ -12,7 +12,7 @@
   $(document).on("click", "#meet-btn{{ $visitor->id }}", function () {
     Swal.fire({
       title: '¿Estás seguro?',
-      text: "Solicitaras una reunión con {{ $forms[$visitor->form_id]['Nombre completo'] }}",
+      text: "Solicitaras una reunión con {{ $visitor->name }}",
       icon: 'info',
       showCancelButton: true,
       cancelButtonColor: '#d33',

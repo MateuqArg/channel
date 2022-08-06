@@ -17,13 +17,13 @@
         <button class="btn btn-success w-100 mb-3">ENVIAR</button>
       </form>
       <h4>Datos personales</h4>
-      <p>Nombre: {{ $forms[$visitor->form_id]['Nombre completo'] }} <br>
-        Email: {{ $forms[$visitor->form_id]['Direccion de email'] }} <br>
-        Teléfono: {{ $forms[$visitor->form_id]['Telefono'] }} <br>
-        Empresa: {{ $forms[$visitor->form_id]['Empresa'] }}<br>
-        Cargo: {{ $forms[$visitor->form_id]['Cargo'] }}<br>
-        Provincia: {{ $forms[$visitor->form_id]['Provincia'] }}<br>
-        Ciudad: {{ $forms[$visitor->form_id]['Localidad'] }}<br>
+      <p>Nombre: {{ $visitor->name }} <br>
+        Email: {{ $visitor->email }} <br>
+        Teléfono: {{ $visitor->phone }} <br>
+        Empresa: {{ $visitor->company }}<br>
+        Cargo: {{ $visitor->charge }}<br>
+        Provincia: {{ $visitor->state }}<br>
+        Ciudad: {{ $visitor->city }}<br>
       </p>
     </div>
     <div class="col"></div>

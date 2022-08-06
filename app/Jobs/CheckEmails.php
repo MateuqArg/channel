@@ -35,10 +35,6 @@ class CheckEmails implements ShouldQueue
      */
     public function handle()
     {
-        $spread = Cache::get('spread');
-
-        $forms = Cache::get('forms');
-
         $emails = Email::where('sended', 0)->get();
 
         foreach($emails as $email) {
@@ -66,7 +62,7 @@ class CheckEmails implements ShouldQueue
                         $client = $client->request('POST', 'https://api.esmsv.com/v1/contacts/getall', [
                         'headers' => $authorization,
                         'form_params' => [
-                            'email' => $forms[$visitor->form_id]['Direccion de email'],
+                            'email' => $visitor->email,
                         ]]);
                         $contacts_ids[] = json_decode($client->getBody(), true)['data']['data'][0]['id'];
 

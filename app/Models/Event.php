@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\{Visitor, User, Talk, Meeting, Email};
+use App\Models\{Visitor, User, Talk, Meeting, Email, Input};
 
 class Event extends Model
 {
@@ -31,4 +31,10 @@ class Event extends Model
     {
         return $this->hasMany(Email::class);
     }
+
+    public function inputs()
+    {
+        return $this->belongsToMany(Input::class);
+    }
+
 }

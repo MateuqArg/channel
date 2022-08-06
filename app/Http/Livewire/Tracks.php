@@ -6,6 +6,7 @@ use Livewire\Component;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Cache;
 use App\Models\{Talk, Track, Visitor, Group};
+use Auth;
 
 class Tracks extends Component
 {
@@ -19,11 +20,10 @@ class Tracks extends Component
 
     public function render()
     {
-        if (\Auth::user()->hasRole('organizer')) {
-            $talks = Talk::where('event_id', Cache::get('currentEvent'))->get();
-        } else if (\Auth::user()->hasRole('exhibitor')) {
-            $talks = Talk::where('event_id', Cache::get('currentEvent'))
-            ->where('exhibitor_id', \Auth::user()->id)->get();
+        if (Auth::user()->hasRole('organizer')) {
+            $talks = Talk::all();
+        } else if (Auth::user()->hasRole('exhibitor')) {
+            $talks = Talk::where('exhibitor_id', Auth::user()->id)->get();
         }
 
         return view('livewire.qrnav', compact('talks'));
@@ -32,10 +32,10 @@ class Tracks extends Component
     public function changeTrack()
     {
         if ($this->talk == null) {
-            if (\Auth::user()->hasRole('organizer')) {
+            if (Auth::user()->hasRole('organizer')) {
                 $talk = Talk::first();
-            } else if (\Auth::user()->hasRole('exhibitor')) {
-                $talk = Talk::where('exhibitor_id', \Auth::user()->id)->first();
+            } else if (Auth::user()->hasRole('exhibitor')) {
+                $talk = Talk::where('exhibitor_id', Auth::user()->id)->first();
             }
 
             Session::put('talk', $talk->title);

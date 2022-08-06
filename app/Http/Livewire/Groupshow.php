@@ -11,6 +11,7 @@ use GuzzleHttp\Client;
 use Carbon\Carbon;
 use Storage;
 use Sheets;
+use Auth;
 
 class Groupshow extends Component
 {
@@ -36,7 +37,6 @@ class Groupshow extends Component
 
     public function __construct()
     {
-        $this->spread = Cache::get('spread');
     }
 
     public function updatingSearch()
@@ -46,39 +46,25 @@ class Groupshow extends Component
 
     public function render()
     {
-        $talks = Talk::where('exhibitor_id', \Auth::user()->id)->get();
+        $talks = Talk::where('exhibitor_id', Auth::user()->id)->get();
         $ids = [];
         foreach ($talks as $talk) {
             $ids[] = $talk->id;
         }
 
-        $allvisitors = Visitor::whereHas('tracks', function($q) use($ids){
-            $q->whereIn('talk_id', $ids);
-        })->get();
-
-        $forms = Cache::get('forms');
-
-        foreach ($forms as $form) {
-            $names[$form['id']] = strtolower($form['Nombre completo']);
-        }
-
         $group = Group::find($this->gid);
+
         $input = preg_quote(strtolower($this->search), '~');
         $ids = [];
-        if ($input <> null) {
-            foreach (preg_grep('~' . $input . '~', $names) as $key => $result) {
-                $ids[] = $key;
-            }
 
-            $visitors = Visitor::whereHas('groups', function($q) use($group){
-                $q->where('title', $group->title);
-            })->where('id', $ids)->paginate($this->cant);
-        } else {
-            $visitors = Visitor::whereHas('groups', function($q) use($group){
-                $q->where('title', $group->title);
-            })->paginate($this->cant);
-        }
-        return view('livewire.groups.show', compact('group', 'forms', 'visitors', 'allvisitors'));
+        $visitors = Visitor::whereHas('groups', function($q) use($group){
+            $q->where('title', $group->title);
+        })
+            ->where('custid', 'like', '%'.$input.'%')
+            ->orWhere('name', 'like', '%'.$input.'%')
+            ->orWhere('company', 'like', '%'.$input.'%')
+            ->paginate($this->cant);
+        return view('livewire.groups.show', compact('group', 'visitors', 'allvisitors'));
     }
 
     public function loadVisitors()
@@ -125,7 +111,7 @@ class Groupshow extends Component
         $talk = Talk::where('title', $group)->first();
 
         $email = new Email([
-            'name' => 'Email de: '.\Auth::user()->name.' - '. $this->subject,
+            'name' => 'Email de: '.Auth::user()->name.' - '. $this->subject,
             'subject' => $this->subject,
             'content' => basename($file),
             'date' => $this->date,
@@ -146,21 +132,27 @@ class Groupshow extends Component
         $group = Group::find($this->gid);
         $title = $group->title;
 
-        $forms = Cache::get('forms');
-
         foreach ($group->visitors as $single) {
-            $data[] = array(
+            foreach($single->responses as $response) {
+                $input = $response->input;
+                $responses[$input->label] = $response->value;
+            }
+
+            $info = array(
                 'ID' => $single->id,
                 'ID público' => $single->custid,
-                'Nombre' => $forms[$single->form_id]['Nombre completo'],
-                'Correo' => $forms[$single->form_id]['Direccion de email'],
-                'Teléfono' => $forms[$single->form_id]['Telefono'],
-                'Empresa' => $forms[$single->form_id]['Empresa'],
-                'Cargo' => $forms[$single->form_id]['Cargo'],
-                'Provincia' => $forms[$single->form_id]['Provincia'],
-                'Ciudad' => $forms[$single->form_id]['Localidad'],
                 '¿Presente?' => $single->present,
+                'Evento' => $single->event->title,
+                'Nombre' => $single->name,
+                'Correo' => $single->email,
+                'Teléfono' => $single->phone,
+                'Empresa' => $single->company,
+                'Cargo' => $single->charge,
+                'Provincia' => $single->state,
+                'Ciudad' => $single->city,
             );
+
+            $data[] = array_merge($info, $responses);
         }
         $export = (new FastExcel($data))->download($title.'.xlsx');
 
@@ -180,7 +172,7 @@ class Groupshow extends Component
     public function draw()
     {
         $group = Group::find($this->gid);
-        $forms = Cache::get('forms');
+
         $count = $visitors = Visitor::whereHas('groups', function($q) use($group){
                 $q->where('title', $group->title);
             })->get()->count();
@@ -195,7 +187,7 @@ class Groupshow extends Component
             } while (in_array($price, $nums));
 
             $nums[] = $price;
-            $prices[] = $forms[$visitors[$price-1]->form_id]['Nombre completo'];
+            $prices[] = $visitors[$price-1]->name;
         }
 
         $this->drawprices = $prices;

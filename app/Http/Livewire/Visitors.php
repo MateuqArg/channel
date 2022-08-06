@@ -26,66 +26,34 @@ class Visitors extends Component
 
     public function __construct()
     {
-        $this->spread = Cache::get('spread');
         $this->event = Event::orderBy('id', 'DESC')->first()->id;
     }
 
     public function render()
     {
-        $this->forms = Cache::get('forms');
-
-        foreach ($this->forms as $form) {
-            $names[$form['id']] = strtolower($form['Nombre completo']);
-        }
-
-        foreach ($this->forms as $form) {
-            $companies[$form['id']] = strtolower($form['Empresa']);
-        }
-
-        if (substr($this->search, 0, 4) == 'http') {
-//return redirect()->to('/organizer/visitor/'.substr($this->search, -6));
-            $this->search = substr($this->search, -6);
-        }
-
         $input = preg_quote(strtolower($this->search), '~');
 
-        $ids = [];
-        foreach (preg_grep('~' . $input . '~', $names) as $key => $result) {
-            $ids[] = $key;
-        }
-
-        foreach (preg_grep('~' . $input . '~', $companies) as $key => $result) {
-            $ids[] = $key;
-        }
-
         if ($this->readyToLoad) {
-            if ($input <> null) {
-                $visitors = Visitor::
-                where('event_id', $this->event)
-                ->where('custid', 'like', '%'.$this->search.'%')
-                ->orWhereIn('id', $ids)
-                ->orderBy('event_id', 'DESC');
+            $visitors = Visitor::
+            where('event_id', $this->event)
+            ->when($input, function($query) use ($input) {
+                $query->where('custid', 'like', '%'.$input.'%')
+                    ->orWhere('name', 'like', '%'.$input.'%')
+                    ->orWhere('company', 'like', '%'.$input.'%'); 
+            })
+            ->orderBy('event_id', 'DESC');
 
-                $presents = $visitors->where('present', 1)->count();
-                $vips = $visitors->where('vip', 1)->count();
+            $presents = $visitors->where('present', 1)->count();
+            $vips = $visitors->where('vip', 1)->count();
 
-                $visitors = Visitor::
-                where('event_id', $this->event)
-                ->where('custid', 'like', '%'.$this->search.'%')
-                ->orWhereIn('id', $ids)
-                ->orderBy('event_id', 'DESC')->paginate($this->cant);
-            } else {
-                $visitors = Visitor::
-                where('event_id', $this->event)
-                ->orderBy('event_id', 'DESC');
-
-                $presents = $visitors->where('present', 1)->count();
-                $vips = $visitors->where('vip', 1)->count();
-
-                $visitors = Visitor::
-                where('event_id', $this->event)
-                ->orderBy('event_id', 'DESC')->paginate($this->cant);
-            }
+            $visitors = Visitor::
+            where('event_id', $this->event)
+            ->when($input, function($query) use ($input) {
+                $query->where('custid', 'like', '%'.$input.'%')
+                    ->orWhere('name', 'like', '%'.$input.'%')
+                    ->orWhere('company', 'like', '%'.$input.'%'); 
+            })
+            ->orderBy('event_id', 'DESC')->paginate($this->cant);
 
         } else {
             $visitors = [];
@@ -126,7 +94,6 @@ class Visitors extends Component
 
     public function download()
     {
-        $forms = Cache::get('forms');
         if ($this->downtype == 'all') {
             $all = Visitor::where('event_id', $this->event)->get();
         } else if ($this->downtype == 'presents') {
@@ -135,24 +102,57 @@ class Visitors extends Component
             $all = Visitor::where('event_id', $this->event)->where('vip', 1)->get();
         }
 
+        $event = Event::find($this->event);
+
+        // $data[] = $event->inputs->toArray();
+
+        // $header = array(
+        //         'ID' => '',
+        //         'ID público' => '',
+        //         '¿Aprobado?' => '',
+        //         '¿Presente?' => '',
+        //         'Evento' => '',
+        //         'Nombre' => '',
+        //         'Correo' => '',
+        //         'Teléfono' => '',
+        //         'Empresa' => '',
+        //         'Cargo' => '',
+        //         'Provincia' => '',
+        //         'Ciudad' => '',
+        //     );
+
+        // foreach ($event->inputs as $input) {
+        //     $header[$input->label] = '';
+        // }
+
+        // $data[] = $header;
         foreach ($all as $single) {
-            $data[] = array(
+            foreach($single->responses as $response) {
+                $input = $response->input;
+                $responses[$input->label] = $response->value;
+            }
+
+            $info = array(
                 'ID' => $single->id,
                 'ID público' => $single->custid,
-                'Evento' => $single->event->title,
-                'Nombre' => $forms[$single->form_id]['Nombre completo'],
-                'Correo' => $forms[$single->form_id]['Direccion de email'],
-                'Teléfono' => $forms[$single->form_id]['Telefono'],
-                'Empresa' => $forms[$single->form_id]['Empresa'],
-                'Cargo' => $forms[$single->form_id]['Cargo'],
-                'Provincia' => $forms[$single->form_id]['Provincia'],
-                'Ciudad' => $forms[$single->form_id]['Localidad'],
                 '¿Aprobado?' => $single->approved,
                 '¿Presente?' => $single->present,
+                'Evento' => $single->event->title,
+                'Nombre' => $single->name,
+                'Correo' => $single->email,
+                'Teléfono' => $single->phone,
+                'Empresa' => $single->company,
+                'Cargo' => $single->charge,
+                'Provincia' => $single->state,
+                'Ciudad' => $single->city,
             );
-        }
 
-        $export = (new FastExcel($data))->download('asistentes.xlsx');
+            $data[] = array_merge($info, $responses);
+        }
+// dd($data);
+        $header = ['ID', 'NAME', ];  // this is my custom header
+
+        $export = (new FastExcel(usersGenerator()))->withoutHeaders()->download('asistentes.xlsx');
 
         $file_name = "asistentes.xlsx";
 
@@ -169,7 +169,6 @@ class Visitors extends Component
 
     public function draw($cant)
     {
-        $forms = Cache::get('forms');
         $count = Visitor::all()->count();
         $visitors = Visitor::all();
 
@@ -179,9 +178,8 @@ class Visitors extends Component
            do {
             $price = random_int(1, $count);
             } while (in_array($price, $nums));
-
             $nums[] = $price;
-            $prices[] = $forms[$visitors[$price-1]->form_id]['Nombre completo'];
+            $prices[] = $visitors[$price-1]->name;
         }
 
         $this->drawprices = $prices;

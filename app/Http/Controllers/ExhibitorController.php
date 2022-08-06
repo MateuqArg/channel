@@ -9,41 +9,28 @@ use App\Models\{Event, Meeting, Visitor, User, Group, Talk};
 use Rap2hpoutre\FastExcel\FastExcel;
 use GuzzleHttp\Client;
 use Sheets;
+use Session;
+use Auth;
 
 class ExhibitorController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth');
-        $this->spread = Cache::get('spread');
     }
-
-    // public function eventsIndex()
-    // {
-    //     $events = Event::whereIn('custid',  \Auth::user()->getRoleNames())->get();
-    //     $meetings = Meeting::where('approved', null)->where('exhibitor', \Auth::user()->name)->where('requested', 'visitor')->get();
-    //     $visitors = Visitor::where('approved', true)->whereDoesntHave('meetings', function ($meetingQuery) {
-    //         $meetingQuery->where('exhibitor', \Auth::user()->name);
-    //     })->get();
-    //     $forms = Cache::get('forms');
-
-    //     return view('exhibitor.events.index', compact('events', 'meetings', 'visitors', 'forms'));
-    // }
 
     public function visitors()
     {
-        $meetings = Meeting::where('approved', null)->where('exhibitor', \Auth::user()->id)->where('requested', 'visitor')->get();
-        $forms = Cache::get('forms');
+        $meetings = Meeting::where('approved', null)->where('exhibitor', Auth::user()->id)->where('requested', 'visitor')->get();
 
-        return view('exhibitor.visitors', compact('meetings', 'forms'));
+        return view('exhibitor.visitors', compact('meetings'));
     }
 
     public function groups()
     {
-        $forms = Cache::get('forms');
-
-        $talks = Talk::where('exhibitor_id', \Auth::user()->id)->get();
+        $talks = Talk::where('exhibitor_id', Auth::user()->id)->get();
         $ids = [];
+        
         foreach ($talks as $talk) {
             $ids[] = $talk->id;
         }
@@ -52,7 +39,7 @@ class ExhibitorController extends Controller
             $q->whereIn('talk_id', $ids);
         })->get();
 
-        return view('exhibitor.groups', compact('forms', 'visitors'));
+        return view('exhibitor.groups', compact('visitors'));
     }
 
     public function groupShow(Request $request, $id)
@@ -100,7 +87,7 @@ class ExhibitorController extends Controller
         //     unlink(public_path().'/excels/'.$custid.'.'.$ext);
         // }
         // dd($request);
-        $event = Event::find(Cache::get('currentEvent'));
+        $event = Event::latest()->first();
 
         $authorization = ['Authorization' => 'eyJpdiI6Ik9UUXdOVFkyT1RZek5qSTNNVGs0T0E9PSIsInZhbHVlIjoiMEwwVjFjeTVyZ3ZnWlE1U204REtkQk0vZCtSbW4rdGZ1WXg3Uzk2Z2dLST0iLCJtYWMiOiI0MzM2M2NlNDE3YjMyY2ZhNjNlZTIxNGFmMDQwOTQyNjVhMzA3ZGNlMDQzZGQ5NDNlZWY0OTIxNWNhZjI4MmUzIn0='];
 
@@ -155,8 +142,8 @@ class ExhibitorController extends Controller
             'headers' => $authorization,
             'form_params' => [
                 'name' => 'Invitación a cliente: '.$request->name,
-                'subject' => \Auth::user()->name.' lo invita al evento '.$event->title,
-                'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://www.channeltalks.net/images/header.png" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"><p style="max-width: 600px; font-size: 20px">¡Hola! '.\Auth::user()->name.' lo invita al evento '.$event->title.', para registrarte ingresa al siguiente link <a href="https://forms.gle/vG42TQ79DuYFnQkn6">AQUI</a>.</p></div></td></tr></tbody></table>',
+                'subject' => Auth::user()->name.' lo invita al evento '.$event->title,
+                'content' => '<table style="border-spacing: 0;border-collapse: collapse;vertical-align: top" border="0" cellspacing="0" cellpadding="0" width="100%"><tbody><tr><td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;width: 100%; padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px" align="center"><div style="font-size: 12px;font-style: normal;font-weight: 400;"><img src="https://www.channeltalks.net/images/header.png" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: 0;height: auto;line-height: 100%;margin: undefined;float: none;width: auto;max-width: 600px;" alt="" border="0" width="auto" class="center fullwidth"><p style="max-width: 600px; font-size: 20px">¡Hola! '.Auth::user()->name.' lo invita al evento '.$event->title.', para registrarte ingresa al siguiente link <a href="https://forms.gle/vG42TQ79DuYFnQkn6">AQUI</a>.</p></div></td></tr></tbody></table>',
                 'fromAlias' => 'Channel Talks',
                 'fromEmail' => 'channeltalks@mediaware.news',
                 'replyEmail' => 'channeltalks@mediaware.news',
@@ -186,7 +173,7 @@ class ExhibitorController extends Controller
         $check =  User::where('email', $request->email)->first();
 
         if (!$check) {
-            $event = Event::find(Cache::get('currentEvent'));
+            $event = Event::latest()->first();
             $authorization = ['Authorization' => 'eyJpdiI6Ik9UUXdOVFkyT1RZek5qSTNNVGs0T0E9PSIsInZhbHVlIjoiMEwwVjFjeTVyZ3ZnWlE1U204REtkQk0vZCtSbW4rdGZ1WXg3Uzk2Z2dLST0iLCJtYWMiOiI0MzM2M2NlNDE3YjMyY2ZhNjNlZTIxNGFmMDQwOTQyNjVhMzA3ZGNlMDQzZGQ5NDNlZWY0OTIxNWNhZjI4MmUzIn0='];
 
             $client = new Client();
@@ -301,7 +288,7 @@ class ExhibitorController extends Controller
 
     public function simulate(Request $request)
     {
-        \Auth::loginUsingId(\Session::get('simulate'), true);
+        Auth::loginUsingId(Session::get('simulate'), true);
         return redirect()->route('organizer.events.index');
     }
 }

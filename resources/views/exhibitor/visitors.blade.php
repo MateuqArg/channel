@@ -34,7 +34,7 @@
               <div class="row">
                 <div class="col-9">
                   <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $meeting->custid }}" aria-expanded="true" aria-controls="{{ $meeting->custid }}">
-                    {{ $forms[$meeting->visitor->form_id]['Nombre completo'] }} - {{ $meeting->event->title }}
+                    {{ $meeting->visitor->name }} - {{ $meeting->event->title }}
                   </button>
                 </div>
                 <div class="col-1">
@@ -48,13 +48,13 @@
             <div id="{{ $meeting->custid }}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
               <div class="accordion-body">
                 <p class="mb-0">
-                  <strong>Nombre:</strong> {{ $forms[$meeting->visitor->form_id]['Nombre completo'] }}<br>
-                  <strong>Email:</strong> {{ $forms[$meeting->visitor->form_id]['Direccion de email'] }}<br>
-                  <strong>Teléfono:</strong> {{ $forms[$meeting->visitor->form_id]['Telefono'] }}<br>
-                  <strong>Empresa:</strong> {{ $forms[$meeting->visitor->form_id]['Empresa'] }}<br>
-                  <strong>Cargo:</strong> {{ $forms[$meeting->visitor->form_id]['Cargo'] }}<br>
-                  <strong>Provincia:</strong> {{ $forms[$meeting->visitor->form_id]['Provincia'] }}<br>
-                  <strong>Ciudad:</strong> {{ $forms[$meeting->visitor->form_id]['Localidad'] }}
+                  <strong>Nombre:</strong> {{ $meeting->visitor->name }}<br>
+                  <strong>Email:</strong> {{ $meeting->visitor->email }}<br>
+                  <strong>Teléfono:</strong> {{ $meeting->visitor->phone }}<br>
+                  <strong>Empresa:</strong> {{ $meeting->visitor->company }}<br>
+                  <strong>Cargo:</strong> {{ $meeting->visitor->charge }}<br>
+                  <strong>Provincia:</strong> {{ $meeting->visitor->state }}<br>
+                  <strong>Ciudad:</strong> {{ $meeting->visitor->city }}
                 </p>
               </div>
             </div>

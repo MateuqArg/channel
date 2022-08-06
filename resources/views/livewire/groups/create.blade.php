@@ -17,7 +17,7 @@
                 {{-- <label for="event" class="form-label">Selecciona el evento relacionado al grupo</label> --}}
                 {{-- <select class="form-control" wire:model="cregroup.visitor" id="visitors" multiple="multiple">
                   @foreach($visitors as $visitor)
-                  <option value="{{ $visitor->id }}">{{ $forms[$visitor->form_id]['Nombre completo'] }}</option>
+                  <option value="{{ $visitor->id }}">{{ $visitor->name }}</option>
                   @endforeach
                 </select> --}}
               </div>
